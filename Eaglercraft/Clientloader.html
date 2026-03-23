@@ -1,0 +1,323 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .desktop {
+    min-height: 600px;
+    background: linear-gradient(135deg,
+      #ff6b6b 0%, #ff9f43 12%, #ffd93d 24%, #6bcb77 36%,
+      #4d96ff 48%, #845ef7 60%, #f77fbe 72%, #ff6b6b 84%, #ff9f43 100%);
+    background-size: 300% 300%;
+    animation: rainbowShift 8s ease infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  @keyframes rainbowShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  .app-list {
+    width: 480px;
+    max-width: 100%;
+  }
+
+  .search-bar { margin-bottom: 12px; }
+  .search-bar input {
+    width: 100%;
+    background: rgba(255,255,255,0.25);
+    border: none;
+    border-radius: 14px;
+    padding: 11px 16px;
+    font-size: 14px;
+    color: #fff;
+    outline: none;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .search-bar input::placeholder { color: rgba(255,255,255,0.65); }
+  .search-bar input:focus { background: rgba(255,255,255,0.35); }
+
+  .app-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 11px 14px;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    margin-bottom: 4px;
+  }
+  .app-item:hover { background: rgba(255,255,255,0.25); transform: translateX(3px); }
+  .app-item:active { transform: scale(0.98); }
+
+  .app-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+
+  .app-info { flex: 1; min-width: 0; }
+  .app-name { font-size: 14px; font-weight: 600; color: #fff; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+  .app-desc { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+
+  .app-btn {
+    background: rgba(255,255,255,0.28);
+    border: none;
+    border-radius: 20px;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    transition: background 0.15s, transform 0.1s;
+    white-space: nowrap;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .app-btn:hover { background: rgba(255,255,255,0.45); }
+  .app-btn:active { transform: scale(0.95); }
+
+  .modal-overlay {
+    display: none;
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    align-items: center; justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(6px);
+  }
+  .modal-overlay.active { display: flex; }
+
+  .modal {
+    background: rgba(30,30,40,0.92);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    width: 480px;
+    max-width: 90vw;
+    overflow: hidden;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+
+  .modal-titlebar {
+    background: rgba(255,255,255,0.07);
+    border-bottom: 0.5px solid rgba(255,255,255,0.12);
+    padding: 12px 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .traffic-lights { display: flex; gap: 7px; }
+  .tl { width: 13px; height: 13px; border-radius: 50%; cursor: pointer; }
+  .tl-red { background: #ff5f57; }
+  .tl-yellow { background: #febc2e; }
+  .tl-green { background: #28c840; }
+  .modal-title { flex: 1; text-align: center; font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.9); }
+
+  .modal-body { padding: 20px; }
+  .url-row { display: flex; gap: 8px; margin-bottom: 16px; }
+  .url-input {
+    flex: 1;
+    background: rgba(255,255,255,0.1);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 13px;
+    color: #fff;
+    outline: none;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .url-input::placeholder { color: rgba(255,255,255,0.4); }
+  .url-input:focus { border-color: rgba(255,255,255,0.45); background: rgba(255,255,255,0.15); }
+
+  .go-btn {
+    background: rgba(255,255,255,0.15);
+    border: 0.5px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    padding: 9px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .go-btn:hover { background: rgba(255,255,255,0.28); }
+
+  .output-area {
+    background: rgba(0,0,0,0.35);
+    border: 0.5px solid rgba(255,255,255,0.1);
+    border-radius: 10px;
+    padding: 14px;
+    min-height: 180px;
+    max-height: 260px;
+    overflow-y: auto;
+    font-size: 12px;
+    font-family: 'SF Mono', 'Menlo', monospace;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .status-ok { color: #28c840; }
+  .status-err { color: #ff5f57; }
+  .status-info { color: #4d96ff; }
+
+  .modal-footer {
+    padding: 0 20px 16px;
+    display: flex; gap: 8px; justify-content: flex-end;
+  }
+  .modal-close-btn {
+    background: rgba(255,255,255,0.1);
+    border: 0.5px solid rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .modal-close-btn:hover { background: rgba(255,255,255,0.18); }
+  .run-btn {
+    background: rgba(40,200,64,0.25);
+    border: 0.5px solid rgba(40,200,64,0.5);
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #28c840;
+    cursor: pointer;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .run-btn:hover { background: rgba(40,200,64,0.38); }
+</style>
+
+<div class="desktop">
+  <div class="app-list">
+    <div class="search-bar">
+      <input type="text" placeholder="&#128269; Search apps..." id="searchInput" oninput="filterApps(this.value)" />
+    </div>
+    <div id="appItems"></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div class="modal-titlebar">
+      <div class="traffic-lights">
+        <div class="tl tl-red" onclick="closeModal()"></div>
+        <div class="tl tl-yellow"></div>
+        <div class="tl tl-green"></div>
+      </div>
+      <div class="modal-title" id="modalTitle">App</div>
+    </div>
+    <div class="modal-body">
+      <div class="url-row">
+        <input class="url-input" type="text" id="urlInput" placeholder="https://example.com" />
+        <button class="go-btn" onclick="scrapeUrl()">Fetch</button>
+      </div>
+      <div class="output-area" id="outputArea"><span class="status-info">Ready. Enter a URL and click Fetch to scrape content.</span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-close-btn" onclick="closeModal()">Close</button>
+      <button class="run-btn" onclick="runCode()">&#9654; Run</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const apps = [
+  { name: "HTML Extractor", desc: "Scrape and extract raw HTML from any URL", icon: "&#128196;", bg: "rgba(255,100,80,0.5)", mode: "html" },
+  { name: "Text Harvester", desc: "Pull all visible text content from a page", icon: "&#128203;", bg: "rgba(255,160,40,0.5)", mode: "text" },
+  { name: "Link Mapper", desc: "Extract all hyperlinks from a webpage", icon: "&#128279;", bg: "rgba(255,220,40,0.5)", mode: "links" },
+  { name: "Meta Reader", desc: "Grab title, description, og tags & more", icon: "&#128269;", bg: "rgba(80,200,100,0.5)", mode: "meta" },
+  { name: "Image Scanner", desc: "Find all image URLs on a page", icon: "&#128247;", bg: "rgba(50,160,255,0.5)", mode: "images" },
+  { name: "JSON Fetcher", desc: "Fetch and pretty-print raw JSON endpoints", icon: "&#123;&#125;", bg: "rgba(130,80,255,0.5)", mode: "json", iconStyle: "font-family:monospace;font-size:14px;font-weight:700;" },
+  { name: "Header Inspector", desc: "View HTTP response headers from a URL", icon: "&#128260;", bg: "rgba(220,80,180,0.5)", mode: "headers" },
+  { name: "Word Counter", desc: "Count words, sentences and reading time", icon: "&#128220;", bg: "rgba(255,80,120,0.5)", mode: "wordcount" },
+];
+
+let currentMode = "html";
+
+function renderApps(list) {
+  const c = document.getElementById("appItems");
+  c.innerHTML = list.map(app => `
+    <div class="app-item" onclick="openApp('${app.name}','${app.mode}')">
+      <div class="app-icon" style="background:${app.bg}">
+        <span style="${app.iconStyle||'font-size:20px'}">${app.icon}</span>
+      </div>
+      <div class="app-info">
+        <div class="app-name">${app.name}</div>
+        <div class="app-desc">${app.desc}</div>
+      </div>
+      <button class="app-btn" onclick="event.stopPropagation();openApp('${app.name}','${app.mode}')">Open app</button>
+    </div>
+  `).join("");
+}
+
+function filterApps(q) {
+  renderApps(apps.filter(a =>
+    a.name.toLowerCase().includes(q.toLowerCase()) ||
+    a.desc.toLowerCase().includes(q.toLowerCase())
+  ));
+}
+
+function openApp(name, mode) {
+  currentMode = mode;
+  document.getElementById("modalTitle").textContent = name;
+  document.getElementById("urlInput").value = "";
+  document.getElementById("outputArea").innerHTML = '<span class="status-info">Ready. Enter a URL and click Fetch to scrape content.</span>';
+  document.getElementById("modalOverlay").classList.add("active");
+}
+
+function closeModal() {
+  document.getElementById("modalOverlay").classList.remove("active");
+}
+
+async function scrapeUrl() {
+  const url = document.getElementById("urlInput").value.trim();
+  const out = document.getElementById("outputArea");
+  if (!url) { out.innerHTML = '<span class="status-err">Please enter a URL.</span>'; return; }
+  out.innerHTML = '<span class="status-info">Fetching via CORS proxy...</span>';
+  try {
+    const res = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(url));
+    const data = await res.json();
+    processResult(data.contents, url);
+  } catch(e) {
+    out.innerHTML = `<span class="status-err">Error: ${e.message}</span>`;
+  }
+}
+
+function processResult(html, url) {
+  const out = document.getElementById("outputArea");
+  const doc = new DOMParser().parseFromString(html, "text/html");
+  if (currentMode === "html") {
+    out.textContent = html.slice(0, 3000) + (html.length > 3000 ? "\n... (truncated)" : "");
+  } else if (currentMode === "text") {
+    out.textContent = (doc.body?.innerText || "").replace(/\s+/g,' ').trim().slice(0,3000);
+  } else if (currentMode === "links") {
+    const links = [...new Set([...doc.querySelectorAll("a[href]")].map(a=>a.href))];
+    out.innerHTML = `<span class="status-ok">Found ${links.length} links:</span>\n` + links.slice(0,60).join("\n");
+  } else if (currentMode === "meta") {
+    const og = [...doc.querySelectorAll('meta[property^="og:"]')].map(m=>`${m.getAttribute("property")}: ${m.content}`).join("\n");
+    out.innerHTML = `<span class="status-ok">Title:</span> ${doc.title||"N/A"}\n<span class="status-ok">Description:</span> ${doc.querySelector('meta[name="description"]')?.content||"N/A"}\n<span class="status-ok">OG Tags:</span>\n${og||"None"}`;
+  } else if (currentMode === "images") {
+    const imgs = [...new Set([...doc.querySelectorAll("img[src]")].map(i=>i.src))];
+    out.innerHTML = `<span class="status-ok">Found ${imgs.length} images:</span>\n` + imgs.slice(0,50).join("\n");
+  } else if (currentMode === "json") {
+    try { out.textContent = JSON.stringify(JSON.parse(html), null, 2).slice(0,3000); }
+    catch { out.innerHTML = `<span class="status-err">Not valid JSON:</span>\n` + html.slice(0,2000); }
+  } else if (currentMode === "headers") {
+    out.innerHTML = `<span class="status-info">Headers not accessible via CORS proxy.\nSniffed type:</span> ${html.startsWith("{")||html.startsWith("[")?"application/json":"text/html"}`;
+  } else if (currentMode === "wordcount") {
+    const t = doc.body?.innerText || html;
+    const words = t.split(/\s+/).filter(w=>w.length>0);
+    out.innerHTML = `<span class="status-ok">Words:</span> ${words.length}\n<span class="status-ok">Sentences:</span> ${t.split(/[.!?]+/).filter(s=>s.trim()).length}\n<span class="status-ok">Characters:</span> ${t.length}\n<span class="status-ok">Reading time:</span> ${Math.ceil(words.length/200)} min`;
+  }
+}
+
+function runCode() {
+  const url = document.getElementById("urlInput").value.trim();
+  if (url) scrapeUrl(); else document.getElementById("outputArea").innerHTML = '<span class="status-err">Enter a URL first.</span>';
+}
+
+renderApps(apps);
+</script>
