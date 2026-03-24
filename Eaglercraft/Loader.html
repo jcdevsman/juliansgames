@@ -1,1 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frosted Glass List</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  body {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'DM Sans', sans-serif;
+    overflow: hidden;
+  }
+
+  .bg {
+    position: fixed; inset: 0; z-index: 0;
+    background-size: cover;
+    background-position: center;
+    background-color: #080814;
+    animation: slowZoom 30s ease-in-out infinite alternate;
+  }
+  .bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(5, 5, 20, 0.45);
+  }
+  @keyframes slowZoom {
+    0%   { transform: scale(1); }
+    100% { transform: scale(1.08); }
+  }
+
+  .card {
+    position: relative; z-index: 1; width: 420px;
+    background: rgba(255,255,255,0.07);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 28px; padding: 36px 32px 32px;
+    box-shadow: 0 8px 64px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.12) inset, 0 -1px 0 rgba(0,0,0,0.3) inset;
+    animation: cardIn 0.7s cubic-bezier(.22,1,.36,1) both;
+  }
+  @keyframes cardIn {
+    from { opacity:0; transform:translateY(32px) scale(0.97); }
+    to   { opacity:1; transform:translateY(0) scale(1); }
+  }
+
+  .card-header { margin-bottom: 28px; }
+  .card-header h1 {
+    font-family: 'Playfair Display', serif; font-size: 1.75rem;
+    font-weight: 600; color: #fff; letter-spacing: -0.02em; line-height: 1.2;
+  }
+  .card-header p {
+    font-size: 0.82rem; color: rgba(255,255,255,0.45);
+    margin-top: 6px; font-weight: 300; letter-spacing: 0.03em;
+  }
+
+  .list { display: flex; flex-direction: column; gap: 12px; }
+
+  .item {
+    display: flex; align-items: center; gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 16px;
+    backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    transition: background 0.25s, border-color 0.25s, transform 0.2s;
+    animation: itemIn 0.5s cubic-bezier(.22,1,.36,1) both;
+  }
+  .item:nth-child(1){animation-delay:0.1s}
+  .item:nth-child(2){animation-delay:0.18s}
+  .item:nth-child(3){animation-delay:0.26s}
+  .item:nth-child(4){animation-delay:0.34s}
+  .item:nth-child(5){animation-delay:0.42s}
+  @keyframes itemIn {
+    from { opacity:0; transform:translateX(-18px); }
+    to   { opacity:1; transform:translateX(0); }
+  }
+  .item:hover {
+    background: rgba(255,255,255,0.12);
+    border-color: rgba(255,255,255,0.22);
+    transform: translateX(4px);
+  }
+
+  .icon {
+    width:40px;height:40px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:1.1rem;flex-shrink:0;
+    border:1px solid rgba(255,255,255,0.12);
+  }
+  .icon-violet { background:rgba(124,58,237,0.35); }
+  .icon-sky    { background:rgba(14,165,233,0.3); }
+  .icon-pink   { background:rgba(236,72,153,0.3); }
+  .icon-amber  { background:rgba(245,158,11,0.3); }
+  .icon-teal   { background:rgba(20,184,166,0.3); }
+
+  .item-text { flex:1; min-width:0; }
+  .item-title {
+    font-size:0.9rem; font-weight:500; color:rgba(255,255,255,0.9);
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .item-sub { font-size:0.75rem; color:rgba(255,255,255,0.38); margin-top:2px; font-weight:300; }
+
+  .btn {
+    flex-shrink:0; padding:6px 14px; border-radius:50px;
+    border:1px solid rgba(255,255,255,0.18);
+    background:rgba(255,255,255,0.1);
+    backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+    color:rgba(255,255,255,0.75);
+    font-family:'DM Sans',sans-serif; font-size:0.72rem; font-weight:500;
+    letter-spacing:0.04em; cursor:pointer;
+    transition:background 0.2s,border-color 0.2s,color 0.2s,transform 0.15s,box-shadow 0.2s;
+    box-shadow:0 2px 12px rgba(0,0,0,0.2);
+  }
+  .btn:hover {
+    background:rgba(255,255,255,0.2); border-color:rgba(255,255,255,0.35);
+    color:#fff; transform:scale(1.05); box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  }
+  .btn:active { transform:scale(0.97); }
+
+  /* ── Fullscreen overlay ── */
+  #overlay {
+    display: none;
+    position: fixed; inset: 0; z-index: 100;
+    background: #000;
+  }
+  #overlay.visible { display: block; }
+
+  #overlay iframe {
+    width: 100%; height: 100%;
+    border: none; display: block;
+  }
+
+  #close-btn {
+    position: fixed; top: 18px; right: 22px; z-index: 101;
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,0.25);
+    background: rgba(0,0,0,0.55);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    color: #fff; font-size: 1.1rem;
+    cursor: pointer; display: none;
+    align-items: center; justify-content: center;
+    transition: background 0.2s, transform 0.15s;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.4);
+  }
+  #close-btn.visible { display: flex; }
+  #close-btn:hover { background: rgba(255,255,255,0.15); transform: scale(1.1); }
+</style>
+</head>
+<body>
+
+<div class="bg"></div>
+<div class="card">
+  <div class="card-header">
+    <h1>Your Collection</h1>
+    <p>5 items</p>
+  </div>
+
+  <ul class="list" role="list">
+    <li class="item">
+      <div class="icon icon-violet">🟦</div>
+      <div class="item-text">
+        <div class="item-title">Vanilla 1.12</div>
+        <div class="item-sub">The basic vanilla client</div>
+      </div>
+      <button class="btn" onclick="openItem('vanilla')">Open</button>
+    </li>
+    <li class="item">
+      <div class="icon icon-sky">⭐</div>
+      <div class="item-text">
+        <div class="item-title">Astra client 2</div>
+        <div class="item-sub">The orginial looks better but it was to big to upload to github :/</div>
+      </div>
+      <button class="btn" onclick="openItem('ocean')">View</button>
+    </li>
+    <li class="item">
+      <div class="icon icon-pink">🌸</div>
+      <div class="item-text">
+        <div class="item-title">Petal UI Kit</div>
+        <div class="item-sub">Draft · not published</div>
+      </div>
+      <button class="btn" onclick="openItem('petal')">Edit</button>
+    </li>
+    <li class="item">
+      <div class="icon icon-amber">✨</div>
+      <div class="item-text">
+        <div class="item-title">Aurora Color Palette</div>
+        <div class="item-sub">48 swatches</div>
+      </div>
+      <button class="btn" onclick="openItem('aurora')">Copy</button>
+    </li>
+    <li class="item">
+      <div class="icon icon-teal">🔮</div>
+      <div class="item-text">
+        <div class="item-title">Crystal Components</div>
+        <div class="item-sub">Shared with 3 people</div>
+      </div>
+      <button class="btn" onclick="openItem('crystal')">Share</button>
+    </li>
+  </ul>
+</div>
+
+<!-- Fullscreen overlay -->
+<div id="overlay">
+  <iframe id="preview-frame" sandbox="allow-scripts"></iframe>
+</div>
+<button id="close-btn" onclick="closeOverlay()" title="Close (Esc)">✕</button>
+
+<script>
+// ── GitHub raw URLs — swap these for your real .html file links ──────────────
+const githubUrls = {
+  vanilla:  'https://raw.githubusercontent.com/your-username/your-repo/main/nebula.html',
+  astra:   'https://raw.githubusercontent.com/your-username/your-repo/main/ocean.html',
+  petal:   'https://raw.githubusercontent.com/your-username/your-repo/main/petal.html',
+  aurora:  'https://raw.githubusercontent.com/your-username/your-repo/main/aurora.html',
+  crystal: 'https://raw.githubusercontent.com/your-username/your-repo/main/crystal.html',
+};
+
+// ── Loading screen shown while fetching ──────────────────────────────────────
+const loadingHTML = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;background:#080814;font-family:'Segoe UI',sans-serif;color:#fff}
+  .spinner{width:40px;height:40px;border:3px solid rgba(255,255,255,.1);
+    border-top-color:rgba(255,255,255,.6);border-radius:50%;
+    animation:spin .8s linear infinite;margin-bottom:18px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  p{font-size:.85rem;color:rgba(255,255,255,.4);letter-spacing:.06em}
+</style></head><body>
+  <div class="spinner"></div><p>Loading...</p>
+</body></html>`;
+
+// ── Error screen ──────────────────────────────────────────────────────────────
+const errorHTML = (url, msg) => `<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{min-height:100vh;display:flex;flex-direction:column;align-items:center;
+    justify-content:center;background:#0f0a14;font-family:'Segoe UI',sans-serif;color:#fff;padding:32px;text-align:center}
+  h2{font-size:1.2rem;color:#f87171;margin-bottom:10px}
+  code{font-size:.75rem;color:rgba(255,255,255,.35);word-break:break-all;max-width:500px;display:block;margin-top:8px}
+</style></head><body>
+  <h2>⚠ Could not load page</h2>
+  <p style="color:rgba(255,255,255,.45);font-size:.85rem">${msg}</p>
+  <code>${url}</code>
+</body></html>`;
+
+// ── Open: fetch raw HTML from GitHub and srcdoc it ───────────────────────────
+async function openItem(key) {
+  const overlay  = document.getElementById('overlay');
+  const frame    = document.getElementById('preview-frame');
+  const closeBtn = document.getElementById('close-btn');
+
+  // Show overlay immediately with a loading screen
+  frame.srcdoc = loadingHTML;
+  overlay.classList.add('visible');
+  closeBtn.classList.add('visible');
+
+  const url = githubUrls[key];
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status} — ${res.statusText}`);
+    const html = await res.text();
+    frame.srcdoc = html;
+  } catch (err) {
+    frame.srcdoc = errorHTML(url, err.message);
+  }
+}
+
+// ── Close ─────────────────────────────────────────────────────────────────────
+function closeOverlay() {
+  const overlay  = document.getElementById('overlay');
+  const frame    = document.getElementById('preview-frame');
+  const closeBtn = document.getElementById('close-btn');
+  overlay.classList.remove('visible');
+  closeBtn.classList.remove('visible');
+  frame.srcdoc = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeOverlay(); });
+</script>
+
+</body>
+</html>
