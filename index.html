@@ -1,1 +1,429 @@
-e
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>macOS Full Icon Grid</title>
+    <link rel="shortcut icon" href="google-classroom.png" type="image/x-icon">
+    <style>
+        :root {
+            --bg-url: url('https://img.freepik.com/free-photo/beautiful-shot-mountains-trees-covered-snow-fog_181624-17590.jpg');
+            --window-bg: rgba(28, 28, 30, 0.85);
+            --border-color: rgba(255, 255, 255, 0.15);
+            --accent: #00a2ff;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            background: var(--bg-url) no-repeat center center fixed;
+            background-size: cover;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-header {
+            width: 100%;
+            padding-top: 50px;
+            text-align: center;
+            color: white;
+            z-index: 10;
+        }
+
+        .main-header h1 {
+            font-weight: 600;
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+            background: linear-gradient(to right, #00a2ff, #002aff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .main-header h2 {
+            font-size: 14px;
+            font-weight: 400;
+            margin-top: 10px;
+            color: rgb(0, 0, 0);
+        }
+
+        .main-header h3 {
+            font-size: 14px;
+            font-weight: 400;
+            margin-top: 10px;
+            color: rgb(0, 0, 0);
+        }
+
+        /* Controls Frame */
+        .controls-frame {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            margin: 20px auto 0;
+            padding: 16px 24px;
+            width: fit-content;
+            max-width: 90%;
+            background: rgba(20, 20, 22, 0.55);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            z-index: 10;
+        }
+
+        /* Category Filter Bar */
+        .category-bar {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            padding: 0;
+            z-index: 10;
+        }
+
+        .cat-btn {
+            padding: 6px 18px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.08);
+            color: rgba(255,255,255,0.75);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.18s ease;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            user-select: none;
+        }
+
+        .cat-btn:hover {
+            background: rgba(255,255,255,0.18);
+            color: #fff;
+            border-color: rgba(255,255,255,0.4);
+        }
+
+        .cat-btn.active {
+            background: linear-gradient(135deg, #00a2ff, #002aff);
+            border-color: transparent;
+            color: #fff;
+            box-shadow: 0 4px 14px rgba(0, 100, 255, 0.45);
+        }
+
+        /* Search Bar */
+        .search-bar-wrapper {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            padding: 0;
+            z-index: 10;
+        }
+
+        .search-bar {
+            width: 100%;
+            max-width: 100%;
+            padding: 8px 16px 8px 38px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.25);
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+            font-size: 13px;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            outline: none;
+            transition: all 0.18s ease;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgba(255,255,255,0.5)' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 12px center;
+        }
+
+        .search-bar::placeholder { color: rgba(255,255,255,0.45); }
+
+        .search-bar:focus {
+            border-color: rgba(0, 162, 255, 0.6);
+            background-color: rgba(255,255,255,0.13);
+            box-shadow: 0 0 0 3px rgba(0, 100, 255, 0.2);
+        }
+
+        /* Desktop Grid */
+        .desktop {
+            flex: 1;
+            padding: 30px 40px 40px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-content: flex-start;
+            gap: 40px;
+            overflow-y: auto;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100px;
+            gap: 10px;
+            cursor: pointer;
+            transition: transform 0.15s ease, opacity 0.2s ease;
+        }
+
+        .app-container:active { transform: scale(0.92); }
+
+        .app-container.hidden {
+            display: none;
+        }
+
+        .app-icon {
+            width: 85px;
+            height: 85px;
+            background: #2c2c2e;
+            border-radius: 18px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .app-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .app-subtitle {
+            color: white;
+            font-size: 13px;
+            font-weight: 500;
+            background: rgba(0, 0, 0, 0.4);
+            padding: 2px 10px;
+            border-radius: 6px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            text-align: center;
+        }
+
+        /* Window Overlay Styles */
+        .window-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.4);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .window {
+            width: 85%;
+            height: 80%;
+            background: var(--window-bg);
+            backdrop-filter: blur(40px) saturate(200%);
+            -webkit-backdrop-filter: blur(40px) saturate(200%);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .title-bar {
+            height: 40px;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .traffic-lights { display: flex; gap: 8px; flex: 1; }
+        .light { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
+        .red { background: #FF5F56; }
+        .yellow { background: #FFBD2E; }
+        .green { background: #27C93F; }
+
+        .window-content { flex: 1; background: #fff; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; background: white; }
+
+        #loadingStatus {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: sans-serif;
+            color: #333;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header class="main-header">
+        <h1>Julian's Games V4</h1>
+
+        <h3>if you want new games. Request at: https://forms.gle/eoSBKS2YXoXBEdmWA</h3>
+
+        <h2>"Impossible is a word to be found only in the dictionary of fools" — Napoléon Bonaparte</h2>
+
+    </header>
+
+    <!-- Controls Frame -->
+    <div class="controls-frame">
+        <!-- Category Filter Buttons -->
+        <nav class="category-bar">
+            <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
+            <button class="cat-btn" onclick="filterCategory('driving', this)">🚗 Driving</button>
+            <button class="cat-btn" onclick="filterCategory('action', this)">⚔️ Action</button>
+            <button class="cat-btn" onclick="filterCategory('platformer', this)">🏃 Platformer</button>
+            <button class="cat-btn" onclick="filterCategory('shooter', this)">🎯 Shooter</button>
+            <button class="cat-btn" onclick="filterCategory('sandbox', this)">🌍 Sandbox</button>
+        </nav>
+
+        <!-- Search Bar -->
+        <div class="search-bar-wrapper">
+            <input class="search-bar" type="text" id="searchInput" placeholder="Search games..." oninput="searchGames(this.value)">
+        </div>
+    </div>
+
+    <main class="desktop">
+
+        <div class="app-container" data-category="shooter" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/onevonedotlol.html')">
+            <div class="app-icon"><img src="https://pbs.twimg.com/profile_images/1219353297129295874/HDIEpfJr_400x400.jpg" alt="1v1.lol"></div>
+            <span class="app-subtitle">1v1.lol</span>
+        </div>
+
+        <div class="app-container" data-category="platformer" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html')">
+            <div class="app-icon"><img src="https://cluster-rush-games.github.io/uploads/2025/5/cluster-rush-1.png" alt="Sketchbook"></div>
+            <span class="app-subtitle">ClusterRush</span>
+        </div>
+
+        <div class="app-container" data-category="driving" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Drivemading.html')">
+            <div class="app-icon"><img src="https://play-lh.googleusercontent.com/vJwCnKoOl9hnyPOphqx0pXXQXRhcX9f747VaJ1GRUldEKTYclYEoZZC0pkgOw3hPXqM" alt="DriveMad"></div>
+            <span class="app-subtitle">DriveMad</span>
+        </div>
+
+        <div class="app-container" data-category="driving" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Eaglercraft/Loader.html')">
+            <div class="app-icon"><img src="https://play-lh.googleusercontent.com/vJwCnKoOl9hnyPOphqx0pXXQXRhcX9f747VaJ1GRUldEKTYclYEoZZC0pkgOw3hPXqM" alt="DriveMad"></div>
+            <span class="app-subtitle">Eaglercraft</span>
+        </div>
+
+        <div class="app-container" data-category="platformer" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html')">
+            <div class="app-icon"><img src="https://m.media-amazon.com/images/I/61mVIP6Oo1L.png" alt="Geo Dash"></div>
+            <span class="app-subtitle">Geo Dash</span>
+        </div>
+
+    </main>
+
+    <div class="window-overlay" id="overlay">
+        <div class="window" id="macWindow">
+            <div class="title-bar">
+                <div class="traffic-lights">
+                    <div class="light red" onclick="closeApp()"></div>
+                    <div class="light yellow" onclick="closeApp()"></div>
+                    <div class="light green" onclick="toggleFullScreen()"></div>
+                </div>
+            </div>
+            <div class="window-content">
+                <div id="loadingStatus">Loading Code...</div>
+                <iframe id="appFrame"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+        const frame = document.getElementById('appFrame');
+        const macWindow = document.getElementById('macWindow');
+        const loader = document.getElementById('loadingStatus');
+
+        function searchGames(query) {
+            const q = query.toLowerCase().trim();
+            if (q) {
+                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            } else {
+                document.querySelector('.cat-btn').classList.add('active');
+            }
+            document.querySelectorAll('.app-container').forEach(app => {
+                const name = app.querySelector('.app-subtitle').textContent.toLowerCase();
+                app.classList.toggle('hidden', q && !name.includes(q));
+            });
+        }
+
+        function filterCategory(category, btn) {
+            document.getElementById('searchInput').value = '';
+            document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+
+            document.querySelectorAll('.app-container').forEach(app => {
+                if (category === 'all' || app.dataset.category === category) {
+                    app.classList.remove('hidden');
+                } else {
+                    app.classList.add('hidden');
+                }
+            });
+        }
+
+        // Opens the overlay and loads via iframe (src) directly — used by "here"
+        function openOverlayWithIframe(url) {
+            overlay.style.display = 'flex';
+            loader.style.display = 'none';
+            frame.srcdoc = "";
+            frame.src = url;
+        }
+
+        async function openApp(url) {
+            overlay.style.display = 'flex';
+            loader.style.display = 'block';
+            frame.srcdoc = "";
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('Failed to fetch content.');
+                const htmlContent = await response.text();
+                frame.srcdoc = htmlContent;
+                loader.style.display = 'none';
+            } catch (error) {
+                console.error('Fetch error:', error);
+                loader.style.display = 'none';
+                frame.srcdoc = `
+                    <div style="font-family:sans-serif; padding:20px; text-align:center;">
+                        <h3>CORS Blocked or Load Failed</h3>
+                        <p>This system cannot fetch the raw code because the website blocks external requests. ERROR CODE: 347</p>
+                        <button onclick="window.parent.fallbackLoad('${url}')" style="padding:10px; cursor:pointer;">
+                            Try using Iframe (NOT REC)
+                        </button>
+                    </div>`;
+            }
+        }
+
+        window.fallbackLoad = function(url) {
+            frame.srcdoc = "";
+            frame.src = url;
+        };
+
+        function closeApp() {
+            overlay.style.display = 'none';
+            frame.src = "";
+            frame.srcdoc = "";
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) {
+                macWindow.requestFullscreen().catch(err => {
+                    alert(`Error: ${err.message}`);
+                });
+            } else {
+                document.exitFullscreen();
+            }
+        }
+    </script>
+</body>
+</html>
