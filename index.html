@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>macOS Full Icon Grid</title>
+    <title>why are you running this locally</title>
     <link rel="shortcut icon" href="google-classroom.png" type="image/x-icon">
     <style>
         :root {
@@ -198,6 +198,22 @@
             object-fit: cover;
             display: block;
         }
+        
+        body, html {
+            margin: 0;           /* Removes default browser margins */
+            padding: 0;
+            height: 100%;
+            overflow: hidden;    /* Prevents unwanted scrollbars on the main page */
+        }
+
+        iframe {
+            display: block;      /* Changes iframe from inline to block element */
+            background: #000;    /* Optional: sets background color while loading */
+            border: none;        /* Removes default iframe border */
+            width: 100vw;        /* 100% of the viewport width */
+            height: 100vh;       /* 100% of the viewport height */
+        }
+
 
         .app-subtitle {
             color: white;
@@ -267,9 +283,9 @@
 <body>
 
     <header class="main-header">
-        <h1>Julian's Games V4.2</h1>
+        <h1>Julian's chill station V4.2</h1>
 
-        <h3>if you want new games. Request at: https://forms.gle/eoSBKS2YXoXBEdmWA</h3>
+        <h3>Bypasses goguardian spyware, and website block.</h3>
 
         <h2>QD: "Stay afraid, but do it anyway. What's important is the action." — Carrie Fisher</h2>
 
@@ -315,7 +331,7 @@
             <span class="app-subtitle">Eaglercraft</span>
         </div>
 
-        <div class="app-container" data-category="action" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/escaperoad.htmll')">
+        <div class="app-container" data-category="action" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/escaperoad.html')">
             <div class="app-icon"><img src="https://azgames.io/upload/imgs/escaperoad.png" alt="DriveMad"></div>
             <span class="app-subtitle">Escape road</span>
         </div>
@@ -327,9 +343,13 @@
 
         <div class="app-container" data-category="platformer" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/stickmanhook.html')">
             <div class="app-icon"><img src="https://stickmanhook.bitbucket.io/images/stickman-hook.png" alt="Geo Dash"></div>
-            <span class="app-subtitle">Stickman</span>
+            <span class="app-subtitle">Stickman h...</span>
         </div>
 
+        <div class="app-container" data-category="platformer" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/odysee.html')">
+            <div class="app-icon"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3NzU3Nzc3Nzc3Nzc3Nzc3NTc3Nzc1Nzg3NzI3NzM3Nzc3NzctN//AABEIABwAHAMBEQACEQEDEQH/xAAaAAACAwEBAAAAAAAAAAAAAAAFBgIDBAcA/8QAKRAAAQMDAwIFBQAAAAAAAAAAAgEDEQAEBRIhMRNRFCJBYXEGFZGhsf/EABsBAAMBAAMBAAAAAAAAAAAAAAIDBQQABgcB/8QAJhEAAQQCAQIGAwAAAAAAAAAAAQACAxEEEjETIhQhQWFx8QWx8P/aAAwDAQACEQMRAD8AwCz7Ukyr0ovRlPp50Gm+rcMBdOs9Zq1XUpkHPMQirGyTPxQlxWHx7STTSWg0T5Vf7r3Ufst0OKHJqA+FJzpourdV4mO0oqUpzjrt6L74yMzdC+6rWZGaQZU7dFMFgLnMvG3b6RAERXHDXYZ/q7LRRh0poLHl50eK0F3rwF0iwxmPcS0uS6N3dWrSMJcj6qKRxKpPPxNbWtaaPJC6rNkzDZnm1rjdfKVvrJ0wNnFtWvh7NiCaRNkPbn9x+Z5qfmSlp0qgrH4toIM5dbjz7f30ltGawGVVdleyTzIOA064AuJBiJKiGnZe9D1yLopbg1xBcLpOOK8JgsPcGGSB43w1A2MJpKPROe0r7VSjkjxoS7e74ULI6uXO0GOgOfhY8vf2+Swdmjruu/bLzeXfiFn032WseTlRy47bPetGNA+DJfqOwoEjVS+oqOy8IpXC4rhKsEUpRcUJKsEUpZcUNqelKAuKG1//2Q==" alt="Geo Dash"></div>
+            <span class="app-subtitle">Odysee (yt clone)</span>
+        </div>
     </main>
 
     <div class="window-overlay" id="overlay">
