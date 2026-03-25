@@ -8,7 +8,7 @@ Well, due to the rise of the **spyware** that "Helps kids focus" when it reality
 
 ## Put this into htmlplayground.com and press preview which has a magnifying glass. And your done
 
-``
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,4 +34,4 @@ Well, due to the rise of the **spyware** that "Helps kids focus" when it reality
 </script>
 </body>
 </html>
-``
+```
