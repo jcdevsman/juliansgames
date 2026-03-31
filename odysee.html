@@ -6,25 +6,18 @@
     <title>why are you running this locally</title>
     <link rel="shortcut icon" href="google-classroom.png" type="image/x-icon">
     <style>
-        body, html {
-            margin: 0;           /* Removes default browser margins */
-            padding: 0;
-            height: 100%;
-            overflow: hidden;    /* Prevents unwanted scrollbars on the main page */
-        }
-
+        
         iframe {
-            display: block;      /* Changes iframe from inline to block element */
-            background: #000;    /* Optional: sets background color while loading */
-            border: none;        /* Removes default iframe border */
-            width: 100vw;        /* 100% of the viewport width */
-            height: 100vh;       /* 100% of the viewport height */
+          width: 100%;      /* Makes the iframe expand to the full width of its container */
+          max-width: 800px; /* Prevents the iframe from getting wider than 800 pixels */
+          height: 400px;    /* Sets a fixed height or use a percentage/aspect ratio method below */
         }
+        
     </style>
 </head>
 <body>
-    <iframe width="420" height="315"
-        src="https://odysee.com">
+    <iframe
+        src="https://discord.com">
     </iframe>
 </body>
 </html>
