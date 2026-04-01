@@ -8,16 +8,68 @@
     <style>
         :root {
             --bg-url: url('https://img.freepik.com/free-photo/beautiful-shot-mountains-trees-covered-snow-fog_181624-17590.jpg');
-            --window-bg: rgba(28, 28, 30, 0.85);
-            --border-color: rgba(255, 255, 255, 0.15);
+            --glass-bg: rgba(0, 0, 0, 0.38);
+            --glass-border: rgba(255, 255, 255, 0.13);
+            --glass-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.12);
+            --glass-blur: blur(32px) saturate(180%) brightness(0.75);
             --accent: #00a2ff;
+            --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --smooth: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            --liquid: cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @keyframes headerReveal {
+            0%   { opacity: 0; transform: translateY(-20px) scale(0.97); filter: blur(8px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        @keyframes frameReveal {
+            0%   { opacity: 0; transform: translateY(16px) scale(0.97); filter: blur(6px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        @keyframes iconPop {
+            0%   { opacity: 0; transform: scale(0.55) translateY(10px); filter: blur(4px); }
+            65%  { transform: scale(1.08) translateY(-3px); filter: blur(0); }
+            82%  { transform: scale(0.96) translateY(1px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes rippleOut {
+            0%   { transform: scale(0.3); opacity: 0.5; }
+            100% { transform: scale(3.8); opacity: 0; }
+        }
+
+        @keyframes resultSlide {
+            0%   { opacity: 0; transform: translateY(6px) scale(0.97); filter: blur(2px); }
+            100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+        }
+
+        @keyframes windowDrop {
+            0%   { opacity: 0; transform: scale(0.91) translateY(-28px); filter: blur(10px); }
+            65%  { transform: scale(1.015) translateY(4px); filter: blur(0); }
+            82%  { transform: scale(0.994) translateY(-2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        @keyframes windowExit {
+            0%   { opacity: 1; transform: scale(1); filter: blur(0); }
+            100% { opacity: 0; transform: scale(0.93) translateY(12px); filter: blur(6px); }
+        }
+
+        @keyframes catBtnIn {
+            0%   { opacity: 0; transform: scale(0.82) translateY(8px); }
+            70%  { transform: scale(1.05) translateY(-2px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            margin: 0; padding: 0; height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", sans-serif;
             background: var(--bg-url) no-repeat center center fixed;
             background-size: cover;
             overflow: hidden;
@@ -25,258 +77,349 @@
             flex-direction: column;
         }
 
+        /* ─── HEADER ─── */
         .main-header {
-            width: 100%;
-            padding-top: 50px;
-            text-align: center;
-            color: white;
-            z-index: 10;
+            width: 100%; padding-top: 44px; text-align: center; color: white; z-index: 10;
+            animation: headerReveal 0.7s var(--liquid) both;
         }
 
         .main-header h1 {
-            font-weight: 600;
-            font-size: 3rem;
-            margin: 0;
-            text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-            background: linear-gradient(to right, #00a2ff, #002aff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-        }
-
-        .main-header h2 {
-            font-size: 14px;
-            font-weight: 400;
-            margin-top: 10px;
-            color: rgb(0, 0, 0);
+            font-weight: 700; font-size: 2.8rem; margin: 0;
+            background: linear-gradient(135deg, #ffffff 0%, #00c6ff 50%, #0072ff 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: inline-block; letter-spacing: -0.5px;
+            filter: drop-shadow(0 2px 12px rgba(0,120,255,0.4));
         }
 
         .main-header h3 {
-            font-size: 14px;
-            font-weight: 400;
-            margin-top: 10px;
-            color: rgb(0, 0, 0);
+            font-size: 13px; font-weight: 400; margin: 8px 0 0;
+            color: rgba(255,255,255,0.7);
+            animation: headerReveal 0.7s var(--liquid) 0.08s both;
         }
 
-        /* Controls Frame */
+        .main-header h2 {
+            font-size: 13px; font-weight: 400; margin: 6px 0 0;
+            color: rgba(255,255,255,0.55); font-style: italic;
+            animation: headerReveal 0.7s var(--liquid) 0.14s both;
+        }
+
+        /* ─── CONTROLS FRAME ─── */
         .controls-frame {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 12px;
-            margin: 20px auto 0;
-            padding: 16px 24px;
-            width: fit-content;
-            max-width: 90%;
-            background: rgba(20, 20, 22, 0.55);
-            backdrop-filter: blur(24px) saturate(180%);
-            -webkit-backdrop-filter: blur(24px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 18px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            display: flex; flex-direction: column; align-items: center; gap: 10px;
+            margin: 18px auto 0; padding: 14px 20px;
+            width: fit-content; max-width: 90%;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 22px;
+            box-shadow: var(--glass-shadow);
             z-index: 10;
+            animation: frameReveal 0.65s var(--liquid) 0.18s both;
+            transition: box-shadow 0.4s var(--smooth), border-color 0.4s var(--smooth);
         }
 
-        /* Category Filter Bar */
-        .category-bar {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            flex-wrap: wrap;
-            padding: 0;
-            z-index: 10;
+        .controls-frame:hover {
+            box-shadow: 0 12px 48px rgba(0,0,0,0.65), 0 3px 10px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.16);
+            border-color: rgba(255,255,255,0.18);
         }
+
+        /* ─── CAT BUTTONS ─── */
+        .category-bar { display: flex; justify-content: center; gap: 7px; flex-wrap: wrap; }
 
         .cat-btn {
-            padding: 6px 18px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.25);
-            background: rgba(255,255,255,0.08);
-            color: rgba(255,255,255,0.75);
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.18s ease;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            user-select: none;
+            padding: 5px 16px; border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.14);
+            background: rgba(0,0,0,0.28);
+            color: rgba(255,255,255,0.72);
+            font-size: 13px; font-weight: 500; cursor: pointer;
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            user-select: none; letter-spacing: 0.1px;
+            transition: background 0.22s var(--smooth), color 0.22s var(--smooth),
+                        border-color 0.22s var(--smooth), box-shadow 0.22s var(--smooth),
+                        transform 0.18s var(--spring);
+            animation: catBtnIn 0.5s var(--spring) both;
         }
+
+        .cat-btn:nth-child(1) { animation-delay: 0.22s; }
+        .cat-btn:nth-child(2) { animation-delay: 0.27s; }
+        .cat-btn:nth-child(3) { animation-delay: 0.32s; }
+        .cat-btn:nth-child(4) { animation-delay: 0.37s; }
+        .cat-btn:nth-child(5) { animation-delay: 0.42s; }
+        .cat-btn:nth-child(6) { animation-delay: 0.47s; }
+        .cat-btn:nth-child(7) { animation-delay: 0.52s; }
 
         .cat-btn:hover {
-            background: rgba(255,255,255,0.18);
-            color: #fff;
-            border-color: rgba(255,255,255,0.4);
+            background: rgba(255,255,255,0.14); color: #fff;
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.15);
+            transform: translateY(-1px) scale(1.03);
         }
+
+        .cat-btn:active { transform: scale(0.94) translateY(1px); transition-duration: 0.08s; }
 
         .cat-btn.active {
-            background: linear-gradient(135deg, #00a2ff, #002aff);
-            border-color: transparent;
-            color: #fff;
-            box-shadow: 0 4px 14px rgba(0, 100, 255, 0.45);
+            background: linear-gradient(135deg, rgba(0,162,255,0.7), rgba(0,42,255,0.6));
+            border: 1px solid rgba(0,162,255,0.45); color: #fff;
+            box-shadow: 0 4px 18px rgba(0,100,255,0.35), inset 0 1px 0 rgba(255,255,255,0.22);
         }
 
-        /* Search Bar */
-        .search-bar-wrapper {
-            display: flex;
-            justify-content: center;
-            width: 100%;
-            padding: 0;
-            z-index: 10;
-        }
+        /* ─── SEARCH TRIGGER ─── */
+        .search-trigger-wrapper { width: 100%; display: flex; justify-content: center; }
 
-        .search-bar {
-            width: 100%;
-            max-width: 100%;
-            padding: 8px 16px 8px 38px;
-            border-radius: 20px;
-            border: 1px solid rgba(255,255,255,0.25);
-            background: rgba(255,255,255,0.08);
-            color: #fff;
-            font-size: 13px;
+        .search-trigger {
+            width: 100%; max-width: 340px;
+            padding: 7px 16px 7px 36px; border-radius: 14px;
+            border: 1px solid rgba(255,255,255,0.13);
+            background: rgba(0,0,0,0.32);
+            color: rgba(255,255,255,0.45); font-size: 13px;
             font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            outline: none;
-            transition: all 0.18s ease;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='rgba(255,255,255,0.5)' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");
-            background-repeat: no-repeat;
-            background-position: 12px center;
+            backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+            cursor: pointer; text-align: left;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='rgba(255,255,255,0.4)' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.099zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: 13px center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+            transition: background-color 0.22s var(--smooth), border-color 0.22s var(--smooth),
+                        color 0.22s var(--smooth), transform 0.18s var(--spring), box-shadow 0.22s var(--smooth);
         }
 
-        .search-bar::placeholder { color: rgba(255,255,255,0.45); }
-
-        .search-bar:focus {
-            border-color: rgba(0, 162, 255, 0.6);
-            background-color: rgba(255,255,255,0.13);
-            box-shadow: 0 0 0 3px rgba(0, 100, 255, 0.2);
+        .search-trigger:hover {
+            background-color: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25);
+            color: rgba(255,255,255,0.65); transform: scale(1.015);
+            box-shadow: 0 4px 14px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.1);
         }
 
-        /* Desktop Grid */
+        .search-trigger:active { transform: scale(0.97); transition-duration: 0.08s; }
+
+        /* ─── DESKTOP ─── */
         .desktop {
-            flex: 1;
-            padding: 30px 40px 40px;
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-content: flex-start;
-            gap: 40px;
-            overflow-y: auto;
+            flex: 1; padding: 28px 40px 40px;
+            display: flex; flex-wrap: wrap;
+            justify-content: center; align-content: flex-start;
+            gap: 36px; overflow-y: auto;
         }
 
         .app-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100px;
-            gap: 10px;
-            cursor: pointer;
-            transition: transform 0.15s ease, opacity 0.2s ease;
+            display: flex; flex-direction: column; align-items: center;
+            width: 100px; gap: 9px; cursor: pointer;
+            animation: iconPop 0.55s var(--spring) both;
+            transition: transform 0.3s var(--spring);
+            position: relative;
         }
 
-        .app-container:active { transform: scale(0.92); }
+        .app-container:nth-child(1) { animation-delay: 0.30s; }
+        .app-container:nth-child(2) { animation-delay: 0.36s; }
+        .app-container:nth-child(3) { animation-delay: 0.42s; }
+        .app-container:nth-child(4) { animation-delay: 0.48s; }
+        .app-container:nth-child(5) { animation-delay: 0.54s; }
+        .app-container:nth-child(6) { animation-delay: 0.60s; }
+        .app-container:nth-child(7) { animation-delay: 0.66s; }
+        .app-container:nth-child(8) { animation-delay: 0.72s; }
 
-        .app-container.hidden {
-            display: none;
+        .app-container:hover  { transform: scale(1.1) translateY(-5px); }
+        .app-container:active { transform: scale(0.90) translateY(2px); transition-duration: 0.1s; }
+        .app-container.hidden { display: none; }
+
+        .app-container .ripple {
+            position: absolute; top: 50%; left: 50%;
+            width: 82px; height: 82px; margin: -41px 0 0 -41px;
+            border-radius: 20px;
+            background: rgba(255,255,255,0.22);
+            animation: rippleOut 0.55s var(--smooth) forwards;
+            pointer-events: none;
         }
 
         .app-icon {
-            width: 85px;
-            height: 85px;
-            background: #2c2c2e;
-            border-radius: 18px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.4);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border: 1px solid rgba(255,255,255,0.1);
+            width: 82px; height: 82px;
+            background: rgba(0,0,0,0.35); border-radius: 20px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.25),
+                        inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -1px 0 rgba(0,0,0,0.15);
+            display: flex; align-items: center; justify-content: center;
+            overflow: hidden; border: 1px solid rgba(255,255,255,0.18);
+            backdrop-filter: blur(10px) saturate(180%);
+            -webkit-backdrop-filter: blur(10px) saturate(180%);
+            transition: box-shadow 0.3s var(--smooth), border-color 0.3s var(--smooth);
+        }
+
+        .app-container:hover .app-icon {
+            box-shadow: 0 18px 42px rgba(0,0,0,0.55), 0 5px 14px rgba(0,0,0,0.3),
+                        inset 0 1px 0 rgba(255,255,255,0.28), inset 0 -1px 0 rgba(0,0,0,0.12);
+            border-color: rgba(255,255,255,0.28);
         }
 
         .app-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-        
-        body, html {
-            margin: 0;           /* Removes default browser margins */
-            padding: 0;
-            height: 100%;
-            overflow: hidden;    /* Prevents unwanted scrollbars on the main page */
+            width: 100%; height: 100%; object-fit: cover; display: block;
+            transition: transform 0.3s var(--spring);
         }
 
-        iframe {
-            display: block;      /* Changes iframe from inline to block element */
-            background: #000;    /* Optional: sets background color while loading */
-            border: none;        /* Removes default iframe border */
-            width: 100vw;        /* 100% of the viewport width */
-            height: 100vh;       /* 100% of the viewport height */
-        }
-
+        .app-container:hover .app-icon img { transform: scale(1.06); }
 
         .app-subtitle {
-            color: white;
-            font-size: 13px;
-            font-weight: 500;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 2px 10px;
-            border-radius: 6px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            text-align: center;
+            color: rgba(255,255,255,0.92); font-size: 12px; font-weight: 500;
+            background: rgba(0,0,0,0.55); backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px); padding: 3px 10px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.12);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.6); text-align: center;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); white-space: nowrap;
+            transition: background 0.2s var(--smooth), border-color 0.2s var(--smooth);
         }
 
-        /* Window Overlay Styles */
+        .app-container:hover .app-subtitle {
+            background: rgba(0,0,0,0.7); border-color: rgba(255,255,255,0.18);
+        }
+
+        /* ─── SPOTLIGHT ─── */
+        .spotlight-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+            backdrop-filter: blur(0px); -webkit-backdrop-filter: blur(0px);
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: flex-start; padding-top: 18vh;
+            z-index: 500; opacity: 0; pointer-events: none;
+            transition: opacity 0.28s var(--smooth), backdrop-filter 0.35s var(--smooth),
+                        -webkit-backdrop-filter 0.35s var(--smooth);
+        }
+
+        .spotlight-overlay.open {
+            opacity: 1; pointer-events: all;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+        }
+
+        .spotlight-box {
+            width: min(640px, 90vw);
+            background: rgba(0,0,0,0.55);
+            backdrop-filter: blur(60px) saturate(180%) brightness(0.7);
+            -webkit-backdrop-filter: blur(60px) saturate(180%) brightness(0.7);
+            border: 1px solid rgba(255,255,255,0.15); border-radius: 20px;
+            box-shadow: 0 32px 80px rgba(0,0,0,0.7), 0 4px 16px rgba(0,0,0,0.4),
+                        inset 0 1px 0 rgba(255,255,255,0.12);
+            overflow: hidden;
+            transform: scale(0.88) translateY(-24px); filter: blur(8px);
+            transition: transform 0.44s var(--spring), filter 0.32s var(--smooth),
+                        box-shadow 0.3s var(--smooth);
+            will-change: transform, filter;
+        }
+
+        .spotlight-overlay.open .spotlight-box {
+            transform: scale(1) translateY(0); filter: blur(0);
+            box-shadow: 0 40px 100px rgba(0,0,0,0.75), 0 6px 20px rgba(0,0,0,0.45),
+                        inset 0 1px 0 rgba(255,255,255,0.15);
+        }
+
+        .spotlight-input-row {
+            display: flex; align-items: center; padding: 14px 18px; gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.14);
+        }
+
+        .spotlight-icon {
+            width: 20px; height: 20px; opacity: 0.65; flex-shrink: 0; fill: white;
+            transition: opacity 0.2s var(--smooth);
+        }
+
+        .spotlight-input-row:focus-within .spotlight-icon { opacity: 0.9; }
+
+        #spotlightInput {
+            flex: 1; background: transparent; border: none; outline: none;
+            color: #fff; font-size: 22px; font-weight: 400;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+            caret-color: #00a2ff; letter-spacing: -0.2px;
+        }
+
+        #spotlightInput::placeholder { color: rgba(255,255,255,0.4); }
+
+        #spotlightClear {
+            width: 22px; height: 22px; border-radius: 50%;
+            background: rgba(255,255,255,0.22); border: none;
+            color: rgba(255,255,255,0.85); font-size: 13px; cursor: pointer;
+            display: none; align-items: center; justify-content: center;
+            flex-shrink: 0; line-height: 1;
+            transition: background 0.18s var(--smooth), transform 0.18s var(--spring);
+        }
+
+        #spotlightClear.visible { display: flex; }
+        #spotlightClear:hover { background: rgba(255,255,255,0.35); transform: scale(1.12); }
+        #spotlightClear:active { transform: scale(0.9); }
+
+        .spotlight-results { max-height: 340px; overflow-y: auto; padding: 6px; }
+        .spotlight-results:empty { display: none; }
+
+        .spotlight-result-item {
+            display: flex; align-items: center; gap: 12px; padding: 9px 12px;
+            border-radius: 12px; cursor: pointer; color: #fff;
+            opacity: 0; transform: translateY(6px) scale(0.97); filter: blur(1px);
+            animation: resultSlide 0.3s var(--liquid) forwards;
+            transition: background 0.16s var(--smooth), transform 0.18s var(--spring);
+        }
+
+        .spotlight-result-item:hover { background: rgba(255,255,255,0.16); transform: scale(1.015); }
+        .spotlight-result-item:active { transform: scale(0.97); transition-duration: 0.08s; }
+
+        .spotlight-result-item img {
+            width: 36px; height: 36px; border-radius: 9px; object-fit: cover;
+            border: 1px solid rgba(255,255,255,0.15); flex-shrink: 0;
+            transition: transform 0.2s var(--spring);
+        }
+
+        .spotlight-result-item:hover img { transform: scale(1.08); }
+        .spotlight-result-name { font-size: 15px; font-weight: 500; }
+        .spotlight-result-cat { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 1px; }
+
+        /* ─── WINDOW ─── */
         .window-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            backdrop-filter: blur(10px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.38);
+            display: none; justify-content: center; align-items: center;
+            z-index: 100; backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
         }
 
         .window {
-            width: 85%;
-            height: 80%;
-            background: var(--window-bg);
-            backdrop-filter: blur(40px) saturate(200%);
-            -webkit-backdrop-filter: blur(40px) saturate(200%);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            box-shadow: 0 50px 100px rgba(0,0,0,0.6);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            width: 85%; height: 80%;
+            background: rgba(8,8,12,0.85);
+            backdrop-filter: blur(50px) saturate(180%) brightness(0.7);
+            -webkit-backdrop-filter: blur(50px) saturate(180%) brightness(0.7);
+            border: 1px solid rgba(255,255,255,0.18); border-radius: 14px;
+            box-shadow: 0 50px 100px rgba(0,0,0,0.65), 0 8px 32px rgba(0,0,0,0.35),
+                        inset 0 1px 0 rgba(255,255,255,0.2);
+            display: flex; flex-direction: column; overflow: hidden;
+            transform-origin: center center;
+            will-change: transform, opacity, filter;
         }
 
+        .window.entering { animation: windowDrop 0.55s var(--spring) both; }
+        .window.exiting  { animation: windowExit 0.28s var(--smooth) forwards; }
+
         .title-bar {
-            height: 40px;
-            display: flex;
-            align-items: center;
-            padding: 0 15px;
-            background: rgba(255, 255, 255, 0.05);
+            height: 42px; display: flex; align-items: center; padding: 0 15px;
+            background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-shrink: 0;
         }
 
         .traffic-lights { display: flex; gap: 8px; flex: 1; }
-        .light { width: 12px; height: 12px; border-radius: 50%; cursor: pointer; }
-        .red { background: #FF5F56; }
-        .yellow { background: #FFBD2E; }
-        .green { background: #27C93F; }
 
-        .window-content { flex: 1; background: #fff; position: relative; }
-        iframe { width: 100%; height: 100%; border: none; background: white; }
+        .light {
+            width: 13px; height: 13px; border-radius: 50%; cursor: pointer;
+            transition: transform 0.2s var(--spring), filter 0.15s ease;
+        }
+
+        .light:hover { filter: brightness(1.3); transform: scale(1.18); }
+        .light:active { transform: scale(0.88); }
+
+        .red    { background: radial-gradient(circle at 35% 35%, #ff8080, #FF5F56); }
+        .yellow { background: radial-gradient(circle at 35% 35%, #ffe080, #FFBD2E); }
+        .green  { background: radial-gradient(circle at 35% 35%, #80ff9a, #27C93F); }
+
+        .window-content { flex: 1; background: #fff; position: relative; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; background: white; display: block; }
 
         #loadingStatus {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-family: sans-serif;
-            color: #333;
-            display: none;
+            position: absolute; inset: 0; display: none;
+            flex-direction: column; align-items: center; justify-content: center;
+            font-family: -apple-system, sans-serif; color: rgba(255,255,255,0.75);
+            font-size: 14px; background: rgba(8,8,12,0.85); gap: 14px;
+        }
+
+        .loader-spinner {
+            width: 28px; height: 28px;
+            border: 2.5px solid rgba(255,255,255,0.12); border-top-color: #00a2ff;
+            border-radius: 50%; animation: spin 0.75s linear infinite;
         }
     </style>
 </head>
@@ -284,16 +427,11 @@
 
     <header class="main-header">
         <h1>Julian's chill station V4.2</h1>
-
         <h3>Bypasses goguardian spyware, and website block.</h3>
-
         <h2>QD: "Stay afraid, but do it anyway. What's important is the action." — Carrie Fisher</h2>
-
     </header>
 
-    <!-- Controls Frame -->
     <div class="controls-frame">
-        <!-- Category Filter Buttons -->
         <nav class="category-bar">
             <button class="cat-btn active" onclick="filterCategory('all', this)">All</button>
             <button class="cat-btn" onclick="filterCategory('driving', this)">🚗 Driving</button>
@@ -303,157 +441,236 @@
             <button class="cat-btn" onclick="filterCategory('shooter', this)">🎯 Shooter</button>
             <button class="cat-btn" onclick="filterCategory('sandbox', this)">🌍 Sandbox</button>
         </nav>
-
-        <!-- Search Bar -->
-        <div class="search-bar-wrapper">
-            <input class="search-bar" type="text" id="searchInput" placeholder="Search games..." oninput="searchGames(this.value)">
+        <div class="search-trigger-wrapper">
+            <button class="search-trigger" onclick="openSpotlight()">Search games...</button>
         </div>
     </div>
 
-    <main class="desktop">
+    <div class="spotlight-overlay" id="spotlightOverlay" onclick="handleOverlayClick(event)">
+        <div class="spotlight-box" id="spotlightBox">
+            <div class="spotlight-input-row">
+                <svg class="spotlight-icon" viewBox="0 0 20 20">
+                    <path d="M13.86 13.15a7 7 0 1 0-1.006 1.007l3.98 3.98a.75.75 0 1 0 1.06-1.06l-3.98-3.98-.054.053zm-6.86 1.1a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+                </svg>
+                <input id="spotlightInput" type="text" placeholder="Search games..." oninput="handleSpotlightSearch(this.value)" autocomplete="off" spellcheck="false">
+                <button id="spotlightClear" onclick="clearSpotlight()">✕</button>
+            </div>
+            <div class="spotlight-results" id="spotlightResults"></div>
+        </div>
+    </div>
 
-        <div class="app-container" data-category="shooter" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/onevonedotlol.html')">
+    <main class="desktop" id="desktop">
+
+        <div class="app-container" data-category="shooter" data-name="1v1.lol" onclick="launchApp(this,'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/onevonedotlol.html')">
             <div class="app-icon"><img src="https://pbs.twimg.com/profile_images/1219353297129295874/HDIEpfJr_400x400.jpg" alt="1v1.lol"></div>
             <span class="app-subtitle">1v1.lol</span>
         </div>
 
-        <div class="app-container" data-category="platformer" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html')">
-            <div class="app-icon"><img src="https://cluster-rush-games.github.io/uploads/2025/5/cluster-rush-1.png" alt="Sketchbook"></div>
+        <div class="app-container" data-category="platformer" data-name="clusterrush" onclick="launchApp(this,'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html')">
+            <div class="app-icon"><img src="https://cluster-rush-games.github.io/uploads/2025/5/cluster-rush-1.png" alt="ClusterRush"></div>
             <span class="app-subtitle">ClusterRush</span>
         </div>
 
-        <div class="app-container" data-category="driving" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Drivemading.html')">
+        <div class="app-container" data-category="driving" data-name="drivemad" onclick="launchApp(this,'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Drivemading.html')">
             <div class="app-icon"><img src="https://play-lh.googleusercontent.com/vJwCnKoOl9hnyPOphqx0pXXQXRhcX9f747VaJ1GRUldEKTYclYEoZZC0pkgOw3hPXqM" alt="DriveMad"></div>
             <span class="app-subtitle">DriveMad</span>
         </div>
 
-        <div class="app-container" data-category="sandbox" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Eaglercraft/Loader.html')">
-            <div class="app-icon"><img src="https://i.imgur.com/nKsYRdJ.png" alt="DriveMad"></div>
+        <div class="app-container" data-category="sandbox" data-name="eaglercraft" onclick="launchApp(this,'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Eaglercraft/Loader.html')">
+            <div class="app-icon"><img src="https://i.imgur.com/nKsYRdJ.png" alt="Eaglercraft"></div>
             <span class="app-subtitle">Eaglercraft</span>
         </div>
 
-        <div class="app-container" data-category="action" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/escaperoad.html')">
-            <div class="app-icon"><img src="https://azgames.io/upload/imgs/escaperoad.png" alt="DriveMad"></div>
-            <span class="app-subtitle">Escape road</span>
+        <div class="app-container" data-category="action" data-name="escape road" onclick="launchApp(this,'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/escaperoad.html')">
+            <div class="app-icon"><img src="https://azgames.io/upload/imgs/escaperoad.png" alt="Escape Road"></div>
+            <span class="app-subtitle">Escape Road</span>
         </div>
 
-        <div class="app-container" data-category="platformer" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html')">
+        <div class="app-container" data-category="platformer" data-name="geo dash geometry dash" onclick="launchApp(this,'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html')">
             <div class="app-icon"><img src="https://m.media-amazon.com/images/I/61mVIP6Oo1L.png" alt="Geo Dash"></div>
             <span class="app-subtitle">Geo Dash</span>
         </div>
 
-        <div class="app-container" data-category="platformer" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/stickmanhook.html')">
-            <div class="app-icon"><img src="https://stickmanhook.bitbucket.io/images/stickman-hook.png" alt="Geo Dash"></div>
-            <span class="app-subtitle">Stickman h...</span>
+        <div class="app-container" data-category="platformer" data-name="stickman hook" onclick="launchApp(this,'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/stickmanhook.html')">
+            <div class="app-icon"><img src="https://stickmanhook.bitbucket.io/images/stickman-hook.png" alt="Stickman Hook"></div>
+            <span class="app-subtitle">Stickman Hook</span>
         </div>
 
-        <div class="app-container" data-category="media" onclick="openApp('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/odysee.html')">
-            <div class="app-icon"><img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBwgHBgkIBwgKCgkLDRYPDQwMDRsUFRAWIB0iIiAdHx8kKDQsJCYxJx8fLT0tMTU3Ojo6Iys/RD84QzQ5OjcBCgoKDQwNGg8PGjclHyU3Nzc3Nzc3Nzc3Nzc3NzU3Nzc3Nzc3Nzc3Nzc3NTc3Nzc1Nzg3NzI3NzM3Nzc3NzctN//AABEIABwAHAMBEQACEQEDEQH/xAAaAAACAwEBAAAAAAAAAAAAAAAFBgIDBAcA/8QAKRAAAQMDAwIFBQAAAAAAAAAAAgEDEQAEBRIhMRNRFCJBYXEGFZGhsf/EABsBAAMBAAMBAAAAAAAAAAAAAAIDBQQABgcB/8QAJhEAAQQCAQIGAwAAAAAAAAAAAQACAxEEEjETIhQhQWFx8QWx8P/aAAwDAQACEQMRAD8AwCz7Ukyr0ovRlPp50Gm+rcMBdOs9Zq1XUpkHPMQirGyTPxQlxWHx7STTSWg0T5Vf7r3Ufst0OKHJqA+FJzpourdV4mO0oqUpzjrt6L74yMzdC+6rWZGaQZU7dFMFgLnMvG3b6RAERXHDXYZ/q7LRRh0poLHl50eK0F3rwF0iwxmPcS0uS6N3dWrSMJcj6qKRxKpPPxNbWtaaPJC6rNkzDZnm1rjdfKVvrJ0wNnFtWvh7NiCaRNkPbn9x+Z5qfmSlp0qgrH4toIM5dbjz7f30ltGawGVVdleyTzIOA064AuJBiJKiGnZe9D1yLopbg1xBcLpOOK8JgsPcGGSB43w1A2MJpKPROe0r7VSjkjxoS7e74ULI6uXO0GOgOfhY8vf2+Swdmjruu/bLzeXfiFn032WseTlRy47bPetGNA+DJfqOwoEjVS+oqOy8IpXC4rhKsEUpRcUJKsEUpZcUNqelKAuKG1//2Q==" alt="Geo Dash"></div>
-            <span class="app-subtitle">Odysee (yt clone)</span>
+        <div class="app-container" data-category="media" data-name="odysee" onclick="launchApp(this,'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/FNAEI.html')">
+            <div class="app-icon"><img src="https://odysee.com/public/img/og.png" alt="Odysee" onerror="this.src='https://i.imgur.com/nKsYRdJ.png'"></div>
+            <span class="app-subtitle">Odysee</span>
         </div>
+
     </main>
 
     <div class="window-overlay" id="overlay">
         <div class="window" id="macWindow">
             <div class="title-bar">
                 <div class="traffic-lights">
-                    <div class="light red" onclick="closeApp()"></div>
+                    <div class="light red"    onclick="closeApp()"></div>
                     <div class="light yellow" onclick="closeApp()"></div>
-                    <div class="light green" onclick="toggleFullScreen()"></div>
+                    <div class="light green"  onclick="toggleFullScreen()"></div>
                 </div>
             </div>
             <div class="window-content">
-                <div id="loadingStatus">Loading Code...</div>
+                <div id="loadingStatus">
+                    <div class="loader-spinner"></div>
+                    <span>Loading code...</span>
+                </div>
                 <iframe id="appFrame"></iframe>
             </div>
         </div>
     </div>
 
     <script>
-        const overlay = document.getElementById('overlay');
-        const frame = document.getElementById('appFrame');
-        const macWindow = document.getElementById('macWindow');
-        const loader = document.getElementById('loadingStatus');
+        const overlay    = document.getElementById('overlay');
+        const frame      = document.getElementById('appFrame');
+        const macWindow  = document.getElementById('macWindow');
+        const loader     = document.getElementById('loadingStatus');
+        const spotlightOverlay = document.getElementById('spotlightOverlay');
+        const spotlightInput   = document.getElementById('spotlightInput');
+        const spotlightResults = document.getElementById('spotlightResults');
+        const spotlightClear   = document.getElementById('spotlightClear');
 
-        function searchGames(query) {
-            const q = query.toLowerCase().trim();
-            if (q) {
-                document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
-            } else {
-                document.querySelector('.cat-btn').classList.add('active');
-            }
-            document.querySelectorAll('.app-container').forEach(app => {
-                const name = app.querySelector('.app-subtitle').textContent.toLowerCase();
-                app.classList.toggle('hidden', q && !name.includes(q));
-            });
+        function spawnRipple(container) {
+            const r = document.createElement('div');
+            r.className = 'ripple';
+            container.appendChild(r);
+            r.addEventListener('animationend', () => r.remove());
         }
 
+        function openSpotlight() {
+            spotlightOverlay.classList.add('open');
+            setTimeout(() => spotlightInput.focus(), 100);
+        }
+
+        function closeSpotlight() {
+            spotlightOverlay.classList.remove('open');
+            setTimeout(() => {
+                spotlightInput.value = '';
+                spotlightResults.innerHTML = '';
+                spotlightClear.classList.remove('visible');
+            }, 300);
+        }
+
+        function handleOverlayClick(e) {
+            if (e.target === spotlightOverlay) closeSpotlight();
+        }
+
+        function clearSpotlight() {
+            spotlightInput.value = '';
+            spotlightResults.innerHTML = '';
+            spotlightClear.classList.remove('visible');
+            spotlightInput.focus();
+        }
+
+        function handleSpotlightSearch(query) {
+            const q = query.toLowerCase().trim();
+            spotlightClear.classList.toggle('visible', q.length > 0);
+            if (!q) { spotlightResults.innerHTML = ''; return; }
+
+            const apps = [...document.querySelectorAll('.app-container')];
+            const matches = apps.filter(app => {
+                const name = app.dataset.name || app.querySelector('.app-subtitle').textContent;
+                return name.toLowerCase().includes(q);
+            }).map(app => ({
+                displayName: app.querySelector('.app-subtitle').textContent,
+                imgSrc: app.querySelector('img')?.src || '',
+                cat: app.dataset.category,
+                el: app
+            }));
+
+            if (matches.length === 0) {
+                spotlightResults.innerHTML = `<div style="padding:14px 16px;color:rgba(255,255,255,0.45);font-size:14px;">No results for "${query}"</div>`;
+                return;
+            }
+
+            spotlightResults.innerHTML = matches.map((m, i) => `
+                <div class="spotlight-result-item" style="animation-delay:${i * 0.05}s" onclick="spotlightLaunch(${i})">
+                    <img src="${m.imgSrc}" alt="${m.displayName}">
+                    <div>
+                        <div class="spotlight-result-name">${m.displayName}</div>
+                        <div class="spotlight-result-cat">${m.cat}</div>
+                    </div>
+                </div>
+            `).join('');
+
+            window._spotlightMatches = matches;
+        }
+
+        function spotlightLaunch(i) {
+            const m = window._spotlightMatches?.[i];
+            if (!m) return;
+            closeSpotlight();
+            setTimeout(() => m.el.click(), 140);
+        }
+
+        document.addEventListener('keydown', e => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); openSpotlight(); }
+            if (e.key === 'Escape') {
+                if (spotlightOverlay.classList.contains('open')) closeSpotlight();
+                else closeApp();
+            }
+        });
+
         function filterCategory(category, btn) {
-            document.getElementById('searchInput').value = '';
             document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-
-            document.querySelectorAll('.app-container').forEach(app => {
-                if (category === 'all' || app.dataset.category === category) {
+            document.querySelectorAll('.app-container').forEach((app, i) => {
+                const show = category === 'all' || app.dataset.category === category;
+                if (show) {
                     app.classList.remove('hidden');
+                    app.style.animation = 'none';
+                    app.offsetHeight;
+                    app.style.animation = `iconPop 0.45s var(--spring) ${i * 0.04}s both`;
                 } else {
                     app.classList.add('hidden');
                 }
             });
         }
 
-        // Opens the overlay and loads via iframe (src) directly — used by "here"
-        function openOverlayWithIframe(url) {
-            overlay.style.display = 'flex';
-            loader.style.display = 'none';
-            frame.srcdoc = "";
-            frame.src = url;
+        function launchApp(el, url) {
+            spawnRipple(el);
+            setTimeout(() => openApp(url), 80);
         }
 
         async function openApp(url) {
             overlay.style.display = 'flex';
-            loader.style.display = 'block';
-            frame.srcdoc = "";
-
+            macWindow.classList.remove('exiting');
+            void macWindow.offsetWidth;
+            macWindow.classList.add('entering');
+            loader.style.display = 'flex';
+            frame.srcdoc = '';
+            macWindow.addEventListener('animationend', () => macWindow.classList.remove('entering'), { once: true });
             try {
-                const response = await fetch(url);
-                if (!response.ok) throw new Error('Failed to fetch content.');
-                const htmlContent = await response.text();
-                frame.srcdoc = htmlContent;
+                const res = await fetch(url);
+                if (!res.ok) throw new Error();
+                frame.srcdoc = await res.text();
                 loader.style.display = 'none';
-            } catch (error) {
-                console.error('Fetch error:', error);
+            } catch {
                 loader.style.display = 'none';
-                frame.srcdoc = `
-                    <div style="font-family:sans-serif; padding:20px; text-align:center;">
-                        <h3>CORS Blocked or Load Failed</h3>
-                        <p>This system cannot fetch the raw code because the website blocks external requests. ERROR CODE: 347</p>
-                        <button onclick="window.parent.fallbackLoad('${url}')" style="padding:10px; cursor:pointer;">
-                            Try using Iframe (NOT REC)
-                        </button>
-                    </div>`;
+                frame.srcdoc = `<div style="font-family:-apple-system,sans-serif;padding:32px;text-align:center;color:#333;">
+                    <h3 style="margin:0 0 10px">Could not load</h3>
+                    <p style="margin:0 0 20px;color:#666;">CORS blocked or load failed. Error 347.</p>
+                    <button onclick="window.parent.fallbackLoad('${url}')" style="padding:10px 20px;border-radius:8px;border:1px solid #ccc;cursor:pointer;font-size:14px;">Try iframe fallback</button>
+                </div>`;
             }
         }
 
-        window.fallbackLoad = function(url) {
-            frame.srcdoc = "";
-            frame.src = url;
-        };
+        window.fallbackLoad = url => { frame.srcdoc = ''; frame.src = url; };
 
         function closeApp() {
-            overlay.style.display = 'none';
-            frame.src = "";
-            frame.srcdoc = "";
+            macWindow.classList.add('exiting');
+            macWindow.addEventListener('animationend', () => {
+                overlay.style.display = 'none';
+                macWindow.classList.remove('exiting');
+                frame.src = ''; frame.srcdoc = '';
+            }, { once: true });
         }
 
         function toggleFullScreen() {
-            if (!document.fullscreenElement) {
-                macWindow.requestFullscreen().catch(err => {
-                    alert(`Error: ${err.message}`);
-                });
-            } else {
-                document.exitFullscreen();
-            }
+            if (!document.fullscreenElement) macWindow.requestFullscreen().catch(e => alert(e.message));
+            else document.exitFullscreen();
         }
     </script>
 </body>
