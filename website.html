@@ -3,267 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Julian's Games V5</title>
-    <link rel="shortcut icon" href="google-classroom.png" type="image/x-icon">
+    <title>Julian's Games | Solara Edition</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-        @keyframes spin { to { transform: rotate(360deg); } }
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to   { opacity: 1; transform: translateY(0); }
+        :root {
+            --bg: #0c0b0f;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --accent: #c9bfff;
+            --accent2: #9fc8e8;
+            --text-main: #ffffff;
+            --text-muted: rgba(255, 255, 255, 0.6);
         }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         body, html {
             height: 100%; overflow: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
-            background: url('https://img.freepik.com/free-photo/beautiful-shot-mountains-trees-covered-snow-fog_181624-17590.jpg') no-repeat center center fixed;
-            background-size: cover;
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            transition: backdrop-filter 0.6s ease, filter 0.6s ease;
+            font-family: 'DM Sans', sans-serif;
+            color: var(--text-main);
+            /* EXACT SOLARA MESH BACKGROUND */
+            background: 
+                radial-gradient(ellipse 90% 65% at 50% -5%, rgba(80,55,145,0.7) 0%, transparent 55%),
+                radial-gradient(ellipse 55% 45% at 10% 50%, rgba(30,70,120,0.35) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 55% at 90% 30%, rgba(100,50,90,0.3) 0%, transparent 50%),
+                #08060f;
+            display: flex; flex-direction: column;
         }
 
-        .game-active-blur {
-            backdrop-filter: blur(20px) brightness(0.4);
-            -webkit-backdrop-filter: blur(20px) brightness(0.4);
+        /* Glassmorphism Effect */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px) saturate(1.5);
+            -webkit-backdrop-filter: blur(12px) saturate(1.5);
+            border: 1px solid var(--glass-border);
         }
 
         /* ── NAVBAR ── */
         .navbar {
-            height: 64px;
-            flex-shrink: 0;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            background: rgba(0, 0, 0, 0.6); 
-            backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            z-index: 1000;
+            height: 64px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 24px; z-index: 1000;
+            border-bottom: 1px solid var(--glass-border);
         }
 
         .brand {
-            font-size: 18px;
-            font-weight: 800;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px; font-weight: 300; letter-spacing: 0.05em;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             cursor: pointer;
-            background: linear-gradient(90deg, #fff 0%, #00c6ff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            user-select: none;
-        }
-
-        /* ── SEARCH BAR ── */
-        .search-container {
-            flex: 0 1 500px;
-            margin: 0 30px;
-            position: relative;
         }
 
         .search-input {
-            width: 100%;
-            background: rgba(255, 255, 255, 0.1); 
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 10px 20px 10px 45px;
-            border-radius: 25px;
-            color: #ffffff !important; 
-            font-size: 16px;
-            font-weight: 500;
-            outline: none;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.85);
-        }
-
-        .search-input:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: #00c6ff;
-            box-shadow: 0 0 15px rgba(0, 198, 255, 0.4);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 16px;
-            pointer-events: none;
+            width: 350px; padding: 10px 20px; border-radius: 100px;
+            background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border);
+            color: white; outline: none; transition: 0.3s;
         }
 
         /* ── LAYOUT ── */
-        .content-layout {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-            padding: 20px;
-            gap: 24px;
-            max-width: 1700px;
-            margin: 0 auto;
-            width: 100%;
-        }
+        .content-layout { flex: 1; display: flex; overflow: hidden; padding: 20px; gap: 20px; }
 
-        .video-container {
-            flex: 3;
-            display: none;
-            flex-direction: column;
-            animation: fadeUp 0.4s ease-out forwards;
-        }
-
-        .player-box {
-            width: 100%;
-            aspect-ratio: 16 / 9;
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-            position: relative;
-            border: 1px solid rgba(255,255,255,0.1);
-        }
-
-        iframe { width: 100%; height: 100%; border: none; background: #000; }
+        /* Game Viewer (Fixed proportions) */
+        .video-container { flex: 3; display: none; flex-direction: column; min-width: 0; }
+        .player-box { width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 16px; overflow: hidden; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; }
 
         .video-meta-frame {
-            margin-top: 16px;
-            padding: 20px;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-top: 16px; padding: 20px; border-radius: 16px;
+            display: flex; justify-content: space-between; align-items: center;
         }
+        .video-info h1 { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #fff; }
 
-        .video-info h1 { font-size: 1.4rem; letter-spacing: -0.5px; }
-        .dev-text { color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 4px; }
-
-        .actions {
-            display: flex;
-            background: rgba(0, 0, 0, 0.6);
-            padding: 4px;
-            border-radius: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .action-btn {
-            background: transparent;
-            border: none;
-            color: #fff;
-            padding: 10px 20px;
-            border-radius: 24px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s ease;
-        }
-
-        .action-btn:hover { background: rgba(255,255,255,0.1); }
-        .action-btn.active { color: #3ea6ff; background: rgba(62, 166, 255, 0.1); }
-        .divider { width: 1px; background: rgba(255,255,255,0.15); margin: 6px 4px; }
-
+        /* Game Grid */
         .scroll-area { flex: 1; overflow-y: auto; scrollbar-width: none; }
         .sidebar-mode { max-width: 400px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
         .sidebar-mode .grid { grid-template-columns: 1fr; }
 
-        .card { cursor: pointer; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1); transition: 0.2s; }
-        .card:hover { border-color: #00c6ff; transform: translateY(-2px); }
-        .card.hidden { display: none; }
+        .card { cursor: pointer; border-radius: 12px; overflow: hidden; transition: 0.3s cubic-bezier(0.1, 0.7, 0.1, 1); }
+        .card:hover { transform: translateY(-4px); border-color: var(--accent); }
+        .thumb img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
+        .card-body { padding: 12px; text-align: center; font-weight: 500; }
 
-        .thumb { width: 100%; aspect-ratio: 16 / 9; background: #111; overflow: hidden; }
-        .thumb img { width: 100%; height: 100%; object-fit: cover; }
-        .card-body { padding: 12px; }
-
-        #loader {
-            position: absolute; inset: 0; display: none;
-            flex-direction: column; align-items: center; justify-content: center;
-            background: #000; z-index: 10;
+        .action-btn {
+            background: rgba(255,255,255,0.1); border: 1px solid var(--glass-border);
+            color: white; padding: 8px 18px; border-radius: 100px; cursor: pointer; transition: 0.2s;
         }
-        .spinner { width: 32px; height: 32px; border: 3px solid rgba(255,255,255,0.1); border-top-color: #00a2ff; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .action-btn:hover { background: var(--accent); color: #000; }
+        .action-btn.active { background: var(--accent); color: #000; }
+
+        #loader { position: absolute; inset: 0; display: none; background: #000; justify-content: center; align-items: center; z-index: 5; }
     </style>
 </head>
-<body id="main-body">
+<body>
 
-<header class="navbar">
-    <div class="brand" onclick="goHome()">Julian's Games</div>
-    
-    <div class="search-container">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="search-bar" class="search-input" placeholder="Search for games..." onkeyup="filterGames()">
-    </div>
-    
-    <div style="width: 180px;"></div>
+<header class="navbar glass">
+    <div class="brand" onclick="goHome()">Julian's Games V5</div>
+    <input type="text" id="search-bar" class="search-input" placeholder="Search experiences..." onkeyup="filterGames()">
+    <div style="width: 100px;"></div>
 </header>
 
 <div class="content-layout">
     <div class="video-container" id="video-page">
-        <div class="player-box" id="fullscreen-target">
-            <div id="loader"><div class="spinner"></div></div>
+        <div class="player-box glass">
+            <div id="loader"><p>Loading Experience...</p></div>
             <iframe id="frame"></iframe>
         </div>
         
-        <div class="video-meta-frame">
+        <div class="video-meta-frame glass">
             <div class="video-info">
-                <h1 id="playing-title">Game Title</h1>
-                <p class="dev-text">author</p>
+                <h1 id="playing-title">Experience</h1>
+                <p style="font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:1px; margin-top:4px;">Likes reset every update to a games page.</p>
             </div>
-            
-            <div class="actions">
-                <button class="action-btn" onclick="toggleVote(this, 'like')">
-                    👍 <span id="like-count">0</span>
-                </button>
-                <div class="divider"></div>
-                <button class="action-btn" onclick="toggleVote(this, 'dislike')">
-                    👎
-                </button>
-                <div class="divider"></div>
-                <button class="action-btn" onclick="toggleFullScreen()" title="Full Screen">
-                    ⛶ Full Screen
-                </button>
+            <div style="display:flex; gap:12px;">
+                <button class="action-btn" id="like-btn" onclick="toggleVote(this)">👍 <span id="like-count">0</span></button>
+                <button class="action-btn" onclick="toggleFullScreen()">⛶ Fullscreen</button>
             </div>
         </div>
     </div>
 
     <main class="scroll-area" id="main-scroll">
         <div class="grid" id="grid">
-            <div class="card" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/onevonedotlol.html', '1v1.lol')">
-                <div class="thumb"><img src="https://pbs.twimg.com/profile_images/1219353297129295874/HDIEpfJr_400x400.jpg"></div>
-                <div class="card-body"><div class="game-title" style="font-size: 14px; font-weight: 600;">1v1.lol</div></div>
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/onevonedotlol.html', '1v1.lol (OG Game)')">
+                <div class="thumb"><img src="https://i.imgur.com/sF99zu0.png"></div>
+                <div class="card-body"><div class="game-title">1v1.lol</div></div>
             </div>
-            <div class="card" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html', 'ClusterRush')">
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html', 'ClusterRush (OG Game)')">
                 <div class="thumb"><img src="https://i.imgur.com/2ahVmwO.png"></div>
-                <div class="card-body"><div class="game-title" style="font-size: 14px; font-weight: 600;">ClusterRush</div></div>
+                <div class="card-body"><div class="game-title">ClusterRush</div></div>
             </div>
-            <div class="card" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/FNAE', 'Five nights at epstein  (Possibly broken rn)')">
-                <div class="thumb"><img src="https://i.imgur.com/coge0s9.png"></div>
-                <div class="card-body"><div class="game-title" style="font-size: 14px; font-weight: 600;">Five nights at epstein</div></div>
-            </div>
-            <div class="card" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Karlson.html', 'Karlson (Webport)')">
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Karlson.html', 'Karlson')">
                 <div class="thumb"><img src="https://i.imgur.com/Lx948s4.png"></div>
-                <div class="card-body"><div class="game-title" style="font-size: 14px; font-weight: 600;">Karlson</div></div>
+                <div class="card-body"><div class="game-title">Karlson</div></div>
             </div>
-            <div class="card" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/agesofconflict.html', 'Ages of conflict (Demo vers. only sry)')">
-                <div class="thumb"><img src="https://i.imgur.com/WMVOiGH.png"></div>
-                <div class="card-body"><div class="game-title" style="font-size: 14px; font-weight: 600;">Ages of conflict</div></div>
-            </div>
-            <div class="card" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/stickmanhook.html', 'Stick man hook (A Julian games v4 orginial)')">
-                <div class="thumb"><img src="https://i.imgur.com/RWnMjNZ.png"></div>
-                <div class="card-body"><div class="game-title" style="font-size: 14px; font-weight: 600;">Stickman hook</div></div>
-            </div>
-            <div class="card" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/stop_crying_im_only_stabbing_u.html', 'BLOODMONEY!! Click him and earn money')">
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/stop_crying_im_only_stabbing_u.html', 'Bloodmoney (Zoom it pressing Cntrl + or zoom out Cntrl -)')">
                 <div class="thumb"><img src="https://i.imgur.com/L4PO2z5.png"></div>
-                <div class="card-body"><div class="game-title" style="font-size: 14px; font-weight: 600;">BLOODMONEY!</div></div>
+                <div class="card-body"><div class="game-title">BLOODMONEY!</div></div>
             </div>
-        </div>
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/stickman.html', 'Stick manhook (OG Game)')">
+                <div class="thumb"><img src="https://i.imgur.com/wC1RHfo.png"></div>
+                <div class="card-body"><div class="game-title">Stickman hook</div></div>
+            </div>
     </main>
 </div>
 
@@ -272,30 +157,47 @@
     const mainScroll = document.getElementById('main-scroll');
     const frame = document.getElementById('frame');
     const loader = document.getElementById('loader');
-    const body = document.getElementById('main-body');
-    const likeCounter = document.getElementById('like-count');
 
-    function filterGames() {
-        const input = document.getElementById('search-bar').value.toLowerCase();
-        const cards = document.querySelectorAll('.card');
-        cards.forEach(card => {
-            const title = card.querySelector('.game-title').innerText.toLowerCase();
-            card.classList.toggle('hidden', !title.includes(input));
-        });
+    // ── LIVE CLOUD COUNTER API ──
+    // Uses a revival of countapi.xyz
+    async function loadLikes(title) {
+        const key = "julian-" + title.replace(/\s+/g, '-').toLowerCase();
+        const countSpan = document.getElementById('like-count');
+        try {
+            const res = await fetch(`https://countapi.mileshilliard.com/api/v1/get/${key}`);
+            const data = await res.json();
+            countSpan.innerText = data.value || 0;
+        } catch (e) { countSpan.innerText = "0"; }
     }
 
+    async function toggleVote(btn) {
+        if (btn.classList.contains('active')) return;
+        const title = document.getElementById('playing-title').innerText;
+        const key = "julian-" + title.replace(/\s+/g, '-').toLowerCase();
+        const countSpan = document.getElementById('like-count');
+        
+        btn.classList.add('active');
+        try {
+            const res = await fetch(`https://countapi.mileshilliard.com/api/v1/hit/${key}`);
+            const data = await res.json();
+            countSpan.innerText = data.value;
+        } catch (e) { console.log("API Error"); }
+    }
+
+    // ── CORE LOGIC ──
     async function launch(url, title) {
         videoPage.style.display = 'flex';
         mainScroll.classList.add('sidebar-mode');
-        body.classList.add('game-active-blur'); 
         document.getElementById('playing-title').innerText = title;
+        document.getElementById('like-btn').classList.remove('active');
+        
+        loadLikes(title); // Fetch likes from cloud
+        
         loader.style.display = 'flex';
         frame.srcdoc = '';
         try {
             const res = await fetch(url);
-            if (!res.ok) throw new Error();
-            const code = await res.text();
-            frame.srcdoc = code; 
+            frame.srcdoc = await res.text();
             loader.style.display = 'none';
         } catch (err) {
             frame.src = url;
@@ -306,37 +208,22 @@
     function goHome() {
         videoPage.style.display = 'none';
         mainScroll.classList.remove('sidebar-mode');
-        body.classList.remove('game-active-blur'); 
-        frame.srcdoc = '';
-        frame.src = '';
-        document.getElementById('search-bar').value = '';
-        filterGames();
+        frame.src = ''; frame.srcdoc = '';
     }
 
-    function toggleVote(btn, type) {
-        const isActive = btn.classList.contains('active');
-        let likes = parseInt(likeCounter.innerText);
-        btn.parentElement.querySelectorAll('.action-btn').forEach(b => b.classList.remove('active'));
-        if (!isActive) {
-            btn.classList.add('active');
-            if (type === 'like') likeCounter.innerText = likes + 1;
-            else if (likes > 0) likeCounter.innerText = likes - 1;
-        } else if (type === 'like') {
-            likeCounter.innerText = likes - 1;
-        }
+    function filterGames() {
+        const input = document.getElementById('search-bar').value.toLowerCase();
+        document.querySelectorAll('.card').forEach(card => {
+            const title = card.innerText.toLowerCase();
+            card.style.display = title.includes(input) ? "block" : "none";
+        });
     }
 
     function toggleFullScreen() {
-        const target = document.getElementById('fullscreen-target');
-        if (!document.fullscreenElement) {
-            target.requestFullscreen().catch(err => alert(err.message));
-        } else {
-            document.exitFullscreen();
-        }
+        const box = document.querySelector('.player-box');
+        if (!document.fullscreenElement) box.requestFullscreen();
+        else document.exitFullscreen();
     }
-
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') goHome(); });
 </script>
-
 </body>
 </html>
