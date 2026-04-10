@@ -141,9 +141,25 @@
                 <div class="thumb"><img src="https://i.imgur.com/2ahVmwO.png"></div>
                 <div class="card-body"><div class="game-title">ClusterRush</div></div>
             </div>
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20Orc.html', 'Choppy orc')">
+                <div class="thumb"><img src="https://i.imgur.com/8MAUMqa.png"></div>
+                <div class="card-body"><div class="game-title">Choppy Orc</div></div>
+            </div>
             <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Drivemading.html', 'DriveMad (OG Game)')">
                 <div class="thumb"><img src="https://i.imgur.com/we1Tmzp.png"></div>
                 <div class="card-body"><div class="game-title">DriveMad</div></div>
+            </div>
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Escape%20Road.html', 'Escape Road')">
+                <div class="thumb"><img src="https://i.imgur.com/p0d4Lm6.png"></div>
+                <div class="card-body"><div class="game-title">Escape Road</div></div>
+            </div>
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/escaperoad2.html', 'Escape Road 2')">
+                <div class="thumb"><img src="https://i.imgur.com/p0d4Lm6.png"></div>
+                <div class="card-body"><div class="game-title">Escape Road 2</div></div>
+            </div>
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html', 'Geometry Dash (Remake)')">
+                <div class="thumb"><img src="https://i.imgur.com/n8Go48j.png"></div>
+                <div class="card-body"><div class="game-title">Geometry dash</div></div>
             </div>
             <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Karlson.html', 'Karlson')">
                 <div class="thumb"><img src="https://i.imgur.com/Lx948s4.png"></div>
@@ -153,6 +169,14 @@
                 <div class="thumb"><img src="https://i.imgur.com/wC1RHfo.png"></div>
                 <div class="card-body"><div class="game-title">Stickman hook</div></div>
             </div>
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Soundboard.html', 'Soundboard')">
+                <div class="thumb"><img src="https://cdn.jsdelivr.net/gh/freebuisness/covers@main/179.png"></div>
+                <div class="card-body"><div class="game-title">Soundboard</div></div>
+            </div>
+            <div class="card glass" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/TheyAreComing.html', 'They are coming')">
+                <div class="thumb"><img src="https://i.imgur.com/fcjK5EZ.png"></div>
+                <div class="card-body"><div class="game-title">They are coming</div></div>
+            </div>  
     </main>
 </div>
 
@@ -228,6 +252,25 @@
         if (!document.fullscreenElement) box.requestFullscreen();
         else document.exitFullscreen();
     }
+
+    $('.summernote').summernote({
+    toolbar: [
+        ['save', ['save']], // The button
+    ],
+    save:{
+      lang: 'en-US', // Change to your chosen language
+      encode: false, // true = encode editor data, you may need to unencode the data on your backend or before output.
+      pageBlockClass: '.page-block', // Leave empty if not using an overlay to block user activity while data is sent.
+      pageBlockToggle: 'd-block', // Class to use to toggle Page Block. Remove the class via backend once data is safely stored.
+      saveBtnIndicator: 'btn-danger', // Class to change save button indication when content changes to warn of unsaved data.
+    }
+
+
+
+});
+
+
+
 </script>
 </body>
 </html>
