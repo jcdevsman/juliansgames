@@ -35,3 +35,5 @@ Well, due to the rise of the **spyware** that "Helps kids focus" when it reality
 </body>
 </html>
 ```
+ ## Or, if your school doesn't have github pages block then go to:
+ https://jcdevsman.github.io/juliansgames/
