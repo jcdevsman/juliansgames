@@ -253,6 +253,28 @@
         else document.exitFullscreen();
     }
 
+
+    let hasInteracted = false;
+
+    // 1. Mark that the user has interacted with the page
+    // Browsers require a "user gesture" before they allow the prompt
+    window.addEventListener('click', () => hasInteracted = true);
+    window.addEventListener('keydown', () => hasInteracted = true);
+
+    window.addEventListener('beforeunload', (event) => {
+        if (hasInteracted) {
+            // 2. Standard way to trigger prompt in modern browsers
+            event.preventDefault(); 
+            
+            // 3. Required for legacy Chrome and Safari support
+            event.returnValue = "Changes you made may not be saved."; 
+            
+            // 4. Required for some older Firefox versions
+            return "Changes you made may not be saved.";
+        }
+    });
+
+
     $('.summernote').summernote({
     toolbar: [
         ['save', ['save']], // The button
@@ -264,6 +286,9 @@
       pageBlockToggle: 'd-block', // Class to use to toggle Page Block. Remove the class via backend once data is safely stored.
       saveBtnIndicator: 'btn-danger', // Class to change save button indication when content changes to warn of unsaved data.
     }
+
+    
+
 
 
 
