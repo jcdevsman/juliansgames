@@ -3,392 +3,405 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Home</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Julian's Games | Float UI</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lexend:wght@500;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
-    --bg-base: #08060f;
-    --sidebar-w: 90px;
-    --sidebar-expand: 280px;
-    --glass-bg: rgba(255, 255, 255, 0.07);
-    --glass-border: rgba(255, 255, 255, 0.15);
-    --accent: #c9bfff;
-    --accent2: #9fc8e8;
-    --text-main: #fff;
-    --text-muted: rgba(255, 255, 255, 0.6);
+    --bg: #050505;
+    --surface: rgba(20, 20, 25, 0.6);
+    --border: rgba(255, 255, 255, 0.1);
+    --accent: #3b82f6; 
+    --text-main: #ffffff;
+    --text-dim: #71717a;
+    --sidebar-w: 75px;
+    --radius: 18px;
+    --shadow: 0 15px 40px rgba(0,0,0,0.8);
 }
 
-* { box-sizing: border-box; margin: 0; padding: 0; }
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    height: 100vh;
-    width: 100vw;
-    font-family: 'DM Sans', sans-serif;
+    background-color: var(--bg);
     color: var(--text-main);
-    background: 
-        radial-gradient(ellipse 90% 65% at 50% -5%, rgba(80,55,145,0.7) 0%, transparent 55%),
-        radial-gradient(ellipse 55% 45% at 10% 50%, rgba(30,70,120,0.35) 0%, transparent 55%),
-        radial-gradient(ellipse 50% 55% at 90% 30%, rgba(100,50,90,0.3) 0%, transparent 50%),
-        var(--bg-base);
-    background-attachment: fixed;
+    font-family: 'Inter', sans-serif;
     display: flex;
+    height: 100vh;
     overflow: hidden;
+    padding: 30px;
+    gap: 40px;
 }
 
-/* --- SIDEBAR --- */
-.sidebar {
+/* Sidebar */
+aside {
     width: var(--sidebar-w);
-    height: calc(100vh - 40px); 
-    margin: 20px;
-    border-radius: 35px; 
-    border: 1px solid var(--glass-border);
-    background: var(--glass-bg);
-    backdrop-filter: blur(25px) saturate(1.6);
-    -webkit-backdrop-filter: blur(25px) saturate(1.6);
+    height: 100%;
+    background: rgba(25, 25, 25, 0.6);
+    backdrop-filter: blur(25px);
+    border: 1px solid var(--border);
+    border-radius: 40px;
     display: flex;
     flex-direction: column;
-    transition: width 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.1);
-    z-index: 100;
-    overflow: hidden;
-    white-space: nowrap;
-    padding: 40px 0;
-}
-
-.sidebar:hover {
-    width: var(--sidebar-expand);
-    box-shadow: 0 25px 50px rgba(0,0,0,0.4);
-}
-
-.brand {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 50px;
-    padding-left: 32px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-.sidebar:hover .brand { opacity: 1; }
-
-.search-wrapper {
-    padding: 0 18px;
-    margin-bottom: 40px;
-}
-
-.search-container {
-    display: flex;
     align-items: center;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--glass-border);
-    border-radius: 50px; 
-    padding: 14px;
+    padding: 30px 0;
+    box-shadow: var(--shadow);
+    z-index: 10;
 }
 
-.search-icon { font-size: 20px; min-width: 24px; text-align: center; color: var(--text-muted); }
-
-.search-input {
-    background: transparent;
-    border: none;
-    color: white;
-    outline: none;
-    width: 0;
-    opacity: 0;
-    transition: width 0.3s, opacity 0.3s;
+.brand-icon {
+    width: 42px;
+    height: 42px;
+    margin-bottom: 50px;
+    cursor: pointer;
 }
-
-.sidebar:hover .search-input { width: 100%; margin-left: 10px; opacity: 1; }
+.brand-icon img { width: 100%; }
 
 nav {
-    padding: 0 15px;
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 25px;
 }
 
 .nav-item {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    color: var(--text-muted);
-    transition: 0.3s;
-}
-
-.nav-item i {
-    min-width: 54px;
-    height: 54px;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255,255,255,0.05);
-    border: 1px solid var(--glass-border);
-    border-radius: 50%;
-    font-style: normal;
-    font-size: 22px;
-    transition: 0.3s;
+    cursor: pointer;
+    color: var(--text-dim);
+    transition: 0.2s;
+    font-size: 1.2rem;
 }
-
-.nav-item span {
-    opacity: 0;
-    font-weight: 500;
-    margin-left: 20px;
-    transition: opacity 0.3s;
-}
-
-.sidebar:hover .nav-item span { opacity: 1; }
-
-.nav-item:hover i, .nav-item.active i {
+.nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
+.nav-item.active {
     background: var(--accent);
-    color: #000;
-    border-color: var(--accent);
-    transform: scale(1.1);
+    color: white;
 }
 
-/* --- MAIN AREA --- */
-.main-area {
+/* Main */
+main {
     flex: 1;
-    height: 100vh;
-    padding: 20px 40px 20px 10px;
-    display: flex;
-    flex-direction: column;
     overflow-y: auto;
 }
 
+/* Grid */
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 25px;
 }
 
 .card {
-    border-radius: 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
     overflow: hidden;
     cursor: pointer;
-    background: var(--glass-bg);
-    backdrop-filter: blur(10px);
-    border: 1px solid var(--glass-border);
-    transition: 0.4s;
+    transition: 0.3s;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+.card img {
+    width: 100%;
+    aspect-ratio: 16/9;
+}
+.card-info {
+    padding: 15px;
+    text-align: center;
 }
 
-.card:hover { transform: translateY(-10px); border-color: var(--accent); }
-.thumb img { width: 100%; aspect-ratio: 16/9; object-fit: cover; }
-.card-body { padding: 20px; text-align: center; font-weight: 500; }
+/* Search Overlay */
+#search-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(12px);
+    z-index: 1000;
+    justify-content: center;
+    padding-top: 10vh;
+}
+.search-container {
+    width: 90%;
+    max-width: 600px;
+    background: #121214;
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 20px;
+    box-shadow: var(--shadow);
+    height: fit-content;
+}
+#search-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.4rem;
+    outline: none;
+    font-family: 'Lexend', sans-serif;
+    padding: 10px;
+}
+#search-results {
+    margin-top: 15px;
+    max-height: 350px;
+    overflow-y: auto;
+}
+.search-res-item {
+    padding: 12px 15px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: 0.2s;
+}
+.search-res-item:hover { background: rgba(255,255,255,0.05); }
+.search-res-item .cat { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
 
-/* --- PLAYER --- */
-.video-container { 
-    display: none; 
-    flex-direction: column; 
-    width: 100%; 
-    height: 100%; 
-    gap: 15px;
+/* Player */
+#player {
+    display: none;
+    position: absolute;
+    inset: 30px 30px 30px 150px;
+    background: rgba(10,10,10,0.95);
+    border-radius: 30px;
+    flex-direction: column;
+    padding: 30px;
 }
 
-.player-box { 
+.player-viewport {
     flex: 1;
-    width: 100%; 
-    border-radius: 30px; 
-    overflow: hidden; 
-    background: #000; 
-    border: 1px solid var(--glass-border);
-    position: relative;
+    background: black;
+    border-radius: 20px;
+    overflow: hidden;
 }
 
-iframe { width: 100%; height: 100%; border: none; }
-
-.video-meta-frame { 
-    padding: 20px 30px; 
-    border-radius: 25px; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    background: var(--glass-bg); 
-    backdrop-filter: blur(15px); 
-    border: 1px solid var(--glass-border);
-    margin-bottom: 20px;
+iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
-.action-btn { padding: 12px 28px; border-radius: 50px; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); color: white; cursor: pointer; font-weight: 500; transition: 0.2s; }
-.action-btn:hover { background: var(--accent); color: black; border-color: var(--accent); }
+.controls {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
 
-#loader { position: absolute; inset: 0; display: none; justify-content: center; align-items: center; background: rgba(0,0,0,0.8); z-index: 10; }
+.btn {
+    padding: 10px 15px;
+    background: #27272a;
+    border: none;
+    color: white;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--accent);
+}
+
+#loader {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: black;
+}
 </style>
 </head>
 
 <body>
 
-<aside class="sidebar">
-    <div class="brand" onclick="goHome()">Julian's Games</div>
-    <div class="search-wrapper">
-        <div class="search-container">
-            <div class="search-icon">🔍</div>
-            <input id="search" class="search-input" placeholder="Search..." onkeyup="filterGames()">
-        </div>
+<aside>
+    <div class="brand-icon" onclick="goHome()">
+        <img src="icons8-games-500.png">
     </div>
+
     <nav>
-        <div class="nav-item active" onclick="filterCategory('all', this)">
-            <i>🏠</i> <span>All Games</span>
-        </div>
-        <div class="nav-item" onclick="filterCategory('action', this)">
-            <i>⚔️</i> <span>Action</span>
-        </div>
-        <div class="nav-item" onclick="filterCategory('skill', this)">
-            <i>🎯</i> <span>Skill</span>
-        </div>
-        <div class="nav-item" onclick="filterCategory('driving', this)">
-            <i>🚗</i> <span>Driving</span>
-        </div>
+        <div class="nav-item" onclick="toggleSearch()">🔍</div>
+        <div class="nav-item active" onclick="filterCategory('all', this)">🕹️</div>
+        <div class="nav-item" onclick="filterCategory('action', this)">⚔️</div>
+        <div class="nav-item" onclick="filterCategory('skill', this)">🎯</div>
+        <div class="nav-item" onclick="filterCategory('driving', this)">🏎️</div>
     </nav>
 </aside>
 
-<main class="main-area">
-    <div class="grid" id="grid">
-        <div class="card" data-category="action skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/1v1.LoL.html','1v1.lol')">
-            <div class="thumb"><img src="https://res.cloudinary.com/dxapqcjhq/image/upload/f_auto,q_auto/image_2026-04-14_231336742_zjiwcv"></div>
-            <div class="card-body">1v1.lol</div>
-        </div>
-        <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Chat%20Bot%20AI%20(A.I%20GPT).html','OpenAI')">
-            <div class="thumb"><img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776224162/image_2026-04-14_233601824_fnxywl.png"></div>
-            <div class="card-body">ChatGPT API</div>
-        </div>
-        <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html','ClusterRush')">
-            <div class="thumb"><img src="https://res-console.cloudinary.com/dxapqcjhq/thumbnails/v1/image/upload/v1776222906/aW1hZ2VfMjAyNi0wNC0xNF8yMzE1MDU1NTFfY21iY3Rz/drilldown"></div>
-            <div class="card-body">Cluster Rush</div>
-        </div>
-        <div class="card" data-category="driving" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Drivemading.html','DriveMad')">
-            <div class="thumb"><img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776222972/image_2026-04-14_231611911_osdtfs.png"></div>
-            <div class="card-body">DriveMad</div>
-        </div>
-        <div class="card" data-category="action" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20Orc.html','Choppy Orc')">
-            <div class="thumb"><img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776223015/image_2026-04-14_231654323_bgxcig.png"></div>
-            <div class="card-body">Choppy Orc</div>
-        </div>
-        <div class="card" data-category="action" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html','Geometry dash')">
-            <div class="thumb"><img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776223813/image_2026-04-14_233011855_dqjhj3.png"></div>
-            <div class="card-body">Geometry dash</div>
+<main>
+    <div id="home-view">
+        <div class="grid">
+            <div class="card" data-category="action" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/1v1.LoL.html','1v1.lol')">
+                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/f_auto,q_auto/image_2026-04-14_231336742_zjiwcv">
+                <div class="card-info">1v1.lol</div>
+            </div>
+            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20Orc.html','Choppy Orc (Open in new tab)')">
+                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776223015/image_2026-04-14_231654323_bgxcig.png">
+                <div class="card-info">Choppy Orc</div>
+            </div>
+            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html','ClusterRush')">
+                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776222906/aW1hZ2VfMjAyNi0wNC0xNF8yMzE1MDU1NTFfY21iY3Rz">
+                <div class="card-info">Cluster Rush</div>
+            </div>
+            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Drivemading.html','Drive Mad')">
+                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776222972/image_2026-04-14_231611911_osdtfs.png">
+                <div class="card-info">DriveMad</div>
+            </div>
+            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html','Geometry Dash')">
+                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776223813/image_2026-04-14_233011855_dqjhj3.png">
+                <div class="card-info">Geometry Dash</div>
+            </div>
+            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Schoolboy%20Runaway.html','Schoolboy Runaway')">
+                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776399345/image_2026-04-17_001543836_d1qtoi.png">
+                <div class="card-info">Schoolboy Runaway</div>
+            </div>
+            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Soundboard.html','Soundboard (Julians games modifed editon)')">
+                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776399843/image_2026-04-17_002402815_lyr16q.png">
+                <div class="card-info">Soundboard</div>
+            </div>
         </div>
     </div>
 
-    <div class="video-container" id="player">
-        <div class="player-box">
+    <div id="player">
+        <div id="player-header">
+            <h2 id="title">Game</h2>
+            <button class="btn" onclick="goHome()">Back</button>
+        </div>
+
+        <div class="player-viewport">
             <div id="loader">Loading...</div>
             <iframe id="frame"></iframe>
         </div>
-        <div class="video-meta-frame">
-            <div>
-                <h2 id="title">Game</h2>
-                <p id="dynamic-msg" style="font-size:13px; color:var(--text-muted); margin-top: 5px;"></p>
-            </div>
-            <div style="display:flex; gap:12px;">
-                <button class="action-btn" id="like-btn" onclick="toggleVote(this)">👍 <span id="like-count">0</span></button>
-                <button class="action-btn" onclick="toggleFullScreen()">Fullscreen</button>
-                <button class="action-btn" id="tab-btn">Open In New Tab</button>
-            </div>
+
+        <div class="controls">
+            <button class="btn btn-primary" id="tab-btn">Open Tab</button>
+            <button class="btn" onclick="toggleFullScreen()">Fullscreen</button>
+            <button class="btn" id="like-btn" onclick="toggleVote(this)">
+                ❤️ <span id="like-count">0</span>
+            </button>
         </div>
     </div>
 </main>
 
+<div id="search-overlay">
+    <div class="search-container">
+        <input type="text" id="search-input" placeholder="Type to search games..." autocomplete="off">
+        <div id="search-results"></div>
+    </div>
+</div>
+
 <script>
 const frame = document.getElementById('frame');
 const player = document.getElementById('player');
-const grid = document.getElementById('grid');
+const homeView = document.getElementById('home-view');
 const loader = document.getElementById('loader');
-const msgLabel = document.getElementById('dynamic-msg');
-const tabBtn = document.getElementById('tab-btn');
+const searchOverlay = document.getElementById('search-overlay');
+const searchInput = document.getElementById('search-input');
+const searchResults = document.getElementById('search-results');
 
-const gamePhrases = {
-    "1v1.lol": "Build, aim, and dominate. Use the sidebar to find your next match.",
-    "ClusterRush": "Don't fall off! Head back to the station using the sidebar when you're done.",
-    "DriveMad": "Keep the wheels turning. Sidebar takes you back to the hub.",
-    "Choppy Orc": "Master the axe. Ready to go back? Just use the sidebar.",
-    "Geometry dash": "Dashing dashing. dashing.",
-    "default": "Enjoy your session. Use the sidebar to return home."
-};
-
-const buttonLabels = {
-    "1v1.lol": "Open in new tab",
-    "ClusterRush": "Open in new tab",
-    "DriveMad": "Open in new tab",
-    "Choppy Orc": "Open in new tab",
-    "default": "Open in new tab",
-    "Geometry dash": "Open in new tab"
-};
-
-// DIFFERENT RAW PAGES PER GAME
-const externalLinks = {
-    "1v1.lol": "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/onevonedotlol.html",
-    "ClusterRush": "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html",
-    "DriveMad": "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Drivemading.html",
-    "Choppy Orc": "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20Orc.html",
-    "Geometry dash": "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html",
-    "OpenAI": "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Chat%20Bot%20AI%20(A.I%20GPT).html",
-    "default": "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/onevonedotlol.html"
-    
-};
-
-async function launch(url, title) {
+async function launch(url, title){
     player.style.display = 'flex';
-    grid.style.display = 'none';
+    homeView.style.display = 'none';
     document.getElementById('title').innerText = title;
-    msgLabel.innerText = gamePhrases[title] || gamePhrases["default"];
-    tabBtn.innerText = buttonLabels[title] || buttonLabels["default"];
-
-    loadLikes(title);
-
-    // Grab the specific RAW page for this game from the lookup table
-    const targetRawUrl = externalLinks[title] || externalLinks["default"];
-    tabBtn.onclick = () => openCodeInNewTab(targetRawUrl);
-
+    document.getElementById('player-header').style.display = 'none';
     loader.style.display = 'flex';
+
     frame.srcdoc = '';
     try {
         const res = await fetch(url);
         const html = await res.text();
         frame.srcdoc = html;
-        loader.style.display = 'none';
     } catch(e) {
-        frame.src = url;
-        frame.onload = () => loader.style.display = 'none';
+        frame.srcdoc = "<h2>Failed to load game.</h2>";
     }
+    loader.style.display = 'none';
+    loadLikes(title);
 }
 
-async function openCodeInNewTab(url) {
-    try {
-        const response = await fetch(url);
-        const code = await response.text();
-        const newWin = window.open('about:blank', '_blank');
-        newWin.document.write(code);
-        newWin.document.close();
-    } catch (err) {
-        alert('Failed to launch raw page: ' + err);
-    }
-}
-
-function goHome() {
+function goHome(){
     player.style.display = 'none';
-    grid.style.display = 'grid';
-    frame.src = '';
+    homeView.style.display = 'block';
+    document.getElementById('player-header').style.display = 'flex';
     frame.srcdoc = '';
 }
 
-function filterGames() {
-    const input = document.getElementById('search').value.toLowerCase();
-    document.querySelectorAll('.card').forEach(card => {
-        card.style.display = card.innerText.toLowerCase().includes(input) ? 'block' : 'none';
+function filterCategory(cat, btn){
+    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+    btn.classList.add('active');
+
+    document.querySelectorAll('.card').forEach(c=>{
+        c.style.display = (cat==='all'||c.dataset.category.includes(cat))?'block':'none';
     });
 }
 
-function filterCategory(category, btn) {
-    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
-    btn.classList.add('active');
-    goHome(); 
-    document.querySelectorAll('.card').forEach(card => {
-        const categories = card.getAttribute('data-category') || '';
-        card.style.display = (category === 'all' || categories.includes(category)) ? 'block' : 'none';
+/* Search Logic */
+function toggleSearch() {
+    const isHidden = getComputedStyle(searchOverlay).display === 'none';
+    searchOverlay.style.display = isHidden ? 'flex' : 'none';
+    if (isHidden) {
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchInput.focus();
+    }
+}
+
+// Global hotkey for search
+document.addEventListener('keydown', (e) => {
+    if (e.key === 's' && document.activeElement.tagName !== 'INPUT') {
+        e.preventDefault();
+        toggleSearch();
+    }
+    if (e.key === 'Escape' && searchOverlay.style.display === 'flex') {
+        toggleSearch();
+    }
+});
+
+searchOverlay.addEventListener('click', (e) => {
+    if (e.target === searchOverlay) toggleSearch();
+});
+
+searchInput.addEventListener('input', () => {
+    const query = searchInput.value.toLowerCase();
+    searchResults.innerHTML = '';
+    if (!query) return;
+
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        const name = card.querySelector('.card-info').innerText;
+        const cat = card.dataset.category;
+        
+        if (name.toLowerCase().includes(query)) {
+            const div = document.createElement('div');
+            div.className = 'search-res-item';
+            div.innerHTML = `<span>${name}</span><span class="cat">${cat}</span>`;
+            div.onclick = () => {
+                card.click();
+                toggleSearch();
+            };
+            searchResults.appendChild(div);
+        }
     });
+});
+
+function toggleFullScreen(){
+    const v = document.querySelector('.player-viewport');
+    if(!document.fullscreenElement) v.requestFullscreen();
+    else document.exitFullscreen();
+}
+
+async function loadLikes(title){
+    const key = "julian-"+title;
+    try{
+        const res = await fetch(`https://countapi.mileshilliard.com/api/v1/get/${key}`);
+        const data = await res.json();
+        document.getElementById('like-count').innerText = data.value || 0;
+    }catch{
+        document.getElementById('like-count').innerText = 0;
+    }
 }
 
 let hasInteracted = false;
@@ -411,32 +424,20 @@ let hasInteracted = false;
         }
     });
 
-async function loadLikes(title){
-    const key = "julian-" + title.replace(/\s+/g,'-').toLowerCase();
-    const count = document.getElementById('like-count');
-    try{
-        const res = await fetch(`https://countapi.mileshilliard.com/api/v1/get/${key}`);
-        const data = await res.json();
-        count.innerText = data.value || 0;
-    }catch{ count.innerText = '0' }
-}
 
 async function toggleVote(btn){
     if(btn.classList.contains('active')) return;
-    const title = document.getElementById('title').innerText;
-    const key = "julian-" + title.replace(/\s+/g,'-').toLowerCase();
     btn.classList.add('active');
+    const countEl = document.getElementById('like-count');
+    let current = parseInt(countEl.innerText) || 0;
+    countEl.innerText = current + 1;
+    const title = document.getElementById('title').innerText;
+    const key = "julian-"+title;
     try{
         const res = await fetch(`https://countapi.mileshilliard.com/api/v1/hit/${key}`);
         const data = await res.json();
-        document.getElementById('like-count').innerText = data.value;
+        countEl.innerText = data.value;
     }catch{}
-}
-
-function toggleFullScreen() {
-    const box = document.querySelector('.player-box');
-    if (!document.fullscreenElement) box.requestFullscreen();
-    else document.exitFullscreen();
 }
 </script>
 
