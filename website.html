@@ -1,445 +1,326 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Julian's Games | Float UI</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lake County Schools</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lexend:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lexend:wght@500;700&display=swap" rel="stylesheet">
 
-<style>
-:root {
-    --bg: #050505;
-    --surface: rgba(20, 20, 25, 0.6);
-    --border: rgba(255, 255, 255, 0.1);
-    --accent: #3b82f6; 
-    --text-main: #ffffff;
-    --text-dim: #71717a;
-    --sidebar-w: 75px;
-    --radius: 18px;
-    --shadow: 0 15px 40px rgba(0,0,0,0.8);
-}
+    <style>
+        :root {
+            --bg-color: #020608;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --cyan-primary: #00e5ff;
+            --text-main: #ffffff;
+            --text-dim: #788a94;
+            --sidebar-w: 80px;
+            --radius: 24px;
+        }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-body {
-    background-color: var(--bg);
-    color: var(--text-main);
-    font-family: 'Inter', sans-serif;
-    display: flex;
-    height: 100vh;
-    overflow: hidden;
-    padding: 30px;
-    gap: 40px;
-}
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            padding: 40px; /* Breathing room */
+            gap: 40px;     /* Breathing room */
+        }
 
-/* Sidebar */
-aside {
-    width: var(--sidebar-w);
-    height: 100%;
-    background: rgba(25, 25, 25, 0.6);
-    backdrop-filter: blur(25px);
-    border: 1px solid var(--border);
-    border-radius: 40px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 30px 0;
-    box-shadow: var(--shadow);
-    z-index: 10;
-}
+        /* Gooey Background */
+        .gooey-bg {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: -1;
+            filter: url('#goo');
+        }
 
-.brand-icon {
-    width: 42px;
-    height: 42px;
-    margin-bottom: 50px;
-    cursor: pointer;
-}
-.brand-icon img { width: 100%; }
+        .ball {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--cyan-primary);
+            opacity: 0.3;
+            animation: drift infinite alternate ease-in-out;
+        }
 
-nav {
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-}
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(150px, 120px) scale(1.2); }
+        }
 
-.nav-item {
-    width: 48px;
-    height: 48px;
-    border-radius: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--text-dim);
-    transition: 0.2s;
-    font-size: 1.2rem;
-}
-.nav-item:hover { color: white; background: rgba(255,255,255,0.05); }
-.nav-item.active {
-    background: var(--accent);
-    color: white;
-}
+        /* Glass Sidebar */
+        aside {
+            width: var(--sidebar-w);
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px) saturate(150%);
+            border: 1px solid var(--glass-border);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 25px 0;
+            z-index: 10;
+        }
 
-/* Main */
-main {
-    flex: 1;
-    overflow-y: auto;
-}
+        .brand-icon { width: 40px; height: 40px; margin-bottom: 40px; cursor: pointer; }
+        .brand-icon img { width: 100%; filter: drop-shadow(0 0 5px var(--cyan-primary)); }
 
-/* Grid */
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 25px;
-}
+        nav { display: flex; flex-direction: column; gap: 20px; }
 
-.card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    cursor: pointer;
-    transition: 0.3s;
-}
-.card:hover {
-    transform: translateY(-5px);
-}
-.card img {
-    width: 100%;
-    aspect-ratio: 16/9;
-}
-.card-info {
-    padding: 15px;
-    text-align: center;
-}
+        .nav-item {
+            width: 48px; height: 48px;
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--text-dim);
+            transition: 0.3s;
+        }
+        .nav-item:hover { color: var(--cyan-primary); background: rgba(0, 229, 255, 0.05); }
+        .nav-item.active { background: var(--cyan-primary); color: #000; box-shadow: 0 0 15px var(--cyan-primary); }
 
-/* Search Overlay */
-#search-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    backdrop-filter: blur(12px);
-    z-index: 1000;
-    justify-content: center;
-    padding-top: 10vh;
-}
-.search-container {
-    width: 90%;
-    max-width: 600px;
-    background: #121214;
-    border: 1px solid var(--border);
-    border-radius: 24px;
-    padding: 20px;
-    box-shadow: var(--shadow);
-    height: fit-content;
-}
-#search-input {
-    width: 100%;
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 1.4rem;
-    outline: none;
-    font-family: 'Lexend', sans-serif;
-    padding: 10px;
-}
-#search-results {
-    margin-top: 15px;
-    max-height: 350px;
-    overflow-y: auto;
-}
-.search-res-item {
-    padding: 12px 15px;
-    border-radius: 12px;
-    cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: 0.2s;
-}
-.search-res-item:hover { background: rgba(255,255,255,0.05); }
-.search-res-item .cat { font-size: 0.7rem; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        /* Main View - Fixed positioning */
+        main { 
+            flex: 1; 
+            position: relative; /* This stops the player from overlapping the sidebar */
+            overflow: hidden; 
+        }
 
-/* Player */
-#player {
-    display: none;
-    position: absolute;
-    inset: 30px 30px 30px 150px;
-    background: rgba(10,10,10,0.95);
-    border-radius: 30px;
-    flex-direction: column;
-    padding: 30px;
-}
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 20px;
+        }
 
-.player-viewport {
-    flex: 1;
-    background: black;
-    border-radius: 20px;
-    overflow: hidden;
-}
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--cyan-primary);
+            background: rgba(0, 229, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.1);
+        }
+        .card img { width: 100%; aspect-ratio: 16/9; border-radius: 12px; }
+        .card-info { padding: 15px 5px; text-align: center; font-weight: 600; }
 
-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
+        /* Search Overlay */
+        #search-overlay {
+            display: none; position: fixed; inset: 0;
+            background: rgba(2, 6, 8, 0.8); backdrop-filter: blur(20px);
+            z-index: 1000; justify-content: center; padding-top: 10vh;
+        }
+        .search-container {
+            width: 90%; max-width: 600px;
+            background: var(--glass-bg); border: 1px solid var(--glass-border);
+            border-radius: 24px; padding: 25px;
+        }
+        #search-input {
+            width: 100%; background: transparent; border: none;
+            color: white; font-size: 1.5rem; outline: none; padding: 10px;
+        }
 
-.controls {
-    display: flex;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.btn {
-    padding: 10px 15px;
-    background: #27272a;
-    border: none;
-    color: white;
-    border-radius: 10px;
-    cursor: pointer;
-}
-
-.btn-primary {
-    background: var(--accent);
-}
-
-#loader {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: black;
-}
-</style>
+        /* Player - Constrained inside main */
+        #player {
+            display: none; 
+            position: absolute; 
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); 
+            flex-direction: column;
+            z-index: 5;
+        }
+        .player-viewport { flex: 1; border-radius: 16px; overflow: hidden; border: 1px solid var(--glass-border); }
+        iframe { width: 100%; height: 100%; border: none; }
+        .controls { display: flex; gap: 10px; margin-top: 20px; }
+        .btn { padding: 12px 25px; background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border); color: white; border-radius: 12px; cursor: pointer; }
+        .btn-primary { background: var(--cyan-primary); color: #000; font-weight: 700; }
+        #loader { position: absolute; inset: 0; display: flex; justify-content: center; align-items: center; background: black; }
+    </style>
 </head>
-
 <body>
 
-<aside>
-    <div class="brand-icon" onclick="goHome()">
-        <img src="icons8-games-500.png">
-    </div>
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10" result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
+    </svg>
 
-    <nav>
-        <div class="nav-item" onclick="toggleSearch()">🔍</div>
-        <div class="nav-item active" onclick="filterCategory('all', this)">🕹️</div>
-        <div class="nav-item" onclick="filterCategory('action', this)">⚔️</div>
-        <div class="nav-item" onclick="filterCategory('skill', this)">🎯</div>
-        <div class="nav-item" onclick="filterCategory('driving', this)">🏎️</div>
-    </nav>
-</aside>
+    <div class="gooey-bg" id="ballContainer"></div>
 
-<main>
-    <div id="home-view">
-        <div class="grid">
-            <div class="card" data-category="action" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/1v1.LoL.html','1v1.lol')">
-                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/f_auto,q_auto/image_2026-04-14_231336742_zjiwcv">
-                <div class="card-info">1v1.lol</div>
+    <aside>
+        <div class="brand-icon" onclick="goHome()">
+            <img src="https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/icons8-games-96.png" alt="Logo">
+        </div>
+        <nav>
+            <div class="nav-item" onclick="toggleSearch()">🔍</div>
+            <div class="nav-item active" onclick="filterCategory('all', this)">🕹️</div>
+            <div class="nav-item" onclick="filterCategory('action', this)">⚔️</div>
+            <div class="nav-item" onclick="filterCategory('skill', this)">🎯</div>
+            <div class="nav-item" onclick="filterCategory('driving', this)">🏎️</div>
+        </nav>
+    </aside>
+
+    <main id="main-content">
+        <div id="home-view" style="overflow-y: auto; height: 100%;">
+            <div class="grid">
+                <div class="card" data-category="action" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/1v1.LoL.html','1v1.lol')">
+                    <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/f_auto,q_auto/image_2026-04-14_231336742_zjiwcv">
+                    <div class="card-info">1v1.lol</div>
+                </div>
+                <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20Orc.html','Choppy Orc')">
+                    <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776223015/image_2026-04-14_231654323_bgxcig.png">
+                    <div class="card-info">Choppy Orc</div>
+                </div>
+                <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html','ClusterRush')">
+                    <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776222906/aW1hZ2VfMjAyNi0wNC0xNF8yMzE1MDU1NTFfY21iY3Rz">
+                    <div class="card-info">Cluster Rush</div>
+                </div>
+                <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Drivemading.html','Drive Mad')">
+                    <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776222972/image_2026-04-14_231611911_osdtfs.png">
+                    <div class="card-info">DriveMad</div>
+                </div>
+                <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html','Geometry Dash')">
+                    <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776223813/image_2026-04-14_233011855_dqjhj3.png">
+                    <div class="card-info">Geometry Dash</div>
+                </div>
+                <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Schoolboy%20Runaway.html','Schoolboy Runaway')">
+                    <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776399345/image_2026-04-17_001543836_d1qtoi.png">
+                    <div class="card-info">Schoolboy Runaway</div>
+                </div>
+                <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Soundboard.html','Soundboard')">
+                    <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776399843/image_2026-04-17_002402815_lyr16q.png">
+                    <div class="card-info">Soundboard</div>
+                </div>
+        </div>
+
+        <div id="player">
+            <div id="player-header" style="margin-bottom: 10px;">
+                <h2 id="title">Game</h2>
             </div>
-            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20Orc.html','Choppy Orc (Open in new tab)')">
-                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776223015/image_2026-04-14_231654323_bgxcig.png">
-                <div class="card-info">Choppy Orc</div>
+            <div class="player-viewport">
+                <div id="loader">Loading...</div>
+                <iframe id="frame"></iframe>
             </div>
-            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html','ClusterRush')">
-                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776222906/aW1hZ2VfMjAyNi0wNC0xNF8yMzE1MDU1NTFfY21iY3Rz">
-                <div class="card-info">Cluster Rush</div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="goHome()">Back to Home</button>
+                <button class="btn" onclick="toggleFullScreen()">Fullscreen</button>
+                <button class="btn" id="like-btn" onclick="toggleVote(this)">❤️ <span id="like-count">0</span></button>
             </div>
-            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Drivemading.html','Drive Mad')">
-                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776222972/image_2026-04-14_231611911_osdtfs.png">
-                <div class="card-info">DriveMad</div>
-            </div>
-            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html','Geometry Dash')">
-                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776223813/image_2026-04-14_233011855_dqjhj3.png">
-                <div class="card-info">Geometry Dash</div>
-            </div>
-            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Schoolboy%20Runaway.html','Schoolboy Runaway')">
-                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776399345/image_2026-04-17_001543836_d1qtoi.png">
-                <div class="card-info">Schoolboy Runaway</div>
-            </div>
-            <div class="card" data-category="skill" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Soundboard.html','Soundboard (Julians games modifed editon)')">
-                <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776399843/image_2026-04-17_002402815_lyr16q.png">
-                <div class="card-info">Soundboard</div>
-            </div>
+        </div>
+    </main>
+
+    <div id="search-overlay">
+        <div class="search-container">
+            <input type="text" id="search-input" placeholder="Search games..." autocomplete="off">
+            <div id="search-results"></div>
         </div>
     </div>
 
-    <div id="player">
-        <div id="player-header">
-            <h2 id="title">Game</h2>
-            <button class="btn" onclick="goHome()">Back</button>
-        </div>
-
-        <div class="player-viewport">
-            <div id="loader">Loading...</div>
-            <iframe id="frame"></iframe>
-        </div>
-
-        <div class="controls">
-            <button class="btn btn-primary" id="tab-btn">Open Tab</button>
-            <button class="btn" onclick="toggleFullScreen()">Fullscreen</button>
-            <button class="btn" id="like-btn" onclick="toggleVote(this)">
-                ❤️ <span id="like-count">0</span>
-            </button>
-        </div>
-    </div>
-</main>
-
-<div id="search-overlay">
-    <div class="search-container">
-        <input type="text" id="search-input" placeholder="Type to search games..." autocomplete="off">
-        <div id="search-results"></div>
-    </div>
-</div>
-
-<script>
-const frame = document.getElementById('frame');
-const player = document.getElementById('player');
-const homeView = document.getElementById('home-view');
-const loader = document.getElementById('loader');
-const searchOverlay = document.getElementById('search-overlay');
-const searchInput = document.getElementById('search-input');
-const searchResults = document.getElementById('search-results');
-
-async function launch(url, title){
-    player.style.display = 'flex';
-    homeView.style.display = 'none';
-    document.getElementById('title').innerText = title;
-    document.getElementById('player-header').style.display = 'none';
-    loader.style.display = 'flex';
-
-    frame.srcdoc = '';
-    try {
-        const res = await fetch(url);
-        const html = await res.text();
-        frame.srcdoc = html;
-    } catch(e) {
-        frame.srcdoc = "<h2>Failed to load game.</h2>";
-    }
-    loader.style.display = 'none';
-    loadLikes(title);
-}
-
-function goHome(){
-    player.style.display = 'none';
-    homeView.style.display = 'block';
-    document.getElementById('player-header').style.display = 'flex';
-    frame.srcdoc = '';
-}
-
-function filterCategory(cat, btn){
-    document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-    btn.classList.add('active');
-
-    document.querySelectorAll('.card').forEach(c=>{
-        c.style.display = (cat==='all'||c.dataset.category.includes(cat))?'block':'none';
-    });
-}
-
-/* Search Logic */
-function toggleSearch() {
-    const isHidden = getComputedStyle(searchOverlay).display === 'none';
-    searchOverlay.style.display = isHidden ? 'flex' : 'none';
-    if (isHidden) {
-        searchInput.value = '';
-        searchResults.innerHTML = '';
-        searchInput.focus();
-    }
-}
-
-// Global hotkey for search
-document.addEventListener('keydown', (e) => {
-    if (e.key === 's' && document.activeElement.tagName !== 'INPUT') {
-        e.preventDefault();
-        toggleSearch();
-    }
-    if (e.key === 'Escape' && searchOverlay.style.display === 'flex') {
-        toggleSearch();
-    }
-});
-
-searchOverlay.addEventListener('click', (e) => {
-    if (e.target === searchOverlay) toggleSearch();
-});
-
-searchInput.addEventListener('input', () => {
-    const query = searchInput.value.toLowerCase();
-    searchResults.innerHTML = '';
-    if (!query) return;
-
-    const cards = document.querySelectorAll('.card');
-    cards.forEach(card => {
-        const name = card.querySelector('.card-info').innerText;
-        const cat = card.dataset.category;
-        
-        if (name.toLowerCase().includes(query)) {
-            const div = document.createElement('div');
-            div.className = 'search-res-item';
-            div.innerHTML = `<span>${name}</span><span class="cat">${cat}</span>`;
-            div.onclick = () => {
-                card.click();
-                toggleSearch();
-            };
-            searchResults.appendChild(div);
+    <script>
+        // --- Setup ---
+        const container = document.getElementById('ballContainer');
+        for (let i = 0; i < 40; i++) {
+            const ball = document.createElement('div');
+            ball.className = 'ball';
+            const size = Math.random() * 60 + 20 + 'px';
+            ball.style.width = size; ball.style.height = size;
+            ball.style.top = Math.random() * 100 + '%';
+            ball.style.left = Math.random() * 100 + '%';
+            ball.style.animationDuration = (Math.random() * 4 + 3) + 's';
+            ball.style.animationDelay = (Math.random() * -10) + 's';
+            container.appendChild(ball);
         }
-    });
-});
 
-function toggleFullScreen(){
-    const v = document.querySelector('.player-viewport');
-    if(!document.fullscreenElement) v.requestFullscreen();
-    else document.exitFullscreen();
-}
+        // --- Original Saved Logic ---
+        let hasInteracted = false;
+        window.addEventListener('click', () => hasInteracted = true);
+        window.addEventListener('keydown', () => hasInteracted = true);
 
-async function loadLikes(title){
-    const key = "julian-"+title;
-    try{
-        const res = await fetch(`https://countapi.mileshilliard.com/api/v1/get/${key}`);
-        const data = await res.json();
-        document.getElementById('like-count').innerText = data.value || 0;
-    }catch{
-        document.getElementById('like-count').innerText = 0;
-    }
-}
+        window.addEventListener('beforeunload', (event) => {
+            if (hasInteracted) {
+                event.preventDefault(); 
+                event.returnValue = "Changes you made may not be saved."; 
+                return "Changes you made may not be saved.";
+            }
+        });
 
-let hasInteracted = false;
+        // --- Game Logic ---
+        const frame = document.getElementById('frame');
+        const player = document.getElementById('player');
+        const homeView = document.getElementById('home-view');
+        const loader = document.getElementById('loader');
+        const searchOverlay = document.getElementById('search-overlay');
+        const searchInput = document.getElementById('search-input');
 
-    // 1. Mark that the user has interacted with the page
-    // Browsers require a "user gesture" before they allow the prompt
-    window.addEventListener('click', () => hasInteracted = true);
-    window.addEventListener('keydown', () => hasInteracted = true);
-
-    window.addEventListener('beforeunload', (event) => {
-        if (hasInteracted) {
-            // 2. Standard way to trigger prompt in modern browsers
-            event.preventDefault(); 
-            
-            // 3. Required for legacy Chrome and Safari support
-            event.returnValue = "Changes you made may not be saved."; 
-            
-            // 4. Required for some older Firefox versions
-            return "Changes you made may not be saved.";
+        async function launch(url, title){
+            player.style.display = 'flex';
+            homeView.style.display = 'none';
+            document.getElementById('title').innerText = title;
+            loader.style.display = 'flex';
+            try {
+                const res = await fetch(url);
+                frame.srcdoc = await res.text();
+            } catch(e) { frame.srcdoc = "<h2>Failed to load.</h2>"; }
+            loader.style.display = 'none';
+            loadLikes(title);
         }
-    });
 
+        function goHome(){
+            player.style.display = 'none';
+            homeView.style.display = 'block';
+            frame.srcdoc = '';
+        }
 
-async function toggleVote(btn){
-    if(btn.classList.contains('active')) return;
-    btn.classList.add('active');
-    const countEl = document.getElementById('like-count');
-    let current = parseInt(countEl.innerText) || 0;
-    countEl.innerText = current + 1;
-    const title = document.getElementById('title').innerText;
-    const key = "julian-"+title;
-    try{
-        const res = await fetch(`https://countapi.mileshilliard.com/api/v1/hit/${key}`);
-        const data = await res.json();
-        countEl.innerText = data.value;
-    }catch{}
-}
-</script>
+        async function loadLikes(title){
+            try {
+                const res = await fetch(`https://countapi.mileshilliard.com/api/v1/get/julian-${title}`);
+                const data = await res.json();
+                document.getElementById('like-count').innerText = data.value || 0;
+            } catch { document.getElementById('like-count').innerText = 0; }
+        }
 
+        async function toggleVote(btn){
+            if(btn.classList.contains('active')) return;
+            btn.classList.add('active');
+            const countEl = document.getElementById('like-count');
+            let current = parseInt(countEl.innerText) || 0;
+            countEl.innerText = current + 1;
+            const title = document.getElementById('title').innerText;
+            try {
+                const res = await fetch(`https://countapi.mileshilliard.com/api/v1/hit/julian-${title}`);
+                const data = await res.json();
+                countEl.innerText = data.value;
+            } catch{}
+        }
+
+        function filterCategory(cat, btn){
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.card').forEach(c=>{
+                c.style.display = (cat==='all'||c.dataset.category.includes(cat))?'block':'none';
+            });
+        }
+
+        function toggleSearch() {
+            const isHidden = getComputedStyle(searchOverlay).display === 'none';
+            searchOverlay.style.display = isHidden ? 'flex' : 'none';
+            if (isHidden) { searchInput.value = ''; searchInput.focus(); }
+        }
+    </script>
 </body>
 </html>
