@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lake County Schools</title>
+    <title>Julian's Games | Cyan Terminal</title>
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Lexend:wght@500;700&display=swap" rel="stylesheet">
 
@@ -28,8 +28,8 @@
             display: flex;
             height: 100vh;
             overflow: hidden;
-            padding: 40px; /* Breathing room */
-            gap: 40px;     /* Breathing room */
+            padding: 40px; 
+            gap: 40px;     
         }
 
         /* Gooey Background */
@@ -83,10 +83,10 @@
         .nav-item:hover { color: var(--cyan-primary); background: rgba(0, 229, 255, 0.05); }
         .nav-item.active { background: var(--cyan-primary); color: #000; box-shadow: 0 0 15px var(--cyan-primary); }
 
-        /* Main View - Fixed positioning */
+        /* Main View */
         main { 
             flex: 1; 
-            position: relative; /* This stops the player from overlapping the sidebar */
+            position: relative; 
             overflow: hidden; 
         }
 
@@ -94,12 +94,13 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
             gap: 20px;
+            overflow-y: auto;
+            height: 100%;
         }
 
         .card {
             background: var(--glass-bg);
             backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
             border: 1px solid var(--glass-border);
             border-radius: 20px;
             padding: 10px;
@@ -110,7 +111,6 @@
             transform: translateY(-5px);
             border-color: var(--cyan-primary);
             background: rgba(0, 229, 255, 0.1);
-            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.1);
         }
         .card img { width: 100%; aspect-ratio: 16/9; border-radius: 12px; }
         .card-info { padding: 15px 5px; text-align: center; font-weight: 600; }
@@ -118,20 +118,30 @@
         /* Search Overlay */
         #search-overlay {
             display: none; position: fixed; inset: 0;
-            background: rgba(2, 6, 8, 0.8); backdrop-filter: blur(20px);
-            z-index: 1000; justify-content: center; padding-top: 10vh;
+            background: rgba(2, 6, 8, 0.85); backdrop-filter: blur(20px);
+            z-index: 1000; justify-content: center; align-items: flex-start; padding-top: 15vh;
         }
         .search-container {
-            width: 90%; max-width: 600px;
-            background: var(--glass-bg); border: 1px solid var(--glass-border);
-            border-radius: 24px; padding: 25px;
+            width: 90%; 
+            max-width: 350px; /* SHRUNK SIZE */
+            background: rgba(20, 25, 30, 0.8); 
+            border: 1px solid var(--glass-border);
+            border-radius: 20px; 
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         #search-input {
-            width: 100%; background: transparent; border: none;
-            color: white; font-size: 1.5rem; outline: none; padding: 10px;
+            width: 100%; background: transparent; border: none; border-bottom: 1px solid var(--glass-border);
+            color: white; font-size: 1.1rem; outline: none; padding: 10px 0;
         }
+        #search-results { margin-top: 15px; max-height: 300px; overflow-y: auto; }
+        .result-item { 
+            padding: 12px; cursor: pointer; border-radius: 10px; 
+            color: #ccc; transition: 0.2s;
+        }
+        .result-item:hover { background: var(--glass-border); color: var(--cyan-primary); }
 
-        /* Player - Constrained inside main */
+        /* Player */
         #player {
             display: none; 
             position: absolute; 
@@ -176,7 +186,7 @@
     </aside>
 
     <main id="main-content">
-        <div id="home-view" style="overflow-y: auto; height: 100%;">
+        <div id="home-view" style="height: 100%;">
             <div class="grid">
                 <div class="card" data-category="action" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/1v1.LoL.html','1v1.lol')">
                     <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/f_auto,q_auto/image_2026-04-14_231336742_zjiwcv">
@@ -206,18 +216,16 @@
                     <img src="https://res.cloudinary.com/dxapqcjhq/image/upload/v1776399843/image_2026-04-17_002402815_lyr16q.png">
                     <div class="card-info">Soundboard</div>
                 </div>
+            </div>
         </div>
 
         <div id="player">
-            <div id="player-header" style="margin-bottom: 10px;">
-                <h2 id="title">Game</h2>
-            </div>
             <div class="player-viewport">
                 <div id="loader">Loading...</div>
                 <iframe id="frame"></iframe>
             </div>
             <div class="controls">
-                <button class="btn btn-primary" onclick="goHome()">Back to Home</button>
+                <button class="btn btn-primary" onclick="goHome()">Back</button>
                 <button class="btn" onclick="toggleFullScreen()">Fullscreen</button>
                 <button class="btn" id="like-btn" onclick="toggleVote(this)">❤️ <span id="like-count">0</span></button>
             </div>
@@ -226,13 +234,13 @@
 
     <div id="search-overlay">
         <div class="search-container">
-            <input type="text" id="search-input" placeholder="Search games..." autocomplete="off">
+            <input type="text" id="search-input" placeholder="Search..." autocomplete="off">
             <div id="search-results"></div>
         </div>
     </div>
 
     <script>
-        // --- Setup ---
+        // Setup
         const container = document.getElementById('ballContainer');
         for (let i = 0; i < 40; i++) {
             const ball = document.createElement('div');
@@ -246,37 +254,21 @@
             container.appendChild(ball);
         }
 
-        // --- Original Saved Logic ---
-        let hasInteracted = false;
-        window.addEventListener('click', () => hasInteracted = true);
-        window.addEventListener('keydown', () => hasInteracted = true);
-
-        window.addEventListener('beforeunload', (event) => {
-            if (hasInteracted) {
-                event.preventDefault(); 
-                event.returnValue = "Changes you made may not be saved."; 
-                return "Changes you made may not be saved.";
-            }
-        });
-
-        // --- Game Logic ---
         const frame = document.getElementById('frame');
         const player = document.getElementById('player');
         const homeView = document.getElementById('home-view');
-        const loader = document.getElementById('loader');
         const searchOverlay = document.getElementById('search-overlay');
         const searchInput = document.getElementById('search-input');
+        const searchResults = document.getElementById('search-results');
 
-        async function launch(url, title){
+        function launch(url, title){
             player.style.display = 'flex';
             homeView.style.display = 'none';
-            document.getElementById('title').innerText = title;
-            loader.style.display = 'flex';
-            try {
-                const res = await fetch(url);
-                frame.srcdoc = await res.text();
-            } catch(e) { frame.srcdoc = "<h2>Failed to load.</h2>"; }
-            loader.style.display = 'none';
+            document.getElementById('loader').style.display = 'flex';
+            fetch(url).then(res => res.text()).then(html => {
+                frame.srcdoc = html;
+                document.getElementById('loader').style.display = 'none';
+            }).catch(() => { frame.srcdoc = "<h2>Failed</h2>"; });
             loadLikes(title);
         }
 
@@ -284,6 +276,38 @@
             player.style.display = 'none';
             homeView.style.display = 'block';
             frame.srcdoc = '';
+        }
+
+        function toggleSearch() {
+            const isHidden = getComputedStyle(searchOverlay).display === 'none';
+            searchOverlay.style.display = isHidden ? 'flex' : 'none';
+            if (isHidden) { searchInput.value = ''; searchResults.innerHTML = ''; searchInput.focus(); }
+        }
+
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            searchResults.innerHTML = '';
+            if (!query) return;
+            document.querySelectorAll('.card').forEach(card => {
+                const name = card.querySelector('.card-info').innerText;
+                if (name.toLowerCase().includes(query)) {
+                    const div = document.createElement('div');
+                    div.className = 'result-item';
+                    div.innerText = name;
+                    div.onclick = () => { card.click(); toggleSearch(); };
+                    searchResults.appendChild(div);
+                }
+            });
+        });
+
+        searchOverlay.addEventListener('click', (e) => { if (e.target === searchOverlay) toggleSearch(); });
+
+        function filterCategory(cat, btn){
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.card').forEach(c=>{
+                c.style.display = (cat==='all'||c.dataset.category.includes(cat))?'block':'none';
+            });
         }
 
         async function loadLikes(title){
@@ -297,29 +321,17 @@
         async function toggleVote(btn){
             if(btn.classList.contains('active')) return;
             btn.classList.add('active');
-            const countEl = document.getElementById('like-count');
-            let current = parseInt(countEl.innerText) || 0;
-            countEl.innerText = current + 1;
-            const title = document.getElementById('title').innerText;
+            const title = document.getElementById('title') ? document.getElementById('title').innerText : 'Game';
             try {
                 const res = await fetch(`https://countapi.mileshilliard.com/api/v1/hit/julian-${title}`);
                 const data = await res.json();
-                countEl.innerText = data.value;
+                document.getElementById('like-count').innerText = data.value;
             } catch{}
         }
 
-        function filterCategory(cat, btn){
-            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-            btn.classList.add('active');
-            document.querySelectorAll('.card').forEach(c=>{
-                c.style.display = (cat==='all'||c.dataset.category.includes(cat))?'block':'none';
-            });
-        }
-
-        function toggleSearch() {
-            const isHidden = getComputedStyle(searchOverlay).display === 'none';
-            searchOverlay.style.display = isHidden ? 'flex' : 'none';
-            if (isHidden) { searchInput.value = ''; searchInput.focus(); }
+        function toggleFullScreen(){
+            if(!document.fullscreenElement) document.querySelector('.player-viewport').requestFullscreen();
+            else document.exitFullscreen();
         }
     </script>
 </body>
