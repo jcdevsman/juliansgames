@@ -3,63 +3,227 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lake County Schools</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Cyan Kinetic Terminal</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        :root {
+            --bg-color: #020608;
+            --glass-bg: rgba(255, 255, 255, 0.015);
+            --glass-border: rgba(255, 255, 255, 0.06);
+            /* Electric blue-heavy cyan */
+            --cyan-primary: #00e5ff; 
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: var(--bg-color);
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* SVG Gooey Filter - Sharpened for faster movement */
+        .gooey-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            filter: url('#goo'); 
+        }
+
+        .ball {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--cyan-primary);
+            opacity: 0.5;
+            /* Faster animation: 3s to 7s instead of 15s+ */
+            animation: drift infinite alternate ease-in-out;
+        }
+
+        /* Animation Keyframes: Random erratic movement */
+        @keyframes drift {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(150px, 120px) scale(1.2); }
+        }
+
+        /* Layout */
+        .wrapper {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+            box-sizing: border-box;
+        }
+
+        /* The Glass Card with Hover Animation */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px) saturate(140%);
+            -webkit-backdrop-filter: blur(25px) saturate(140%);
+            border: 1px solid var(--glass-border);
+            border-top: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 32px;
+            padding: 60px;
+            max-width: 850px;
+            width: 100%;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+            cursor: default;
+        }
+
+        /* Hover Interaction */
+        .glass-card:hover {
+            transform: translateY(-10px) scale(1.01);
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 50px 100px rgba(0, 229, 255, 0.1);
+        }
+
+        h1 { font-size: 3.5rem; margin: 0 0 10px 0; color: #fff; letter-spacing: -2px; }
+        .desc { color: #88a0ab; margin-bottom: 40px; font-size: 1.1rem; }
+
+        /* Features */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: left;
+            transition: 0.3s ease;
+        }
+
+        .feature-item:hover {
+            border-color: var(--cyan-primary);
+            background: rgba(0, 229, 255, 0.05);
+        }
+
+        .feature-item h3 { margin: 0 0 8px 0; font-size: 1.1rem; color: #fff; }
+        .feature-item p { margin: 0; font-size: 0.9rem; color: #788a94; line-height: 1.4; }
+
+        /* Launch Button */
+        .launch-btn {
+            background: var(--cyan-primary);
+            color: #000;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.1rem;
+            font-weight: 900;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
+        }
+
+        .launch-btn:hover {
+            transform: scale(1.1);
+            background: #fff;
+            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
+        }
     </style>
 </head>
-<body class="bg-zinc-950 flex items-center justify-center min-h-screen">
+<body>
 
-    <div class="text-center max-w-md px-6">
-        <h1 class="text-4xl font-light text-zinc-100 mb-4 tracking-tight">
-            Julian's Games loader
-        </h1>
-        <p class="text-zinc-500 mb-10 leading-relaxed font-light">
-            Undetected by goguardian, and unblockable :)
-        </p>
-        
-        <button id="launchBtn" class="px-10 py-3.5 bg-gradient-to-r from-cyan-400 to-blue-500 text-white font-semibold rounded-xl hover:shadow-[0_0_20px_rgba(34,211,238,0.4)] hover:scale-105 transition-all duration-300 active:scale-95">
-            Launch
-        </button>
+    <svg style="visibility: hidden; position: absolute;" width="0" height="0">
+        <defs>
+            <filter id="goo">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
+                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10" result="goo" />
+                <feBlend in="SourceGraphic" in2="goo" />
+            </filter>
+        </defs>
+    </svg>
+
+    <div class="gooey-bg" id="ballContainer">
+        </div>
+
+    <div class="wrapper">
+        <div class="glass-card">
+            <h1>Julian's games</h1>
+            <p class="desc">Fastest games you will everplay, while being undetected, and unblockable.</p>
+            
+            <div class="features">
+                <div class="feature-item">
+                    <h3>100% UUS</h3>
+                    <p>UUS Means Universal Unblockable Level. The higher the better. We are the only 100% UUS< Gaming page.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Fast execution</h3>
+                    <p>We execute code faster then competitors, Over a 10% More FPS, and loading times then alternatives.</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Best Interace.</h3>
+                    <p>Fastest, and cleanist Interface you will ever use. With dymanic search, and catagories.</p>
+                </div>
+            </div>
+
+            <p class="desc">What are you waiting for? Play the best 100% UUS Gaming Page available.</p>
+            <button class="launch-btn" id="launchButton">Launch</button>
+        </div>
     </div>
 
     <script>
-        // Replace with your actual GitHub Raw URL
-        const GITHUB_RAW_URL = 'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/website.html';
+        // 1. Generate 50 balls dynamically
+        const container = document.getElementById('ballContainer');
+        for (let i = 0; i < 50; i++) {
+            const ball = document.createElement('div');
+            ball.className = 'ball';
+            
+            // Random sizes, positions, and high-speed durations
+            const size = Math.random() * 60 + 20 + 'px';
+            ball.style.width = size;
+            ball.style.height = size;
+            ball.style.top = Math.random() * 100 + '%';
+            ball.style.left = Math.random() * 100 + '%';
+            
+            // Randomize speed between 3s and 7s
+            ball.style.animationDuration = (Math.random() * 4 + 3) + 's';
+            ball.style.animationDelay = (Math.random() * -10) + 's';
+            
+            container.appendChild(ball);
+        }
 
-        document.getElementById('launchBtn').addEventListener('click', async () => {
-            const btn = document.getElementById('launchBtn');
-            const originalText = btn.innerText;
-
+        // 2. The Launch Logic (Fetching from GitHub Raw)
+        document.getElementById('launchButton').addEventListener('click', async function() {
+            // !!! REPLACE with your actual GitHub Raw URL !!!
+            const RAW_URL = 'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/website.html';
+            
             try {
-                btn.innerText = 'Connecting...';
-                btn.style.opacity = '0.7';
+                this.innerText = 'CONNECTING...';
+                const response = await fetch(RAW_URL);
                 
-                // Fetch the code from GitHub
-                const response = await fetch(GITHUB_RAW_URL);
-                if (!response.ok) throw new Error('Source not found');
+                if (!response.ok) throw new Error('Fetch failed');
                 const code = await response.text();
-
-                // Open a new blank window
-                const newWin = window.open('about:blank', '_blank');
-
-                if (newWin) {
-                    // Inject and execute the code
-                    newWin.document.open();
-                    newWin.document.write(code);
-                    newWin.document.close();
+                
+                const newWindow = window.open('about:blank', '_blank');
+                if (newWindow) {
+                    newWindow.document.open();
+                    newWindow.document.write(code);
+                    newWindow.document.close();
                 } else {
-                    alert('Pop-up blocked. Please enable pop-ups for this site.');
+                    alert('Please allow popups to launch the app.');
                 }
-
-            } catch (error) {
-                console.error('Launch Error:', error);
-                alert('Launch failed. Contact julian, or email him. And send him just "403"');
+            } catch (err) {
+                console.error(err);
+                alert('Connection Error. Ensure your URL is a valid Raw GitHub link.');
             } finally {
-                btn.innerText = originalText;
-                btn.style.opacity = '1';
+                this.innerText = 'LAUNCH';
             }
         });
     </script>
