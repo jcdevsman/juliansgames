@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { 
+            background: #1a1a1a; 
+            font-family: 'Segoe UI', sans-serif; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); 
+            gap: 20px; 
+            padding: 40px; 
+        }
+        
+        .game-card { 
+            background: #2d2d2d; 
+            border: 1px solid #444; 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            cursor: pointer; 
+            border-radius: 8px; 
+            transition: 0.2s; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .game-card:hover { background: #3d3d3d; border-color: #666; }
+
+        .game-icon {
+            width: 80px;
+            height: 80px;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            background: #444; 
+        }
+    </style>
+</head>
+<body>
+
+    <div class="game-card" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/1v1.LoL.html')">
+        <img src="https://raw.githubusercontent.com/username/repo/main/image.png" class="game-icon" alt="Game Icon">
+        <div>1v1.lol</div>
+    </div>
+
+    <script>
+        async function launch(url) {
+            const win = window.open('about:blank', '_blank');
+            try {
+                const response = await fetch(url);
+                const htmlContent = await response.text();
+                win.document.write(htmlContent);
+                win.document.close();
+            } catch (err) {
+                win.document.write("<h1>Error loading game.</h1>");
+            }
+        }
+    </script>
+
+    <div class="game-card" onclick="launch('https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20Orc.html')">
+        <img src="https://raw.githubusercontent.com/username/repo/main/image.png" class="game-icon" alt="Game Icon">
+        <div>Choppy Orc</div>
+    </div>
+
+    <script>
+        async function launch(url) {
+            const win = window.open('about:blank', '_blank');
+            try {
+                const response = await fetch(url);
+                const htmlContent = await response.text();
+                win.document.write(htmlContent);
+                win.document.close();
+            } catch (err) {
+                win.document.write("<h1>Error loading game.</h1>");
+            }
+        }
+    </script>
+</body>
+</html>
