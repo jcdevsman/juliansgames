@@ -26,7 +26,7 @@ Well, due to the rise of the **spyware** like GoGuardian. Which just ends up res
 <iframe id="frame" sandbox="allow-scripts allow-forms allow-modals allow-popups allow-same-origin"></iframe>
 <script>
   (async () => {
-    const url = "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/website.html";
+    const url = "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/index.html";
     const res = await fetch(url);
     const code = await res.text();
     document.getElementById("frame").srcdoc = code;
