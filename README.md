@@ -1,12 +1,13 @@
-# These are all for my game launcher. I did not make any of these games
+# These are all for jOS.
 
 It works by having code in htmlplayground. That scraps the code in index.html. And in there the apps do the exact same thing. For example, DriveMad. It scraps the code from "Drivemading.html" And for eaglercraft it scrapes the loader.html in the eaglercraft folder.
 
 ## Why this?
 
-Well, due to the rise of the **spyware** that "Helps kids focus" when it reality it just spies on students. And blocks websites. Yes, you **should focus** but it shouldn't be forced. It should be chozen by the student. If a student doesn't pay attetion. Then they get a low grade and encourages them to work harder. But you shouldn't restrict student's rights and privacy to make them "**Focus better**". So when your done with class. Or you want to be an idiot and play games before your done. Your choice. This bypasses Spyware, and the block.
+Well, due to the rise of the **spyware** like GoGuardian. Which just ends up restricting students freedom and privacy. Even in some cases it blocks kids from getting mental/physical help. That is a real thing that happened with securely. Securely blocked a website which would let a student if they had problems at home, could call for help. But, Securely blocked that website. What if a student that didn't have a phone needed help? How are they supposed to get the help they need? Its just a ploy that sounds good so schools get and stock price go up. Company happy.
 
-## Put this into htmlplayground.com and press preview which has a magnifying glass. And your done
+
+## To get this secure html based OS. Paste this code in to [Html Playground](https://htmlplayground.com) in any of the boxes except the javascript box.
 
 ```html
 <!DOCTYPE html>
@@ -25,7 +26,7 @@ Well, due to the rise of the **spyware** that "Helps kids focus" when it reality
 <iframe id="frame" sandbox="allow-scripts allow-forms allow-modals allow-popups allow-same-origin"></iframe>
 <script>
   (async () => {
-    const url = "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/index.html";
+    const url = "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/website.html";
     const res = await fetch(url);
     const code = await res.text();
     document.getElementById("frame").srcdoc = code;
@@ -35,5 +36,5 @@ Well, due to the rise of the **spyware** that "Helps kids focus" when it reality
 </body>
 </html>
 ```
- ## Or, if your school doesn't have github pages block then go to:
- https://jcdevsman.github.io/juliansgames/
+ ## Or, if your school doesn't have vercel blocked then go to:
+https://classlink.dev
