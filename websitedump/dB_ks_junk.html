@@ -2,902 +2,169 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>classlink.dev</title>
+<title>Access Portal</title>
 
 <style>
-:root {
-    /* Xbox App Dark Theme Colors */
-    --bg-base: #0a0a0a;
-    --bg-panel: #1a1b1e;
-    --bg-hover: #2a2b2e;
-    --text-main: #ffffff;
-    --text-muted: #a3a3a3;
-    
-    /* Cyan-Blue Gradients */
-    --gradient-primary: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%);
-    --gradient-hover: linear-gradient(135deg, #1ae0ff 0%, #1a8cff 100%);
-    --gradient-glow: rgba(0, 150, 255, 0.4);
-    --gradient-ultimate: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%);
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: 'Segoe UI', system-ui, sans-serif;
-}
-
 body {
-    background: var(--bg-base);
-    color: var(--text-main);
-    overflow-x: hidden;
-}
-
-/* BACKGROUND PARTICLE CANVAS */
-canvas {
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    opacity: 0.6; 
-}
-
-/* TOP NAVIGATION (XBOX STYLE) */
-.topbar {
-    position: sticky;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 40px;
-    background: rgba(10, 10, 10, 0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    z-index: 100;
-}
-
-/* LOGO & BADGE */
-.logo-container {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-
-.logo {
-    font-size: 1.5rem;
-    font-weight: 800;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: -0.5px;
-}
-
-.tier-badge {
-    background: var(--gradient-primary);
+    font-family: Arial, sans-serif;
+    background: #0f172a;
     color: white;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 1px;
-    padding: 4px 8px;
-    border-radius: 6px;
-    box-shadow: 0 0 10px var(--gradient-glow);
-    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
-}
-
-.search-container {
-    flex: 1;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    max-width: 500px;
-    margin: 0 20px;
+    height: 100vh;
+    margin: 0;
 }
 
-.search {
-    width: 100%;
-    padding: 10px 20px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: var(--bg-panel);
-    color: var(--text-main);
-    font-size: 0.95rem;
-    transition: 0.3s ease;
-}
-
-.search:focus {
-    outline: none;
-    border-color: #00d2ff;
-    box-shadow: 0 0 12px var(--gradient-glow);
-    background: #111;
-}
-
-/* MAIN CONTENT CONTAINER */
-.container {
-    max-width: 1400px;
-    margin: auto;
-    padding: 30px 40px;
-}
-
-/* FEATURED HERO BANNER */
-.hero {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: linear-gradient(90deg, #101215 0%, rgba(0, 119, 255, 0.1) 100%);
-    border: 1px solid rgba(0, 210, 255, 0.2);
-    border-radius: 16px;
-    padding: 50px;
-    margin-bottom: 50px;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-}
-
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -50%;
-    right: -10%;
-    width: 600px;
-    height: 600px;
-    background: var(--gradient-primary);
-    filter: blur(120px);
-    opacity: 0.15;
-    z-index: 0;
-    border-radius: 50%;
-    pointer-events: none;
-}
-
-.hero-left, .hero-right {
-    position: relative;
-    z-index: 1;
-}
-
-.hero-left h1 {
-    font-size: 3.5rem;
-    font-weight: 800;
-    margin-bottom: 15px;
-    line-height: 1.1;
-}
-
-.hero-left p {
-    color: var(--text-muted);
-    font-size: 1.1rem;
-    margin-bottom: 25px;
-    max-width: 400px;
-}
-
-.btn-primary {
-    background: var(--gradient-primary);
-    color: white;
+input {
+    padding: 12px;
+    width: 250px;
+    border-radius: 8px;
     border: none;
-    padding: 12px 28px;
-    font-size: 1rem;
-    font-weight: 600;
+    font-size: 16px;
+}
+
+button {
+    margin-top: 10px;
+    padding: 10px 18px;
+    border: none;
     border-radius: 8px;
-    cursor: pointer;
-    transition: 0.2s;
-    box-shadow: 0 4px 15px var(--gradient-glow);
-}
-
-.btn-primary:hover {
-    background: var(--gradient-hover);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px var(--gradient-glow);
-}
-
-.btn-secondary {
-    background: rgba(255, 255, 255, 0.1);
+    background: #2563eb;
     color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    padding: 10px 20px;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border-radius: 8px;
     cursor: pointer;
-    transition: 0.2s;
+}
+
+.link {
     margin-top: 15px;
-}
-
-.btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(0, 210, 255, 0.5);
-    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
-}
-
-.hero-right img {
-    width: 100%;
-    max-width: 350px;
-    border-radius: 16px;
-    transform: perspective(1000px) rotateY(-23deg);
-    transition: 0.5s ease;
-}
-
-.hero-right img:hover {
-    transform: perspective(1000px) rotateY(0deg) scale(1);
-}
-
-/* SECTION TITLES */
-.section-title {
-    font-size: 1.4rem;
-    font-weight: 600;
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.section-title::before {
-    content: '';
-    display: block;
-    width: 4px;
-    height: 20px;
-    background: var(--gradient-primary);
-    border-radius: 2px;
-}
-
-/* GAMES GRID */
-.games {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 20px;
-}
-
-/* GAME CARD */
-.game {
-    background: var(--bg-panel);
-    border-radius: 12px;
+    font-size: 14px;
+    color: #93c5fd;
     cursor: pointer;
-    transition: 0.25s ease;
-    display: flex;
-    flex-direction: column;
-    padding: 15px;
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
 }
 
-.game::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 12px;
-    box-shadow: inset 0 0 0 2px transparent;
-    transition: 0.25s ease;
-    pointer-events: none;
-}
-
-.game img {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    object-fit: cover;
-    border-radius: 8px;
-    margin-bottom: 12px;
-    transition: 0.25s ease;
-}
-
-.game-info {
-    text-align: left;
-}
-
-.game-info .title {
-    font-weight: 600;
-    font-size: 1rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.game-info .category {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-top: 4px;
-}
-
-.game:hover {
-    transform: translateY(-6px);
-    background: var(--bg-hover);
-    box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-}
-
-.game:hover::after {
-    box-shadow: inset 0 0 0 2px #00d2ff;
-}
-
-.game:hover img {
-    transform: scale(1.05);
-}
-
-/* VIEWER / MODAL */
-.viewer {
+.popup {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(15px);
-    display: flex;
-    justify-content: center;
+    background: rgba(0,0,0,0.7);
+    display: none;
     align-items: center;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-    z-index: 1000;
+    justify-content: center;
 }
 
-.viewer.active {
-    opacity: 1;
-    pointer-events: all;
-}
-
-.viewer-content {
-    width: 95%;
-    max-width: 1600px;
-    height: 90%;
-    display: flex;
-    gap: 30px;
-    transform: scale(0.95) translateY(20px);
-    opacity: 0;
-    transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.viewer.active .viewer-content {
-    transform: scale(1) translateY(0);
-    opacity: 1;
-}
-
-/* LEFT (PLAYER + INFO) */
-.player-section {
-    flex: 3;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg-panel);
-    border-radius: 16px;
+.popup-content {
+    background: #1e293b;
     padding: 20px;
-    border: 1px solid rgba(255,255,255,0.05);
-}
-
-/* PLAYER */
-.player {
-    background: #000;
     border-radius: 12px;
-    overflow: hidden;
-    position: relative;
-    flex-grow: 1;
-    box-shadow: 0 0 20px rgba(0, 210, 255, 0.15);
-    border: 1px solid rgba(0, 210, 255, 0.3);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    text-align: center;
 }
 
-iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-}
-
-/* RAW HTML5 VIDEO */
-#videoWrapper {
-    width: 100%;
-    height: 100%;
-    position: relative;
-    background: #000;
-    display: none;
-}
-
-#adVideo {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    pointer-events: none; 
-}
-
-.video-notice {
-    position: absolute;
-    top: 20px;
-    left: 20px;
-    background: rgba(0,0,0,0.8);
-    padding: 8px 15px;
-    border-radius: 8px;
-    border: 1px solid #00d2ff;
-    color: white;
-    font-weight: 600;
-    z-index: 10;
-    display: none;
-}
-
-/* INFO */
-.info {
-    margin-top: 20px;
-    padding: 10px;
-}
-
-.info h2 {
-    font-size: 2rem;
-    margin-bottom: 5px;
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-.info small {
-    display: inline-block;
-    color: var(--text-muted);
-    margin-bottom: 15px;
-    font-size: 0.9rem;
-}
-
-.info p {
-    color: #e0e0e0;
-    font-size: 1rem;
-    line-height: 1.5;
-}
-
-/* RIGHT (SUGGESTIONS) */
-.suggestions {
-    flex: 1;
-    background: var(--bg-panel);
-    border-radius: 16px;
-    padding: 20px;
-    border: 1px solid rgba(255,255,255,0.05);
-    display: flex;
-    flex-direction: column;
-}
-
-.suggestions h3 {
-    margin-bottom: 20px;
-    font-size: 1.2rem;
-    color: var(--text-main);
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    padding-bottom: 10px;
-}
-
-.suggestions-list {
-    overflow-y: auto;
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    padding-right: 10px;
-}
-
-.suggestions-list::-webkit-scrollbar { width: 6px; }
-.suggestions-list::-webkit-scrollbar-thumb {
-    background: rgba(0, 210, 255, 0.5);
+.popup img {
+    width: 280px;
     border-radius: 10px;
-}
-
-/* BUTTONS */
-.icon-btn {
-    position: absolute;
-    background: rgba(0,0,0,0.6);
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255,255,255,0.1);
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.2rem;
-    transition: 0.2s;
-    z-index: 20;
-}
-
-.icon-btn:hover {
-    background: var(--gradient-primary);
-    border-color: transparent;
-    transform: scale(1.1);
-}
-
-.fullscreen-btn { top: 15px; right: 15px; }
-
-.close-btn {
-    top: 20px;
-    right: 30px;
-    position: fixed;
-    width: 50px;
-    height: 50px;
-    font-size: 1.5rem;
-    border-radius: 50%;
-}
-
-.hero-left h1 span {
-    background: var(--gradient-ultimate);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-}
-
-
-@media (max-width: 900px) {
-    .hero { flex-direction: column; text-align: center; padding: 30px; }
-    .hero-left p { margin: 0 auto 25px; }
-    .viewer-content { flex-direction: column; height: 100%; overflow-y: auto; padding-top: 60px;}
-    .player { aspect-ratio: 16/9; flex-grow: 0; }
 }
 </style>
 </head>
 
 <body>
 
-<canvas id="bg"></canvas>
+<h1>Enter Key</h1>
 
-<nav class="topbar">
-    <div class="logo-container">
-        <div class="logo">classlink.dev</div>
-        <div class="tier-badge">ULTIMATE</div>
-    </div>
-    
-    <div class="search-container">
-        <input id="searchInput" class="search" placeholder="Search for games..." autocomplete="off" />
-    </div>
-    <div style="width: 100px;"></div> 
-</nav>
+<input id="keyInput" placeholder="Enter key..." />
+<button onclick="checkKey()">Submit</button>
 
-<div class="container">
-    
-    <div class="hero">
-        <div class="hero-left">
-            <h1>classlink<span>.dev</span></h1>
-            <p>Your premier destination for unblocked, ad-free gaming. Jump in and play instantly.</p>
-            <button class="btn-primary" onclick="document.getElementById('searchInput').focus()">Browse Library</button>
-        </div>
-        <div class="hero-right">
-            <img src="https://www.pngall.com/wp-content/uploads/12/Secure-HTTPS-Green-Symbol-PNG.png" alt="Featured Game" />
-        </div>
-    </div>
+<div class="link" onclick="openPopup()">Don't have a key?</div>
 
-    <h2 class="section-title">Only with ULTIMATE</h2>
-    <div class="games" id="exclusiveGames" style="margin-bottom: 50px;"></div>
-
-    <h2 class="section-title">All Games</h2>
-    <div class="games" id="allGames"></div>
-    
-</div>
-
-<div class="viewer" id="viewer">
-    <button class="icon-btn close-btn" onclick="closeViewer()">✕</button>
-
-    <div class="viewer-content">
-        <div class="player-section">
-            <div class="player" id="playerBox">
-                <button class="icon-btn fullscreen-btn" onclick="toggleFullscreen()">⛶</button>
-                
-                <div id="videoNotice" class="video-notice">Please wait for the video to finish...</div>
-                
-                <div id="videoWrapper">
-                    <video id="adVideo" muted playsinline></video>
-                </div>
-
-                <iframe id="gameFrame" style="display:none;"></iframe>
-            </div>
-            
-            <div class="info">
-                <h2 id="gameTitle"></h2>
-                <small id="gameAuthor"></small>
-                <p id="gameDesc"></p>
-                <button id="newTabBtn" class="btn-secondary" style="display: none;" onclick="openInNewTab()">
-                    ↗ Open in New Tab
-                </button>
-            </div>
-        </div>
-
-        <div class="suggestions">
-            <h3>More Like This</h3>
-            <div class="suggestions-list" id="suggestedGames"></div>
-        </div>
-    </div>
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h2>Get a Key</h2>
+    <img src="https://via.placeholder.com/300x200.png?text=Key+Info">
+    <br><br>
+    <button onclick="closePopup()">Close</button>
+  </div>
 </div>
 
 <script>
-/* RAW HTML5 AD LOGIC */
-const adVideo = document.getElementById("adVideo");
-let currentGameToLoad = null;
+/* ----------------------------
+   CONFIG
+---------------------------- */
 
-// Replace this with a direct link to any .mp4 file.
-const DIRECT_MP4_URL = ""; 
+const validKeys = [
+  "devkey4231",
+  "SECRET456",
+  "KEY789"
+];
 
-adVideo.src = DIRECT_MP4_URL;
+const githubRawURL =
+"https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/website.html";
 
-// When the video ends naturally or fails to load, it loads the game and reveals the button
-adVideo.addEventListener("ended", finishVideoAndLoadGame);
-adVideo.addEventListener("error", finishVideoAndLoadGame);
+/* ----------------------------
+   DEVICE ID (local only)
+---------------------------- */
 
-function finishVideoAndLoadGame() {
-    document.getElementById("videoWrapper").style.display = "none";
-    document.getElementById("videoNotice").style.display = "none";
-    document.getElementById("gameFrame").style.display = "block";
-    
-    // Reveal the "Open in new tab" button now that the ad is finished
-    document.getElementById("newTabBtn").style.display = "inline-block";
-
-    if (currentGameToLoad) {
-        fetch(currentGameToLoad.url)
-            .then(r => r.text())
-            .then(html => {
-                document.getElementById("gameFrame").srcdoc = html;
-            });
+function getDeviceId() {
+    let id = localStorage.getItem("deviceId");
+    if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem("deviceId", id);
     }
+    return id;
 }
 
-/* OPEN GAME IN NEW ABOUT:BLANK TAB */
-function openInNewTab() {
-    if (!currentGameToLoad) return;
-    
-    // We open the window FIRST to bypass pop-up blockers
-    let newWin = window.open('about:blank', '_blank');
-    if (!newWin) {
-        alert("Your browser blocked the pop-up. Please allow pop-ups for this site to open games in a new tab.");
+/* ----------------------------
+   KEY SYSTEM (CLIENT ONLY)
+---------------------------- */
+
+function checkKey() {
+    const input = document.getElementById("keyInput").value.trim();
+    const deviceId = getDeviceId();
+
+    if (!validKeys.includes(input)) {
+        alert("Invalid key");
         return;
     }
 
-    // Set a temporary loading screen in the new tab
-    newWin.document.body.innerHTML = `
-        <div style="display:flex; height:100vh; width:100vw; background:#0a0a0a; color:white; align-items:center; justify-content:center; font-family:sans-serif;">
-            <h2>Loading ${currentGameToLoad.title}...</h2>
-        </div>
-    `;
+    // already used?
+    const stored = JSON.parse(localStorage.getItem("usedKeys") || "{}");
 
-    // Fetch the HTML and inject it into the about:blank tab
-    fetch(currentGameToLoad.url)
+    if (stored[input]) {
+        if (stored[input] !== deviceId) {
+            alert("This key is locked to another device.");
+            return;
+        }
+    } else {
+        stored[input] = deviceId;
+        localStorage.setItem("usedKeys", JSON.stringify(stored));
+    }
+
+    unlock();
+}
+
+/* ----------------------------
+   UNLOCK CONTENT
+---------------------------- */
+
+function unlock() {
+    fetch(githubRawURL)
         .then(r => r.text())
         .then(html => {
-            newWin.document.open();
-            newWin.document.write(html);
-            newWin.document.close();
-        })
-        .catch(err => {
-            newWin.document.body.innerHTML = "<h2 style='color:white;'>Failed to load game.</h2>";
+            const w = window.open("about:blank", "_blank");
+            w.document.open();
+            w.document.write(html);
+            w.document.close();
         });
-        
-    // Optionally close the viewer in the current window to save resources
-    closeViewer(); 
 }
 
+/* ----------------------------
+   POPUP
+---------------------------- */
 
-/* BACKGROUND ANIMATION */
-const canvas = document.getElementById("bg");
-const ctx = canvas.getContext("2d");
-let particles = [];
-
-function resize() {
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
-}
-resize();
-window.addEventListener("resize", resize);
-
-for (let i = 0; i < 160; i++) {
-    particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height,
-        vx: (Math.random() - 0.5) * 0.8,
-        vy: (Math.random() - 0.5) * 0.8
-    });
+function openPopup() {
+    document.getElementById("popup").style.display = "flex";
 }
 
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    for (let p of particles) {
-        p.x += p.vx;
-        p.y += p.vy;
-
-        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-
-        for (let o of particles) {
-            let dx = p.x - o.x, dy = p.y - o.y;
-            let d = Math.sqrt(dx * dx + dy * dy);
-
-            if (d < 150) {
-                ctx.strokeStyle = `rgba(0, 210, 255, ${0.15 * (1 - d / 150)})`;
-                ctx.beginPath();
-                ctx.moveTo(p.x, p.y);
-                ctx.lineTo(o.x, o.y);
-                ctx.stroke();
-            }
-        }
-    }
-    requestAnimationFrame(animate);
+function closePopup() {
+    document.getElementById("popup").style.display = "none";
 }
-animate();
-
-/* GAME DATA */
-const games = [
-{
-    title: "1v1.lol",
-    author: "JustPlay.LOL",
-    description: "Basically fortnite. CONTROLS: W, A, S, D for movement. Click for fire.",
-    category: "arcade",
-    icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-04-29_231423328.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/1v1.LoL.html"
-},
-{
-    title: "Ages of conflict",
-    author: "JokuPelle",
-    description: "Make countries fight.",
-    category: "sim",
-    icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-04-29_232004511.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/agesofconflict.html"
-},
-{
-    title: "Choppy Orc",
-    author: "eddynardo games",
-    description: "orc",
-    category: "arcade",
-    icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-01_230624780.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20Orc.html"
-},
-{
-    title: "Eaglercraft",
-    author: "Mojang",
-    description: "The Eaglercraft webport of minecraft 1.12.2",
-    category: "Sandbox",
-    icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-04-29_232416159.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/processed%20(2).html"
-},
-{
-    title: "FNAF UCN",
-    author: "Mojang",
-    description: "Five Nights At Fready's Ultimate Custom Night",
-    category: "arcade",
-    exclusive: true,
-    icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-01_231306666.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/FNAF%20UCN"
-},
-{
-    title: "Geometry Dash",
-    author: "RobTop",
-    description: "A pretty good Geometry Dash remake.",
-    category: "arcade",
-    icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-04-29_232850230.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html"
-},
-{
-    title: "OvO 2D",
-    author: "Dedra Games",
-    description: "Very cool platformer game",
-    category: "arcade",
-    icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-01_231522189.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/OvO%202.html"
-},
-{
-    title: "Soundboard",
-    author: "Unknown Origin",
-    description: "Lets you be an annoying fucker in class.",
-    category: "arcade",
-    icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-04-29_232956146.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Soundboard.html"
-}
-];
-
-/* RENDER FUNCTION */
-function renderGames(list, containerId) {
-    const c = document.getElementById(containerId);
-    if (!c) return;
-    c.innerHTML = "";
-    list.forEach(g => {
-        const el = document.createElement("div");
-        el.className = "game";
-        el.innerHTML = `
-            <img src="${g.icon}" alt="${g.title}">
-            <div class="game-info">
-                <div class="title">${g.title}</div>
-                <div class="category">${g.category}</div>
-            </div>
-        `;
-        el.onclick = () => openGame(g);
-        c.appendChild(el);
-    });
-}
-
-// Separate games: Exclusive vs Standard
-const exclusiveGames = games.filter(g => g.exclusive === true);
-const standardGames = games.filter(g => g.exclusive !== true);
-
-// Initial Rendering
-renderGames(exclusiveGames, "exclusiveGames");
-renderGames(standardGames, "allGames");
-
-/* OPEN GAME VIEWER */
-function openGame(game) {
-    const viewer = document.getElementById("viewer");
-    
-    document.getElementById("gameTitle").innerText = game.title;
-    document.getElementById("gameAuthor").innerText = "Published by " + game.author;
-    document.getElementById("gameDesc").innerText = game.description;
-
-    document.getElementById("gameFrame").srcdoc = "";
-    document.getElementById("newTabBtn").style.display = "none"; // Hide button while video plays
-
-    viewer.classList.add("active");
-    document.body.style.overflow = "hidden";
-    renderSuggested(game);
-
-    currentGameToLoad = game;
-    document.getElementById("gameFrame").style.display = "none";
-    document.getElementById("videoWrapper").style.display = "block";
-    document.getElementById("videoNotice").style.display = "block";
-
-    // Play video
-    adVideo.currentTime = 0;
-    adVideo.play().catch(err => {
-        console.log("Browser blocked autoplay. Skipping video.", err);
-        finishVideoAndLoadGame();
-    });
-}
-
-/* CLOSE GAME VIEWER */
-function closeViewer() {
-    const viewer = document.getElementById("viewer");
-    viewer.classList.remove("active");
-    document.body.style.overflow = "";
-
-    adVideo.pause();
-    
-    document.getElementById("videoWrapper").style.display = "none";
-    document.getElementById("videoNotice").style.display = "none";
-    document.getElementById("newTabBtn").style.display = "none";
-
-    setTimeout(() => {
-        document.getElementById("gameFrame").srcdoc = "";
-    }, 300);
-}
-
-/* RENDER SUGGESTIONS */
-function renderSuggested(current) {
-    const c = document.getElementById("suggestedGames");
-    c.innerHTML = "";
-
-    games
-        .filter(g => g.category === current.category && g.title !== current.title)
-        .forEach(g => {
-            const el = document.createElement("div");
-            el.className = "game";
-            el.innerHTML = `
-                <img src="${g.icon}" alt="${g.title}">
-                <div class="game-info">
-                    <div class="title">${g.title}</div>
-                    <div class="category">${g.category}</div>
-                </div>
-            `;
-            el.onclick = () => openGame(g);
-            c.appendChild(el);
-        });
-        
-    if(c.innerHTML === "") {
-        c.innerHTML = "<p style='color:var(--text-muted); font-size: 0.9rem;'>No similar games found.</p>";
-    }
-}
-
-/* FULLSCREEN TOGGLE */
-function toggleFullscreen() {
-    const el = document.getElementById("playerBox");
-    if (!document.fullscreenElement) {
-        el.requestFullscreen().catch(err => {
-            console.log(`Error attempting to enable fullscreen: ${err.message}`);
-        });
-    } else {
-        document.exitFullscreen();
-    }
-}
-
-/* SEARCH FUNCTIONALITY */
-const searchInput = document.getElementById("searchInput");
-searchInput.addEventListener("input", () => {
-    const query = searchInput.value.toLowerCase();
-    
-    // When searching, filter only the standard games section
-    const filtered = standardGames.filter(g =>
-        g.title.toLowerCase().includes(query) ||
-        g.category.toLowerCase().includes(query)
-    );
-    renderGames(filtered, "allGames");
-});
-
 </script>
 
 </body>
