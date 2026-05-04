@@ -1,4 +1,4 @@
-# These are all for jOS.
+# These are all for classlink.dev.
 
 It works by having code in htmlplayground. That scraps the code in index.html. And in there the apps do the exact same thing. For example, DriveMad. It scraps the code from "Drivemading.html" And for eaglercraft it scrapes the loader.html in the eaglercraft folder.
 
