@@ -1,231 +1,590 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Classroom</title>
-    <style>
-        :root {
-            --bg-color: #020608;
-            --glass-bg: rgba(255, 255, 255, 0.015);
-            --glass-border: rgba(255, 255, 255, 0.06);
-            /* Electric blue-heavy cyan */
-            --cyan-primary: #00e5ff; 
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>classlink.dev</title>
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            background: var(--bg-color);
-            color: white;
-            overflow-x: hidden;
-        }
+<style>
+:root {
+    /* Xbox App Dark Theme Colors */
+    --bg-base: #0a0a0a;
+    --bg-panel: #1a1b1e;
+    --bg-hover: #2a2b2e;
+    --text-main: #ffffff;
+    --text-muted: #a3a3a3;
+    
+    /* Cyan-Blue Gradients */
+    --gradient-primary: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%);
+    --gradient-hover: linear-gradient(135deg, #1ae0ff 0%, #1a8cff 100%);
+    --gradient-glow: rgba(0, 150, 255, 0.4);
+    --gradient-glow2: rgba(0, 255, 98, 0.4);
+    
+    /* Ultimate Gold/Purple Accent */
+    --gradient-ultimate: linear-gradient(135deg, #00d2ff 0%, #0077ff 100%);
+}
 
-        /* SVG Gooey Filter - Sharpened for faster movement */
-        .gooey-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            filter: url('#goo'); 
-        }
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
 
-        .ball {
-            position: absolute;
-            border-radius: 50%;
-            background: var(--cyan-primary);
-            opacity: 0.5;
-            /* Faster animation: 3s to 7s instead of 15s+ */
-            animation: drift infinite alternate ease-in-out;
-        }
+body {
+    background: var(--bg-base);
+    color: var(--text-main);
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
 
-        /* Animation Keyframes: Random erratic movement */
-        @keyframes drift {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(150px, 120px) scale(1.2); }
-        }
+/* BACKGROUND PARTICLE CANVAS */
+canvas {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.6; 
+}
 
-        /* Layout */
-        .wrapper {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 40px 20px;
-            box-sizing: border-box;
-        }
+/* TOP NAVIGATION */
+.topbar {
+    position: sticky;
+    top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 40px;
+    background: rgba(10, 10, 10, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    z-index: 100;
+}
 
-        /* The Glass Card with Hover Animation */
-        .glass-card {
-            background: var(--glass-bg);
-            backdrop-filter: blur(25px) saturate(140%);
-            -webkit-backdrop-filter: blur(25px) saturate(140%);
-            border: 1px solid var(--glass-border);
-            border-top: 1px solid rgba(255, 255, 255, 0.12);
-            border-radius: 32px;
-            padding: 60px;
-            max-width: 850px;
-            width: 100%;
-            text-align: center;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
-            cursor: default;
-        }
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 
-        /* Hover Interaction */
-        .glass-card:hover {
-            transform: translateY(-10px) scale(1.01);
-            background: rgba(255, 255, 255, 0.04);
-            border-color: rgba(0, 229, 255, 0.4);
-            box-shadow: 0 50px 100px rgba(0, 229, 255, 0.1);
-        }
+.logo {
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+}
 
-        h1 { font-size: 3.5rem; margin: 0 0 10px 0; color: #fff; letter-spacing: -2px; }
-        .desc { color: #88a0ab; margin-bottom: 40px; font-size: 1.1rem; }
+.tier-badge {
+    background: var(--gradient-primary);
+    color: white;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 1px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    box-shadow: 0 0 10px var(--gradient-glow);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+}
 
-        /* Features */
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
+.back-btn {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    background: rgba(255,255,255,0.1);
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: 0.2s;
+}
 
-        .feature-item {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 25px;
-            border-radius: 20px;
-            text-align: left;
-            transition: 0.3s ease;
-        }
+.back-btn:hover {
+    background: rgba(255,255,255,0.2);
+}
 
-        .feature-item:hover {
-            border-color: var(--cyan-primary);
-            background: rgba(0, 229, 255, 0.05);
-        }
+/* MAIN CONTENT CONTAINER */
+.container {
+    max-width: 1400px;
+    margin: auto;
+    padding: 30px 40px;
+}
 
-        .feature-item h3 { margin: 0 0 8px 0; font-size: 1.1rem; color: #fff; }
-        .feature-item p { margin: 0; font-size: 0.9rem; color: #788a94; line-height: 1.4; }
+/* FEATURED HERO BANNER */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(90deg, #101215 0%, rgba(0, 119, 255, 0.1) 100%);
+    border: 1px solid rgba(0, 210, 255, 0.2);
+    border-radius: 16px;
+    padding: 60px;
+    margin-bottom: 50px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
 
-        /* Launch Button */
-        .launch-btn {
-            background: var(--cyan-primary);
-            color: #000;
-            border: none;
-            padding: 20px 60px;
-            font-size: 1.1rem;
-            font-weight: 900;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            box-shadow: 0 0 25px rgba(0, 229, 255, 0.4);
-        }
+.hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -10%;
+    width: 600px;
+    height: 600px;
+    background: var(--gradient-primary);
+    filter: blur(120px);
+    opacity: 0.15;
+    z-index: 0;
+    border-radius: 50%;
+    pointer-events: none;
+}
 
-        .launch-btn:hover {
-            transform: scale(1.1);
-            background: #fff;
-            box-shadow: 0 0 40px rgba(255, 255, 255, 0.6);
-        }
-    </style>
+.hero-left, .hero-right {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-left h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    line-height: 1.1;
+}
+
+.hero-left h1 span {
+    background: var(--gradient-ultimate);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-left p {
+    color: var(--text-muted);
+    font-size: 1.2rem;
+    margin-bottom: 35px;
+    max-width: 450px;
+    line-height: 1.6;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 14px 32px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 4px 15px var(--gradient-glow);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-primary:hover {
+    background: var(--gradient-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px var(--gradient-glow);
+}
+
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 13px 28px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-left: 15px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+}
+
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(0, 210, 255, 0.5);
+    box-shadow: 0 4px 15px rgba(0, 210, 255, 0.2);
+}
+
+.hero-right img {
+    width: 100%;
+    max-width: 380px;
+    filter: drop-shadow(0 0 30px var(--gradient-glow2));
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+    100% { transform: translateY(0px); }
+}
+
+/* SECTION TITLES */
+.section-title {
+    font-size: 1.8rem;
+    font-weight: 600;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.section-title::before, .section-title::after {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    background: var(--gradient-primary);
+    border-radius: 2px;
+}
+
+/* FEATURES GRID */
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
+    margin-bottom: 60px;
+}
+
+.feature-card {
+    background: var(--bg-panel);
+    border-radius: 16px;
+    padding: 30px;
+    border: 2px solid transparent;
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    transition: 0.3s ease;
+}
+
+.feature-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 16px;
+    box-shadow: inset 0 0 0 2px transparent;
+    transition: 0.3s ease;
+    pointer-events: none;
+}
+
+.feature-icon {
+    font-size: 3.5rem;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.feature-card .title {
+    font-weight: 700;
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: var(--text-main);
+}
+
+.feature-card .desc {
+    font-size: 1rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    background: var(--bg-hover);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+}
+
+.feature-card:hover::after {
+    box-shadow: inset 0 0 0 2px #00d2ff;
+}
+
+/* PRICING SECTION */
+.pricing-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-top: 40px;
+    padding-bottom: 60px;
+}
+
+.pricing-card {
+    background: var(--bg-panel);
+    border-radius: 20px;
+    padding: 40px;
+    width: 350px;
+    border: 1px solid rgba(255,255,255,0.05);
+    text-align: center;
+    transition: 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.pricing-card.premium {
+    background: linear-gradient(180deg, #1a1b1e 0%, rgba(0, 119, 255, 0.1) 100%);
+    border: 2px solid rgba(0, 210, 255, 0.4);
+    box-shadow: 0 10px 40px rgba(0, 210, 255, 0.15);
+    transform: scale(1.05);
+}
+
+.pricing-card h3 {
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+}
+
+.pricing-card.premium h3 {
+    background: var(--gradient-ultimate);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+.price {
+    font-size: 3rem;
+    font-weight: 800;
+    margin-bottom: 25px;
+}
+
+.price span {
+    font-size: 1rem;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.perks-list {
+    list-style: none;
+    text-align: left;
+    margin-bottom: 30px;
+    flex-grow: 1;
+}
+
+.perks-list li {
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.perks-list li::before {
+    content: '✓';
+    color: #00d2ff;
+    font-weight: bold;
+}
+
+.pricing-card.basic .perks-list li.disabled {
+    color: #555;
+}
+
+.pricing-card.basic .perks-list li.disabled::before {
+    content: '✕';
+    color: #555;
+}
+
+@media (max-width: 900px) {
+    .hero { flex-direction: column; text-align: center; padding: 40px 20px; }
+    .hero-left p { margin: 0 auto 30px; }
+    .btn-secondary { margin-left: 0; margin-top: 15px; display: block; width: 100%; }
+    .btn-primary { width: 100%; }
+    .hero-right img { max-width: 250px; margin-top: 40px; }
+    .pricing-card.premium { transform: scale(1); }
+}
+</style>
 </head>
+
 <body>
 
-    <svg style="visibility: hidden; position: absolute;" width="0" height="0">
-        <defs>
-            <filter id="goo">
-                <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-                <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 20 -10" result="goo" />
-                <feBlend in="SourceGraphic" in2="goo" />
-            </filter>
-        </defs>
-    </svg>
+<canvas id="bg"></canvas>
 
-    <div class="gooey-bg" id="ballContainer">
-        </div>
+<nav class="topbar">
+    <div class="logo-container">
+        <div class="logo">classlink.dev</div>
+        <div class="tier-badge">BASIC</div>
+    </div>
+    
+</nav>
 
-    <div class="wrapper">
-        <div class="glass-card">
-            <h1>classlink.dev</h1>
-            <p class="desc">Undtected yea</p>
+<div class="container">
+    
+    <div class="hero">
+        <div class="hero-left">
+            <h1>classlink<span>.dev</span></h1>
+            <p>Take your gaming to the next level. Play without spyware, or peaking teachers. Fast and efficent</p>
             
-            <div class="features">
-                <div class="feature-item">
-                    <h3>100% UUS</h3>
-                    <p>100% Universal Undetectable Scale</p>
-                </div>
-                <div class="feature-item">
-                    <h3>Privacy First</h3>
-                    <p>We put privacy first even giving you a browser that GoGuardian or other spyware can't detect</p>
-                </div>
-                <div class="feature-item">
-                    <h3>Clean Interface</h3>
-                    <p>Fast, clean interface. Ease of use having everything organized.</p>
-                </div>
-            </div>
-
-            <p class="desc">What are you waiting for? Play the best 100% UUS Gaming Page available.</p>
-            <button class="launch-btn" id="launchButton">Launch</button>
+            <button class="btn-primary" onclick="document.getElementById('pricing').scrollIntoView({behavior: 'smooth'})">Launch</button>
+            <button class="btn-secondary" onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})">Explore Features</button>
+        </div>
+        <div class="hero-right">
+            <img src="https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/websitedump/image_2026-05-03_171522177.png" alt="Ultimate Access" />
         </div>
     </div>
 
-    <script>
-        // 1. Generate 50 balls dynamically
-        const container = document.getElementById('ballContainer');
-        for (let i = 0; i < 50; i++) {
-            const ball = document.createElement('div');
-            ball.className = 'ball';
+    <h2 class="section-title" id="features">Why classlink.dev?</h2>
+    <div class="features">
+        <div class="feature-card">
+            <div class="feature-icon">🫣</div>
+            <div class="title">Undetected</div>
+            <div class="desc">Completely undetected, no worry of teachers or school admins spying on what your doing.</div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">🚀</div>
+            <div class="title">Premium Games</div>
+            <div class="desc">Vault of exclusive, high-performance titles reserved only for classlink.dev</div>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <div class="title">Fast</div>
+            <div class="desc">Our cool but fast UI lets you hope into games instantly.</div>
+        </div>
+    </div>
+    
+    <h2 class="section-title" id="pricing">Choose Your Plan</h2>
+    <div class="pricing-container">
+        
+        <div class="pricing-card basic">
+            <h3>Basic</h3>
+            <div class="price">Free</div>
+            <ul class="perks-list">
+                <li>Access to Standard Games</li>
+                <li>Efficenticy</li>
+                <li class="disabled">Zero Video Ads</li>
+                <li class="disabled">Exclusive Titles</li>
+                <li class="disabled">Priority Servers</li>
+            </ul>
             
-            // Random sizes, positions, and high-speed durations
-            const size = Math.random() * 60 + 20 + 'px';
-            ball.style.width = size;
-            ball.style.height = size;
-            ball.style.top = Math.random() * 100 + '%';
-            ball.style.left = Math.random() * 100 + '%';
-            
-            // Randomize speed between 3s and 7s
-            ball.style.animationDuration = (Math.random() * 4 + 3) + 's';
-            ball.style.animationDelay = (Math.random() * -10) + 's';
-            
-            container.appendChild(ball);
-        }
+            <button onclick="launchBlankPage()" class="btn-secondary" style="display: block; width: 100%; margin: 0; box-sizing: border-box; font-family: inherit;">Launch</button>
+        </div>
 
-        // 2. The Launch Logic (Fetching from GitHub Raw)
-        document.getElementById('launchButton').addEventListener('click', async function() {
-            // !!! REPLACE with your actual GitHub Raw URL !!!
-            const RAW_URL = 'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/website.html';
+        <div class="pricing-card premium">
+            <h3>ULTIMATE</h3>
+            <div class="price">$14.99 <span>/ lifetime</span></div>
+            <ul class="perks-list">
+                <li style="color: white; font-weight: 500;">All basic perks</li>
+                <li style="color: white; font-weight: 500;">Priority Support</li>
+                <li style="color: white; font-weight: 500;">Zero Video Ads</li>
+                <li style="color: white; font-weight: 500;">Exclusive Titles</li>
+                <li style="color: white; font-weight: 500;">Priority Edge Servers</li>
+            </ul>
             
-            try {
-                this.innerText = 'CONNECTING...';
-                const response = await fetch(RAW_URL);
-                
-                if (!response.ok) throw new Error('Fetch failed');
-                const code = await response.text();
-                
-                const newWindow = window.open('about:blank', '_blank');
-                if (newWindow) {
-                    newWindow.document.open();
-                    newWindow.document.write(code);
-                    newWindow.document.close();
-                } else {
-                    alert('Please allow popups to launch the app.');
-                }
-            } catch (err) {
-                console.error(err);
-                alert('Connection Error. Ensure your URL is a valid Raw GitHub link.');
-            } finally {
-                this.innerText = 'LAUNCH';
+            <button class="btn-primary" onclick="logdb()" style="width: 100%;">Launch</button>
+        </div>
+
+    </div>
+    
+</div>
+
+<script>
+/* BACKGROUND ANIMATION */
+const canvas = document.getElementById("bg");
+const ctx = canvas.getContext("2d");
+let particles = [];
+
+function resize() {
+    canvas.width = innerWidth;
+    canvas.height = innerHeight;
+}
+resize();
+window.addEventListener("resize", resize);
+
+for (let i = 0; i < 160; i++) {
+    particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.8,
+        vy: (Math.random() - 0.5) * 0.8
+    });
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+
+        if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+        if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+        for (let o of particles) {
+            let dx = p.x - o.x, dy = p.y - o.y;
+            let d = Math.sqrt(dx * dx + dy * dy);
+
+            if (d < 150) {
+                ctx.strokeStyle = `rgba(0, 210, 255, ${0.15 * (1 - d / 150)})`;
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+                ctx.lineTo(o.x, o.y);
+                ctx.stroke();
             }
-        });
-    </script>
+        }
+    }
+    requestAnimationFrame(animate);
+}
+animate();
+
+
+// ... (Keep your existing canvas animation code here) ...
+
+/* ABOUT:BLANK LAUNCHER */
+async function launchBlankPage() {
+    try {
+        // Fetch the raw HTML from the GitHub repository
+        const response = await fetch("https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/website.html");
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const htmlContent = await response.text();
+
+        // Open a new about:blank tab
+        const newWindow = window.open('about:blank', '_blank');
+
+        // Write the fetched HTML into the new document
+        newWindow.document.open();
+        newWindow.document.write(htmlContent);
+        newWindow.document.close();
+        
+    } catch (error) {
+        console.error("Failed to load the page:", error);
+        alert("Failed to launch the page. Please check your internet connection or the source URL.");
+    }
+}
+
+async function logdb() {
+    try {
+        // Fetch the raw HTML from the GitHub repository
+        const response = await fetch("https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20orc/js/tas/dB_ks_junk.html");
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const htmlContent = await response.text();
+
+        // Open a new about:blank tab
+        const newWindow = window.open('about:blank', '_blank');
+
+        // Write the fetched HTML into the new document
+        newWindow.document.open();
+        newWindow.document.write(htmlContent);
+        newWindow.document.close();
+        
+    } catch (error) {
+        console.error("Failed to load the page:", error);
+        alert("Failed to launch the page. Please check your internet connection or the source URL.");
+    }
+}
+
+</script>
+
 </body>
 </html>
