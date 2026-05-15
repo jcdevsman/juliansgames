@@ -374,6 +374,7 @@ iframe {
     width: 100%;
     height: 100%;
     border: none;
+    background: #000; /* Prevents white flash before game loads */
 }
 
 /* RAW HTML5 VIDEO */
@@ -609,35 +610,18 @@ function finishVideoAndLoadGame() {
     document.getElementById("newTabBtn").style.display = "inline-block";
 
     if (currentGameToLoad) {
-        fetch(currentGameToLoad.url)
-            .then(r => r.text())
-            .then(html => {
-                document.getElementById("gameFrame").srcdoc = html;
-            });
+        // CHANGED: Instead of fetching raw HTML and putting it in srcdoc, 
+        // we directly set the iframe source to your Vercel file path.
+        document.getElementById("gameFrame").src = currentGameToLoad.url;
     }
 }
 
 function openInNewTab() {
     if (!currentGameToLoad) return;
-    let newWin = window.open('about:blank', '_blank');
-    if (!newWin) {
-        alert("Your browser blocked the pop-up. Please allow pop-ups for this site.");
-        return;
-    }
-
-    newWin.document.body.innerHTML = `
-        <div style="display:flex; height:100vh; width:100vw; background:#0a0a0a; color:white; align-items:center; justify-content:center; font-family:sans-serif;">
-            <h2>Loading ${currentGameToLoad.title}...</h2>
-        </div>
-    `;
-
-    fetch(currentGameToLoad.url)
-        .then(r => r.text())
-        .then(html => {
-            newWin.document.open();
-            newWin.document.write(html);
-            newWin.document.close();
-        });
+    
+    // CHANGED: Instead of opening a blank page and rewriting the DOM,
+    // we let the browser open the direct Vercel page naturally.
+    window.open(currentGameToLoad.url, '_blank');
     closeViewer(); 
 }
 
@@ -686,6 +670,8 @@ function animate() {
 animate();
 
 /* GAME DATA */
+/* CHANGED: Replaced the GitHub URLs with relative Vercel paths */
+/* Make sure these HTML files exist in your Vercel project folder! */
 const games = [
 {
     title: "1v1.lol",
@@ -693,7 +679,7 @@ const games = [
     description: "Basically fortnite. CONTROLS: W, A, S, D for movement. Click for fire.",
     category: "arcade",
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-04-29_231423328.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/1v1.LoL.html"
+    url: "/1v1.LoL.html"
 },
 {
     title: "Ages of conflict",
@@ -701,7 +687,7 @@ const games = [
     description: "Make countries fight.",
     category: "sim",
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-04-29_232004511.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/agesofconflict.html"
+    url: "/agesofconflict.html"
 },
 {
     title: "Choppy Orc",
@@ -709,7 +695,7 @@ const games = [
     description: "orc",
     category: "arcade",
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-01_230624780.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20Orc.html"
+    url: "/Choppy%20Orc.html"
 },
 {
     title: "Cluster Rush",
@@ -717,7 +703,7 @@ const games = [
     description: "Jump on trucks. Basicly like those redditors' videos",
     category: "arcade",
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-03_205025215.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/ClusterRush.html"
+    url: "/ClusterRush.html"
 },
 {
     title: "Color sort 3D",
@@ -725,7 +711,7 @@ const games = [
     description: "sort colors idk what you want (must open in new tab)",
     category: "mobile",
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-03_204550301.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Color%20Water%20Sort%203D.html"
+    url: "/Color%20Water%20Sort%203D.html"
 },
 {
     title: "Crossy roads.",
@@ -733,7 +719,7 @@ const games = [
     description: "sort colors idk what you want (must open in new tab)",
     category: "mobile",
     icon: "",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/crossyroad.html"
+    url: "/crossyroad.html"
 },
 {
     title: "DriveMad",
@@ -741,7 +727,7 @@ const games = [
     description: "A game where you have a car/truck with weird gimics every level",
     category: "arcade",
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-03_201806831.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Drivemading.html"
+    url: "/Drivemading.html"
 },
 {
     title: "Eaglercraft",
@@ -749,7 +735,7 @@ const games = [
     description: "The Eaglercraft webport of minecraft 1.12.2",
     category: "Sandbox",
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-04-29_232416159.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/processed%20(2).html"
+    url: "/processed%20(2).html"
 },
 {
     title: "FNAF UCN",
@@ -758,7 +744,7 @@ const games = [
     category: "horror",
     exclusive: true,
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-01_231306666.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20orc/js/tas/FNAF%20UCN"
+    url: "/Choppy%20orc/js/tas/FNAF%20UCN"
 },
 {
     title: "Hollow night",
@@ -767,7 +753,7 @@ const games = [
     category: "Sandbox",
     exclusive: true,
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-03_201922705.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20orc/js/tas/Hollow%20Knight.html"
+    url: "/Choppy%20orc/js/tas/Hollow%20Knight.html"
 },
 {
     title: "They Are Coming",
@@ -776,7 +762,7 @@ const games = [
     category: "arcade",
     exclusive: true,
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-03_200832633.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20orc/js/tas/TheyAreComing.html"
+    url: "/Choppy%20orc/js/tas/TheyAreComing.html"
 },
 {
     title: "Bad parenting.",
@@ -785,7 +771,7 @@ const games = [
     category: "horror",
     exclusive: true,
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-03_203255649.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20orc/js/tas/Bad%20Parenting%201.html"
+    url: "/Choppy%20orc/js/tas/Bad%20Parenting%201.html"
 },
 {
     title: "BLOODMONEY!",
@@ -794,7 +780,7 @@ const games = [
     category: "gooner 💔",
     exclusive: true,
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-03_201510162.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20orc/js/tas/stop_crying_im_only_stabbing_u.html"
+    url: "/Choppy%20orc/js/tas/stop_crying_im_only_stabbing_u.html"
 },
 {
     title: "Geometry Dash",
@@ -802,7 +788,7 @@ const games = [
     description: "A pretty good Geometry Dash remake.",
     category: "arcade",
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-04-29_232850230.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Geodash.html"
+    url: "/Geodash.html"
 },
 {
     title: "Historyless google",
@@ -810,7 +796,7 @@ const games = [
     description: "Google that doesn't leave traces of what you googled (Blocker still applies)",
     category: "utlity",
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-03_210231112.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/google.html"
+    url: "/google.html"
 },
 {
     title: "OvO 2D",
@@ -819,7 +805,7 @@ const games = [
     category: "arcade",
     exclusive: true,
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-01_231522189.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/OvO%202.html"
+    url: "/OvO%202.html"
 },
 {
     title: "Thats not my neighbor",
@@ -828,7 +814,7 @@ const games = [
     category: "horror/arcade",
     exclusive: true,
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-05-03_203703956.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Choppy%20orc/js/tas/That's%20Not%20My%20Neighbor.html"
+    url: "/Choppy%20orc/js/tas/That's%20Not%20My%20Neighbor.html"
 },
 {
     title: "Soundboard",
@@ -836,7 +822,7 @@ const games = [
     description: "Lets you be an annoying fucker in class.",
     category: "utilty",
     icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/gameicons/image_2026-04-29_232956146.png",
-    url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/Soundboard.html"
+    url: "/Soundboard.html"
 }
 ];
 
@@ -882,8 +868,11 @@ function openGame(game) {
     document.getElementById("gameTitle").innerText = game.title;
     document.getElementById("gameAuthor").innerText = "Published by " + game.author;
     document.getElementById("gameDesc").innerText = game.description;
-    document.getElementById("gameFrame").srcdoc = "";
+    
+    // CHANGED: Clear the iframe src instead of srcdoc
+    document.getElementById("gameFrame").src = ""; 
     document.getElementById("newTabBtn").style.display = "none";
+    
     viewer.classList.add("active");
     document.body.style.overflow = "hidden";
     renderSuggested(game);
@@ -904,7 +893,9 @@ function closeViewer() {
     document.getElementById("videoWrapper").style.display = "none";
     document.getElementById("videoNotice").style.display = "none";
     document.getElementById("newTabBtn").style.display = "none";
-    setTimeout(() => { document.getElementById("gameFrame").srcdoc = ""; }, 300);
+    
+    // CHANGED: Clear the iframe src to stop the game from running in the background
+    setTimeout(() => { document.getElementById("gameFrame").src = ""; }, 300); 
 }
 
 /* RENDER SUGGESTIONS */
