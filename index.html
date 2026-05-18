@@ -1,26 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Loading...</title>
-<style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  html, body { height: 100%; width: 100%; overflow: hidden; background: #0a0a0a; }
-  iframe { position: fixed; inset: 0; width: 100%; height: 100%; border: none; }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Launcher</title>
+    <style>
+        /* Base Dark Theme */
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #0d0d12; /* Very dark background */
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Animated Gradient Title */
+        .animated-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            
+            /* Gradient Setup */
+            background: linear-gradient(
+                270deg, 
+                #ff007f, #7928ca, #00d4ff, #7928ca, #ff007f
+            );
+            background-size: 400% 400%;
+            
+            /* Clip background to text */
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: transparent; /* Fallback */
+            
+            /* Animation */
+            animation: gradient-shift 8s ease infinite;
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Sleek Button */
+        .launch-btn {
+            background-color: #1a1a24;
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            outline: none;
+        }
+
+        .launch-btn:hover {
+            background-color: #2a2a3a;
+            border-color: #00d4ff;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .launch-btn:active {
+            transform: translateY(1px);
+            box-shadow: 0 2px 10px rgba(0, 212, 255, 0.2);
+        }
+
+        /* Status Text */
+        #status-message {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: #888;
+            min-height: 20px;
+        }
+    </style>
 </head>
 <body>
-<iframe id="frame" sandbox="allow-scripts allow-forms allow-modals allow-popups allow-same-origin"></iframe>
-<script>
-  (async () => {
-    const url = "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/public/index.html";
-    const res = await fetch(url);
-    const code = await res.text();
-    document.getElementById("frame").srcdoc = code;
-    document.title = "Julian's Games";
-  })();
-</script>
+
+    <div class="animated-title">Project Orbit</div>
+    
+    <button class="launch-btn" onclick="launchCode()">Launch Payload</button>
+    
+    <div id="status-message"></div>
+
+    <script>
+        // Replace this with your actual raw GitHub URL
+        // Example: https://raw.githubusercontent.com/username/repo/main/index.html
+        const TARGET_URL = 'YOUR_RAW_GITHUB_URL_HERE';
+
+        async function launchCode() {
+            const statusDiv = document.getElementById('status-message');
+            
+            if (TARGET_URL === 'YOUR_RAW_GITHUB_URL_HERE') {
+                statusDiv.style.color = '#ff4444';
+                statusDiv.innerText = "Error: Please update the TARGET_URL in the script.";
+                return;
+            }
+
+            statusDiv.style.color = '#888';
+            statusDiv.innerText = "Fetching code...";
+
+            try {
+                // Fetch the code from the raw GitHub URL
+                const response = await fetch(TARGET_URL);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const code = await response.text();
+                statusDiv.innerText = "Injecting into new tab...";
+
+                // Open a new about:blank window
+                const newWindow = window.open('about:blank', '_blank');
+                
+                if (newWindow) {
+                    // Write the fetched code into the new window
+                    newWindow.document.open();
+                    newWindow.document.write(code);
+                    newWindow.document.close();
+                    statusDiv.innerText = "Launch successful.";
+                } else {
+                    // Handle pop-up blocker
+                    statusDiv.style.color = '#ff4444';
+                    statusDiv.innerText = "Error: Pop-up blocked. Please allow pop-ups for this site.";
+                }
+
+            } catch (error) {
+                console.error("Launch failed:", error);
+                statusDiv.style.color = '#ff4444';
+                statusDiv.innerText = "Error fetching code. Check console for details.";
+            }
+        }
+    </script>
+
 </body>
 </html>
-e
