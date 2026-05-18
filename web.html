@@ -1,1 +1,794 @@
-fah
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Opera One Replica - Glassmorphism & Game Engine</title>
+    <style>
+        :root {
+            --bg-main: #161722;
+            --bg-island: #212233;
+            --bg-tab-active: #232538;
+            --bg-address: #1c1e2d;
+            --bg-context: #1f202e;
+            --text-main: #ffffff;
+            --text-muted: #83879a;
+            --accent-purple: #8c52ff;
+            --accent-blue: #3b82f6;
+            --border-radius-pill: 30px;
+            --border-radius-island: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            padding: 16px;
+            gap: 12px;
+            position: relative;
+            z-index: 0;
+        }
+
+        /* --- INTERACTIVE FLUID AURORA BACKGROUND --- */
+        .aurora-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .blob-wrapper {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .aurora-blob {
+            position: absolute;
+            filter: blur(90px);
+            opacity: 0.6;
+            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+            animation: morphAndSpin 15s linear infinite;
+        }
+
+        .blob-purple {
+            background: var(--accent-purple);
+            width: 650px;
+            height: 650px;
+            top: -150px;
+            left: -100px;
+        }
+
+        .blob-blue {
+            background: var(--accent-blue);
+            width: 550px;
+            height: 550px;
+            top: 20%;
+            left: 20%;
+            animation-duration: 22s;
+            animation-direction: reverse;
+        }
+
+        @keyframes morphAndSpin {
+            0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg) scale(1); }
+            50% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; transform: rotate(180deg) scale(1.1); }
+            100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(360deg) scale(1); }
+        }
+
+        /* --- FLOATING SIDEBAR --- */
+        .sidebar {
+            width: 88px;
+            background-color: rgba(33, 34, 51, 0.75); 
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: var(--border-radius-island);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 0;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+        }
+
+        .sidebar-top, .sidebar-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .sidebar-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            overflow: hidden;
+        }
+
+        .sidebar-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .sidebar-icon.opera-logo {
+            background-color: #ff1b2d;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        /* --- MAIN CONTAINER --- */
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            position: relative;
+        }
+
+        /* --- BROWSER ISLAND (NAV CONTAINER) --- */
+        .browser-island {
+            background-color: rgba(33, 34, 51, 0.75); 
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: var(--border-radius-island);
+            padding: 10px 16px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- TAB STRIP --- */
+        .tab-strip {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            height: 36px;
+        }
+
+        .tab-island {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            padding: 2px;
+            display: flex;
+            gap: 4px;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            height: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scrollbar-width: none;
+        }
+        
+        .tab-island::-webkit-scrollbar { display: none; }
+
+        .tab {
+            height: 100%;
+            padding: 0 14px 0 18px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.15s ease-in-out;
+            max-width: 140px;
+            min-width: 80px;
+            white-space: nowrap;
+        }
+
+        .tab span:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tab:hover {
+            background-color: rgba(255, 255, 255, 0.06);
+            color: var(--text-main);
+        }
+
+        .tab.active {
+            background-color: var(--bg-tab-active);
+            color: var(--text-main);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+
+        .tab-close {
+            font-size: 14px;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s, background-color 0.2s;
+            margin-left: auto;
+        }
+
+        .tab:hover .tab-close, .tab.active .tab-close { opacity: 0.5; }
+        .tab .tab-close:hover { opacity: 1; background-color: rgba(255, 255, 255, 0.1); }
+
+        .add-tab-btn {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.01);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+
+        .add-tab-btn:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* --- CUSTOM CONTEXT MENU --- */
+        .tab-context-menu {
+            position: fixed;
+            background-color: var(--bg-context);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 12px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 320px;
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+        }
+
+        .context-nav-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            padding-bottom: 10px;
+        }
+
+        .context-nav-btn {
+            flex: 1;
+            height: 28px;
+            border-radius: 6px;
+            background-color: rgba(255, 255, 255, 0.03);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: var(--text-muted);
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .context-nav-btn:hover { background-color: rgba(255, 255, 255, 0.08); color: var(--text-main); }
+
+        .context-address-container {
+            background-color: var(--bg-address);
+            border-radius: 8px;
+            height: 34px;
+            display: flex;
+            align-items: center;
+            padding: 0 12px;
+            gap: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .context-address-container:focus-within { border-color: var(--accent-purple); }
+
+        .context-address-input {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            width: 100%;
+            font-size: 12px;
+            outline: none;
+        }
+
+        /* --- WEB CONTENT AREA --- */
+        .web-content {
+            flex: 1;
+            /* Added glassmorphism directly to the main container so internal pages blur naturally */
+            background-color: rgba(26, 27, 38, 0.65);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: var(--border-radius-island);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+            z-index: 5;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .internal-container {
+            width: 100%;
+            height: 100%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            /* Fills the blurred space */
+        }
+
+        .internal-container.active {
+            display: flex;
+        }
+
+        .iframe-container {
+            width: 100%;
+            height: 100%;
+            display: none;
+        }
+        
+        .iframe-container.active { display: block; }
+
+        .scaled-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            /* The solid white here will seamlessly cover the blurred container behind it */
+            background-color: #ffffff;
+            display: block;
+        }
+
+        /* Startpage Specifics */
+        .start-page {
+            text-align: center;
+            max-width: 580px;
+            width: 100%;
+        }
+
+        .search-island {
+            background-color: var(--bg-island);
+            padding: 14px 28px;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 16px 40px rgba(0,0,0,0.3);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .search-input { background: none; border: none; outline: none; color: white; font-size: 14px; width: 100%; }
+
+        .speed-dial-grid {
+            display: flex;
+            gap: 48px;
+            margin-top: 90px;
+            justify-content: center;
+        }
+
+        .speed-dial-item {
+            width: 76px;
+            height: 76px;
+            background-color: var(--bg-island);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            font-size: 11px;
+            color: var(--text-muted);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .speed-dial-item:hover {
+            transform: translateY(-4px);
+            background-color: var(--bg-tab-active);
+            color: white;
+            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+        }
+
+        .speed-dial-image { width: 24px; height: 24px; border-radius: 6px; object-fit: cover; }
+
+        /* --- Games Page Specifics --- */
+        .games-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            padding: 60px 20px;
+            overflow-y: auto;
+        }
+
+        .games-header {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 40px;
+            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
+        }
+
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 24px;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .game-card {
+            background-color: var(--bg-island);
+            border-radius: 16px;
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+        }
+
+        /* Animated Gradient Border Layer */
+        .game-card::before {
+            content: '';
+            position: absolute;
+            top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(60deg, #ff1b2d, #8c52ff, #3b82f6, #00f2fe, #ff1b2d);
+            background-size: 300% 300%;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        /* Inner Content Box to hollow out the border */
+        .game-card-inner {
+            position: relative;
+            z-index: 1;
+            background-color: var(--bg-island);
+            width: calc(100% - 6px); /* Leaves a 3px border */
+            height: calc(100% - 6px);
+            border-radius: 13px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+        }
+
+        .game-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 32px rgba(0,0,0,0.4);
+        }
+
+        /* Trigger Gradient Animation on Hover */
+        .game-card:hover::before {
+            opacity: 1;
+            animation: gradientSpin 3s ease infinite;
+        }
+
+        .game-icon { font-size: 48px; }
+        .game-title { font-weight: 600; color: white; font-size: 16px; }
+
+        @keyframes gradientSpin {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="aurora-container">
+        <div class="blob-wrapper" id="wrapper1">
+            <div class="aurora-blob blob-purple"></div>
+        </div>
+        <div class="blob-wrapper" id="wrapper2">
+            <div class="aurora-blob blob-blue"></div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-top">
+            <div class="sidebar-icon opera-logo" title="Opera">O</div>
+            <div class="sidebar-icon" title="Aria AI">
+                <img src="https://unsplash.com" alt="Aria AI">
+            </div>
+            <div class="sidebar-icon" title="Messenger">
+                <img src="https://unsplash.com" alt="Messenger">
+            </div>
+            <div class="sidebar-icon" title="WhatsApp">
+                <img src="https://unsplash.com" alt="WhatsApp">
+            </div>
+            <div class="sidebar-icon" title="Instagram">
+                <img src="https://unsplash.com" alt="Instagram">
+            </div>
+        </div>
+        <div class="sidebar-bottom">
+            <div class="sidebar-icon" title="History">
+                <img src="https://unsplash.com" alt="History">
+            </div>
+            <div class="sidebar-icon" title="Settings">
+                <img src="https://unsplash.com" alt="Settings">
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container">
+       
+        <div class="browser-island">
+            <div class="tab-strip">
+                <div class="tab-island" id="tabContainer">
+                    <div class="tab active" data-id="tab1" data-url="Terere://startpage">
+                        <span>New Tab</span>
+                        <span class="tab-close" title="Close tab">&times;</span>
+                    </div>
+                    <div class="tab" data-id="tab2" data-url="Terere://games">
+                        <span>Games</span>
+                        <span class="tab-close" title="Close tab">&times;</span>
+                    </div>
+                    <div class="tab" data-id="tab3" data-url="https://en.wikipedia.org/wiki/Main_Page">
+                        <span>Wikipedia</span>
+                        <span class="tab-close" title="Close tab">&times;</span>
+                    </div>
+                </div>
+                <div class="add-tab-btn" id="addTabBtn" title="Open new tab">+</div>
+            </div>
+        </div>
+
+        <div class="web-content" id="webContentView">
+           
+            <div class="internal-container active" id="panel-startpage">
+                <div class="start-page">
+                    <div class="search-island">
+                        <span>🔍</span>
+                        <input type="text" class="search-input" placeholder="Search the web or type a URL...">
+                    </div>
+
+                    <div class="speed-dial-grid">
+                        <div class="speed-dial-item" onclick="navigateActiveTab('https://en.wikipedia.org/wiki/Main_Page', 'Wikipedia')">
+                            <img class="speed-dial-image" src="https://unsplash.com" alt="Wikipedia">
+                            <span>Wikipedia</span>
+                        </div>
+                        <div class="speed-dial-item" onclick="navigateActiveTab('https://www.google.com/search?igu=1', 'Google')">
+                            <img class="speed-dial-image" src="https://unsplash.com" alt="Google">
+                            <span>Google</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="internal-container" id="panel-games">
+                <div class="games-layout">
+                    <h1 class="games-header">Game Center</h1>
+                    <div class="games-grid">
+                        <div class="game-card" onclick="launchGame('/g/tetris.html', 'Tetris')">
+                            <div class="game-card-inner">
+                                <div class="game-icon">🧱</div>
+                                <div class="game-title">Tetris</div>
+                            </div>
+                        </div>
+                        <div class="game-card" onclick="launchGame('/g/pacman.html', 'Pac-Man')">
+                            <div class="game-card-inner">
+                                <div class="game-icon">👻</div>
+                                <div class="game-title">Pac-Man</div>
+                            </div>
+                        </div>
+                        <div class="game-card" onclick="launchGame('/g/snake.html', 'Snake')">
+                            <div class="game-card-inner">
+                                <div class="game-icon">🐍</div>
+                                <div class="game-title">Snake</div>
+                            </div>
+                        </div>
+                        <div class="game-card" onclick="launchGame('/g/pong.html', 'Pong')">
+                            <div class="game-card-inner">
+                                <div class="game-icon">🏓</div>
+                                <div class="game-title">Pong</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            </div>
+
+    </div>
+
+    <div class="tab-context-menu" id="tabContextMenu">
+        <div class="context-nav-buttons">
+            <div class="context-nav-btn">← Back</div>
+            <div class="context-nav-btn">→ Forward</div>
+            <div class="context-nav-btn">↻ Refresh</div>
+        </div>
+        <div class="context-address-container">
+            <span style="font-size: 12px;">🔒</span>
+            <input type="text" class="context-address-input" id="contextAddressInput">
+        </div>
+    </div>
+
+    <script {nonce}>
+        // --- CORE DYNAMIC TAB ENGINE ---
+        const tabContainer = document.getElementById('tabContainer');
+        const webContentView = document.getElementById('webContentView');
+        const panelStartpage = document.getElementById('panel-startpage');
+        const panelGames = document.getElementById('panel-games');
+        const contextMenu = document.getElementById('tabContextMenu');
+        const contextAddressInput = document.getElementById('contextAddressInput');
+        const addTabBtn = document.getElementById('addTabBtn');
+        
+        let tabCount = 3;
+        let currentActiveTab = document.querySelector('.tab.active');
+
+        // Initialize existing tabs
+        document.querySelectorAll('.tab').forEach(setupTab);
+        if (currentActiveTab) activateTab(currentActiveTab);
+
+        function setupTab(tab) {
+            tab.addEventListener('click', () => {
+                activateTab(tab);
+                contextMenu.style.display = 'none';
+            });
+
+            tab.addEventListener('contextmenu', (e) => {
+                e.preventDefault();
+                activateTab(tab);
+                contextMenu.style.display = 'flex';
+                contextMenu.style.left = `${e.clientX}px`;
+                contextMenu.style.top = `${e.clientY + 10}px`;
+            });
+
+            const closeBtn = tab.querySelector('.tab-close');
+            if (closeBtn) {
+                closeBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    closeTab(tab);
+                    contextMenu.style.display = 'none';
+                });
+            }
+        }
+
+        function closeTab(tabToClose) {
+            const tabId = tabToClose.getAttribute('data-id');
+            const isActive = tabToClose.classList.contains('active');
+            
+            tabToClose.remove();
+
+            const iframePanel = document.getElementById(`iframe-${tabId}`);
+            if (iframePanel) iframePanel.remove();
+
+            if (isActive) {
+                const remainingTabs = document.querySelectorAll('.tab');
+                if (remainingTabs.length > 0) {
+                    activateTab(remainingTabs[remainingTabs.length - 1]);
+                } else {
+                    addTabBtn.click();
+                }
+            }
+        }
+
+        function activateTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            currentActiveTab = tab;
+
+            const url = tab.getAttribute('data-url');
+            const tabId = tab.getAttribute('data-id');
+            contextAddressInput.value = url;
+
+            panelStartpage.classList.remove('active');
+            panelGames.classList.remove('active');
+            document.querySelectorAll('.iframe-container').forEach(c => c.classList.remove('active'));
+
+            if (url === 'Terere://startpage') {
+                panelStartpage.classList.add('active');
+            } else if (url === 'Terere://games') {
+                panelGames.classList.add('active');
+            } else {
+                let iframePanel = document.getElementById(`iframe-${tabId}`);
+                
+                if (!iframePanel) {
+                    iframePanel = document.createElement('div');
+                    iframePanel.className = 'iframe-container';
+                    iframePanel.id = `iframe-${tabId}`;
+                    iframePanel.innerHTML = `<iframe class="scaled-iframe" src="${url}"></iframe>`;
+                    webContentView.appendChild(iframePanel);
+                } else {
+                    const iframe = iframePanel.querySelector('iframe');
+                    if (iframe.src !== url) iframe.src = url;
+                }
+                
+                iframePanel.classList.add('active');
+            }
+        }
+
+        function navigateActiveTab(newUrl, newTitle = "Web Page") {
+            if (!currentActiveTab) return;
+            currentActiveTab.setAttribute('data-url', newUrl);
+            if (newTitle) currentActiveTab.querySelector('span').innerText = newTitle;
+            activateTab(currentActiveTab); 
+            contextMenu.style.display = 'none';
+        }
+
+        // --- NEW: RELATIVE GAME URL RESOLVER ---
+        function launchGame(relativePath, gameTitle) {
+            // Uses the browser's URL API to perfectly resolve the path based on wherever this file is hosted
+            const fullUrl = new URL(relativePath, window.location.href).href;
+            navigateActiveTab(fullUrl, gameTitle);
+        }
+
+        contextAddressInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                const newUrl = contextAddressInput.value.trim();
+                let newTitle = newUrl.substring(0, 15) + "...";
+                if (newUrl === 'Terere://startpage') newTitle = 'New Tab';
+                if (newUrl === 'Terere://games') newTitle = 'Games';
+                navigateActiveTab(newUrl, newTitle);
+            }
+        });
+
+        addTabBtn.addEventListener('click', () => {
+            tabCount++;
+            const newTab = document.createElement('div');
+            newTab.className = 'tab';
+            newTab.setAttribute('data-id', `tab${tabCount}`);
+            newTab.setAttribute('data-url', 'Terere://startpage');
+            newTab.innerHTML = `<span>New Tab</span><span class="tab-close" title="Close tab">&times;</span>`;
+            
+            tabContainer.appendChild(newTab);
+            setupTab(newTab);
+            activateTab(newTab);
+            tabContainer.scrollLeft = tabContainer.scrollWidth;
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!contextMenu.contains(e.target) && !e.target.closest('.tab')) {
+                contextMenu.style.display = 'none';
+            }
+        });
+
+        // --- AURORA JS PARALLAX ENGINE ---
+        const wrapper1 = document.getElementById('wrapper1');
+        const wrapper2 = document.getElementById('wrapper2');
+
+        document.addEventListener('mousemove', (e) => {
+            const x = (e.clientX / window.innerWidth) - 0.5;
+            const y = (e.clientY / window.innerHeight) - 0.5;
+            
+            wrapper1.style.transform = `translate(${x * 120}px, ${y * 120}px)`;
+            wrapper2.style.transform = `translate(${x * -80}px, ${y * -80}px)`;
+        });
+    </script>
+</body>
+</html>
