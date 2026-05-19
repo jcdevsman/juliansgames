@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Opera One Replica - Glassmorphism & Game Engine</title>
+    <title>Terere Games</title>
     <style>
         :root {
             --bg-main: #161722;
@@ -296,9 +296,12 @@
             color: var(--text-muted);
             font-size: 13px;
             transition: all 0.2s;
+            user-select: none;
         }
 
         .context-nav-btn:hover { background-color: rgba(255, 255, 255, 0.08); color: var(--text-main); }
+        .context-nav-btn.disabled { opacity: 0.3; cursor: not-allowed; }
+        .context-nav-btn.disabled:hover { background-color: rgba(255, 255, 255, 0.03); color: var(--text-muted); }
 
         .context-address-container {
             background-color: var(--bg-address);
@@ -325,7 +328,6 @@
         /* --- WEB CONTENT AREA --- */
         .web-content {
             flex: 1;
-            /* Added glassmorphism directly to the main container so internal pages blur naturally */
             background-color: rgba(26, 27, 38, 0.65);
             backdrop-filter: blur(24px);
             -webkit-backdrop-filter: blur(24px);
@@ -343,7 +345,6 @@
             display: none;
             align-items: center;
             justify-content: center;
-            /* Fills the blurred space */
         }
 
         .internal-container.active {
@@ -362,7 +363,6 @@
             width: 100%;
             height: 100%;
             border: none;
-            /* The solid white here will seamlessly cover the blurred container behind it */
             background-color: #ffffff;
             display: block;
         }
@@ -574,7 +574,7 @@
                 <div class="start-page">
                     <div class="search-island">
                         <span>🔍</span>
-                        <input type="text" class="search-input" placeholder="Search the web or type a URL...">
+                        <input type="text" class="search-input" id="startpageSearch" placeholder="Search the web or type a URL...">
                     </div>
 
                     <div class="speed-dial-grid">
@@ -622,15 +622,15 @@
                 </div>
             </div>
 
-            </div>
+        </div>
 
     </div>
 
     <div class="tab-context-menu" id="tabContextMenu">
         <div class="context-nav-buttons">
-            <div class="context-nav-btn">← Back</div>
-            <div class="context-nav-btn">→ Forward</div>
-            <div class="context-nav-btn">↻ Refresh</div>
+            <div class="context-nav-btn" id="btnBack">← Back</div>
+            <div class="context-nav-btn" id="btnForward">→ Forward</div>
+            <div class="context-nav-btn" id="btnRefresh">↻ Refresh</div>
         </div>
         <div class="context-address-container">
             <span style="font-size: 12px;">🔒</span>
@@ -638,8 +638,8 @@
         </div>
     </div>
 
-    <script {nonce}>
-        // --- CORE DYNAMIC TAB ENGINE ---
+    <script>
+        // --- CORE BROWSER ENGINE ---
         const tabContainer = document.getElementById('tabContainer');
         const webContentView = document.getElementById('webContentView');
         const panelStartpage = document.getElementById('panel-startpage');
@@ -647,12 +647,37 @@
         const contextMenu = document.getElementById('tabContextMenu');
         const contextAddressInput = document.getElementById('contextAddressInput');
         const addTabBtn = document.getElementById('addTabBtn');
+        const startpageSearch = document.getElementById('startpageSearch');
         
+        // Navigation Button Selectors
+        const btnBack = document.getElementById('btnBack');
+        const btnForward = document.getElementById('btnForward');
+        const btnRefresh = document.getElementById('btnRefresh');
+
         let tabCount = 3;
         let currentActiveTab = document.querySelector('.tab.active');
 
-        // Initialize existing tabs
-        document.querySelectorAll('.tab').forEach(setupTab);
+        // --- SESSION HISTORY DATA OBJECT ---
+        // Keeps independent tracking of back/forward steps per tab context ID
+        const tabHistories = {};
+
+        function initTabHistory(tabId, url, title) {
+            tabHistories[tabId] = {
+                stack: [{ url, title }],
+                index: 0
+            };
+            updateNavButtonVisualStates();
+        }
+
+        // Initialize pre-existing hardcoded markdown tabs
+        document.querySelectorAll('.tab').forEach(tab => {
+            setupTab(tab);
+            const id = tab.getAttribute('data-id');
+            const url = tab.getAttribute('data-url');
+            const title = tab.querySelector('span').innerText;
+            initTabHistory(id, url, title);
+        });
+        
         if (currentActiveTab) activateTab(currentActiveTab);
 
         function setupTab(tab) {
@@ -684,6 +709,7 @@
             const isActive = tabToClose.classList.contains('active');
             
             tabToClose.remove();
+            delete tabHistories[tabId]; // Garbage collection
 
             const iframePanel = document.getElementById(`iframe-${tabId}`);
             if (iframePanel) iframePanel.remove();
@@ -731,43 +757,128 @@
                 
                 iframePanel.classList.add('active');
             }
+            updateNavButtonVisualStates();
         }
 
-        function navigateActiveTab(newUrl, newTitle = "Web Page") {
+        // Updated global navigational master logic to accurately map histories
+        function navigateActiveTab(newUrl, newTitle = "Web Page", isHistoryTraversal = false) {
             if (!currentActiveTab) return;
+            const tabId = currentActiveTab.getAttribute('data-id');
+            const state = tabHistories[tabId];
+
+            if (state && !isHistoryTraversal) {
+                // Wipe out alternative forward timeline states if we decide to navigate organically from standard inputs
+                state.stack = state.stack.slice(0, state.index + 1);
+                state.stack.push({ url: newUrl, title: newTitle });
+                state.index++;
+            }
+
             currentActiveTab.setAttribute('data-url', newUrl);
             if (newTitle) currentActiveTab.querySelector('span').innerText = newTitle;
+            
             activateTab(currentActiveTab); 
             contextMenu.style.display = 'none';
         }
 
-        // --- NEW: RELATIVE GAME URL RESOLVER ---
         function launchGame(relativePath, gameTitle) {
-            // Uses the browser's URL API to perfectly resolve the path based on wherever this file is hosted
             const fullUrl = new URL(relativePath, window.location.href).href;
             navigateActiveTab(fullUrl, gameTitle);
         }
 
-        contextAddressInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
-                const newUrl = contextAddressInput.value.trim();
-                let newTitle = newUrl.substring(0, 15) + "...";
-                if (newUrl === 'Terere://startpage') newTitle = 'New Tab';
-                if (newUrl === 'Terere://games') newTitle = 'Games';
-                navigateActiveTab(newUrl, newTitle);
+        // --- BACK/FORWARD SYSTEM LISTENERS ---
+        function updateNavButtonVisualStates() {
+            if (!currentActiveTab) return;
+            const tabId = currentActiveTab.getAttribute('data-id');
+            const state = tabHistories[tabId];
+
+            if (state) {
+                btnBack.classList.toggle('disabled', state.index <= 0);
+                btnForward.classList.toggle('disabled', state.index >= state.stack.length - 1);
             }
+        }
+
+        btnBack.addEventListener('click', () => {
+            if (!currentActiveTab) return;
+            const tabId = currentActiveTab.getAttribute('data-id');
+            const state = tabHistories[tabId];
+
+            if (state && state.index > 0) {
+                state.index--;
+                const historicalStep = state.stack[state.index];
+                navigateActiveTab(historicalStep.url, historicalStep.title, true);
+            }
+        });
+
+        btnForward.addEventListener('click', () => {
+            if (!currentActiveTab) return;
+            const tabId = currentActiveTab.getAttribute('data-id');
+            const state = tabHistories[tabId];
+
+            if (state && state.index < state.stack.length - 1) {
+                state.index++;
+                const historicalStep = state.stack[state.index];
+                navigateActiveTab(historicalStep.url, historicalStep.title, true);
+            }
+        });
+
+        btnRefresh.addEventListener('click', () => {
+            if (!currentActiveTab) return;
+            const tabId = currentActiveTab.getAttribute('data-id');
+            const url = currentActiveTab.getAttribute('data-url');
+
+            if (url !== 'Terere://startpage' && url !== 'Terere://games') {
+                const iframePanel = document.getElementById(`iframe-${tabId}`);
+                if (iframePanel) {
+                    const iframe = iframePanel.querySelector('iframe');
+                    if (iframe) iframe.src = iframe.src; // Forces hardware cycle trigger update reload
+                }
+            } else {
+                activateTab(currentActiveTab); // Hard reset application templates internally
+            }
+            contextMenu.style.display = 'none';
+        });
+
+        // Search Bar Event Triggers
+        function handleInputNavigation(inputElement) {
+            let targetUrl = inputElement.value.trim();
+            if (!targetUrl) return;
+
+            // Simple URL checking logic pattern
+            if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://') && !targetUrl.startsWith('Terere://')) {
+                if (targetUrl.includes('.') && !targetUrl.includes(' ')) {
+                    targetUrl = 'https://' + targetUrl;
+                } else {
+                    targetUrl = 'https://www.google.com/search?q=' + encodeURIComponent(targetUrl);
+                }
+            }
+            
+            let descriptiveTitle = targetUrl.replace('https://', '').replace('http://', '');
+            if (descriptiveTitle.length > 18) descriptiveTitle = descriptiveTitle.substring(0, 15) + '...';
+            
+            navigateActiveTab(targetUrl, descriptiveTitle);
+            inputElement.value = '';
+        }
+
+        contextAddressInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleInputNavigation(contextAddressInput);
+        });
+
+        startpageSearch.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') handleInputNavigation(startpageSearch);
         });
 
         addTabBtn.addEventListener('click', () => {
             tabCount++;
+            const targetId = `tab${tabCount}`;
             const newTab = document.createElement('div');
             newTab.className = 'tab';
-            newTab.setAttribute('data-id', `tab${tabCount}`);
+            newTab.setAttribute('data-id', targetId);
             newTab.setAttribute('data-url', 'Terere://startpage');
             newTab.innerHTML = `<span>New Tab</span><span class="tab-close" title="Close tab">&times;</span>`;
             
             tabContainer.appendChild(newTab);
             setupTab(newTab);
+            initTabHistory(targetId, 'Terere://startpage', 'New Tab');
             activateTab(newTab);
             tabContainer.scrollLeft = tabContainer.scrollWidth;
         });
@@ -786,7 +897,7 @@
             const x = (e.clientX / window.innerWidth) - 0.5;
             const y = (e.clientY / window.innerHeight) - 0.5;
             
-            wrapper1.style.transform = `translate(${x * 120}px, ${y * 120}px)`;
+            wrapper1.style.transform = `translate(${x * 120}px, ${y * 120   }px)`;
             wrapper2.style.transform = `translate(${x * -80}px, ${y * -80}px)`;
         });
     </script>
