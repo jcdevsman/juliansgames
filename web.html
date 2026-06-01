@@ -3,903 +3,501 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terere Games</title>
+    <title>Modern Xbox UI - Game Portal</title>
     <style>
+        /* Modern Xbox Palette & Variables */
         :root {
-            --bg-main: #161722;
-            --bg-island: #212233;
-            --bg-tab-active: #232538;
-            --bg-address: #1c1e2d;
-            --bg-context: #1f202e;
+            --app-bg: #0b0b0b;
+            --glass-panel: rgba(30, 30, 30, 0.6);
+            --glass-hover: rgba(50, 50, 50, 0.8);
+            --xbox-green: #9bf00b;
+            --xbox-green-btn: #107c10;
             --text-main: #ffffff;
-            --text-muted: #83879a;
-            --accent-purple: #8c52ff;
-            --accent-blue: #3b82f6;
-            --border-radius-pill: 30px;
-            --border-radius-island: 16px;
+            --text-dim: #cccccc;
+            --text-muted: #888888;
+            --font-main: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
+            --border-radius-lg: 32px;
+            --border-radius-md: 24px;
+            --border-radius-sm: 16px;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            -webkit-font-smoothing: antialiased;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            background-color: var(--bg-main);
+            font-family: var(--font-main);
+            background-color: var(--app-bg);
+            background-image: radial-gradient(circle at 15% 50%, rgba(16, 124, 16, 0.15), transparent 25%),
+                              radial-gradient(circle at 85% 30%, rgba(0, 120, 215, 0.1), transparent 25%);
             color: var(--text-main);
             display: flex;
             height: 100vh;
             overflow: hidden;
-            padding: 16px;
-            gap: 12px;
-            position: relative;
-            z-index: 0;
-        }
-
-        /* --- INTERACTIVE FLUID AURORA BACKGROUND --- */
-        .aurora-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        .blob-wrapper {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
-        }
-
-        .aurora-blob {
-            position: absolute;
-            filter: blur(90px);
-            opacity: 0.6;
-            border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
-            animation: morphAndSpin 15s linear infinite;
-        }
-
-        .blob-purple {
-            background: var(--accent-purple);
-            width: 650px;
-            height: 650px;
-            top: -150px;
-            left: -100px;
-        }
-
-        .blob-blue {
-            background: var(--accent-blue);
-            width: 550px;
-            height: 550px;
-            top: 20%;
-            left: 20%;
-            animation-duration: 22s;
-            animation-direction: reverse;
-        }
-
-        @keyframes morphAndSpin {
-            0% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(0deg) scale(1); }
-            50% { border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; transform: rotate(180deg) scale(1.1); }
-            100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: rotate(360deg) scale(1); }
-        }
-
-        /* --- FLOATING SIDEBAR --- */
-        .sidebar {
-            width: 88px;
-            background-color: rgba(33, 34, 51, 0.75); 
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-radius: var(--border-radius-island);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: space-between;
-            padding: 24px 0;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-        }
-
-        .sidebar-top, .sidebar-bottom {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-            width: 100%;
-        }
-
-        .sidebar-icon {
-            width: 38px;
-            height: 38px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            overflow: hidden;
-        }
-
-        .sidebar-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        .sidebar-icon.opera-logo {
-            background-color: #ff1b2d;
-            color: white;
-            font-weight: bold;
-            font-size: 20px;
-            margin-bottom: 8px;
-        }
-
-        /* --- MAIN CONTAINER --- */
-        .main-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-            position: relative;
-        }
-
-        /* --- BROWSER ISLAND (NAV CONTAINER) --- */
-        .browser-island {
-            background-color: rgba(33, 34, 51, 0.75); 
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-radius: var(--border-radius-island);
-            padding: 10px 16px;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-            position: relative;
-            z-index: 10;
-        }
-
-        /* --- TAB STRIP --- */
-        .tab-strip {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            height: 36px;
-        }
-
-        .tab-island {
-            background-color: rgba(255, 255, 255, 0.02);
-            border-radius: 12px;
-            padding: 2px;
-            display: flex;
-            gap: 4px;
-            align-items: center;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            height: 100%;
-            overflow-x: auto;
-            overflow-y: hidden;
-            scrollbar-width: none;
-        }
-        
-        .tab-island::-webkit-scrollbar { display: none; }
-
-        .tab {
-            height: 100%;
-            padding: 0 14px 0 18px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--text-muted);
-            cursor: pointer;
             user-select: none;
-            transition: all 0.15s ease-in-out;
-            max-width: 140px;
-            min-width: 80px;
-            white-space: nowrap;
         }
 
-        .tab span:first-child {
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .tab:hover {
-            background-color: rgba(255, 255, 255, 0.06);
-            color: var(--text-main);
-        }
-
-        .tab.active {
-            background-color: var(--bg-tab-active);
-            color: var(--text-main);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.02);
-        }
-
-        .tab-close {
-            font-size: 14px;
-            border-radius: 50%;
-            width: 18px;
-            height: 18px;
+        /* --- Sidebar Navigation --- */
+        .sidebar {
+            width: 280px;
+            background-color: var(--glass-panel);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
             display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: opacity 0.2s, background-color 0.2s;
-            margin-left: auto;
-        }
-
-        .tab:hover .tab-close, .tab.active .tab-close { opacity: 0.5; }
-        .tab .tab-close:hover { opacity: 1; background-color: rgba(255, 255, 255, 0.1); }
-
-        .add-tab-btn {
-            width: 32px;
-            height: 32px;
-            flex-shrink: 0;
-            border-radius: 8px;
-            background-color: rgba(255, 255, 255, 0.01);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: var(--text-muted);
-            font-size: 16px;
-            transition: all 0.2s;
-        }
-
-        .add-tab-btn:hover {
-            background-color: rgba(255, 255, 255, 0.05);
-            color: var(--text-main);
-            border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        /* --- CUSTOM CONTEXT MENU --- */
-        .tab-context-menu {
-            position: fixed;
-            background-color: var(--bg-context);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 12px;
-            display: none;
             flex-direction: column;
-            gap: 12px;
-            min-width: 320px;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+            padding: 20px 15px;
             z-index: 100;
         }
 
-        .context-nav-buttons {
+        .nav-menu {
+            list-style: none;
             display: flex;
-            gap: 10px;
-            justify-content: space-between;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-            padding-bottom: 10px;
+            flex-direction: column;
+            gap: 8px;
+            flex-grow: 1; 
         }
 
-        .context-nav-btn {
-            flex: 1;
-            height: 28px;
-            border-radius: 6px;
-            background-color: rgba(255, 255, 255, 0.03);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .nav-item {
+            padding: 12px 20px;
+            border-radius: var(--border-radius-md); 
+            color: var(--text-dim);
+            font-weight: 500;
             cursor: pointer;
-            color: var(--text-muted);
-            font-size: 13px;
-            transition: all 0.2s;
-            user-select: none;
-        }
-
-        .context-nav-btn:hover { background-color: rgba(255, 255, 255, 0.08); color: var(--text-main); }
-        .context-nav-btn.disabled { opacity: 0.3; cursor: not-allowed; }
-        .context-nav-btn.disabled:hover { background-color: rgba(255, 255, 255, 0.03); color: var(--text-muted); }
-
-        .context-address-container {
-            background-color: var(--bg-address);
-            border-radius: 8px;
-            height: 34px;
+            transition: background 0.2s, color 0.2s;
             display: flex;
             align-items: center;
-            padding: 0 12px;
-            gap: 10px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
+            gap: 12px;
         }
 
-        .context-address-container:focus-within { border-color: var(--accent-purple); }
-
-        .context-address-input {
-            background: none;
-            border: none;
+        .nav-item:hover {
+            background-color: var(--glass-hover);
             color: var(--text-main);
-            width: 100%;
-            font-size: 12px;
-            outline: none;
         }
 
-        /* --- WEB CONTENT AREA --- */
-        .web-content {
-            flex: 1;
-            background-color: rgba(26, 27, 38, 0.65);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border-radius: var(--border-radius-island);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
-            z-index: 5;
-            overflow: hidden;
-            position: relative;
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
         }
 
-        .internal-container {
-            width: 100%;
-            height: 100%;
-            display: none;
-            align-items: center;
-            justify-content: center;
+        /* Most Recent Sidebar Area */
+        .sidebar-recent {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .internal-container.active {
+        .sidebar-recent h4 {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding-left: 10px;
+        }
+
+        .recent-game {
             display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 10px;
+            border-radius: var(--border-radius-md);
+            cursor: pointer;
+            transition: background 0.2s;
         }
 
-        .iframe-container {
+        .recent-game:hover { background-color: var(--glass-hover); }
+        .recent-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+        .recent-title { font-size: 0.95rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
+
+        /* --- TRUE PROGRESSIVE BLUR --- */
+        .progressive-blur-container {
+            position: fixed; top: 0; left: 280px; right: 0; height: 150px; z-index: 50; pointer-events: none; 
+        }
+        .progressive-blur-container > div { position: absolute; inset: 0; }
+        .blur-1 { backdrop-filter: blur(2px); mask-image: linear-gradient(to bottom, black 60%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%); }
+        .blur-2 { backdrop-filter: blur(6px); mask-image: linear-gradient(to bottom, black 40%, transparent 80%); -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 80%); }
+        .blur-3 { backdrop-filter: blur(12px); mask-image: linear-gradient(to bottom, black 20%, transparent 60%); -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 60%); }
+        .blur-4 { backdrop-filter: blur(24px); mask-image: linear-gradient(to bottom, black 10%, transparent 40%); -webkit-mask-image: linear-gradient(to bottom, black 10%, transparent 40%); }
+        .blur-5 { backdrop-filter: blur(48px); mask-image: linear-gradient(to bottom, black 0%, transparent 20%); -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 20%); }
+
+        /* --- FLOATING CONTROLS --- */
+        .floating-controls {
+            position: fixed; top: 25px; right: 40px; display: flex; align-items: center; gap: 15px; z-index: 100;
+        }
+        .search-bar {
+            background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 12px 20px; border-radius: 30px;
+            width: 300px; outline: none; transition: border 0.2s, background 0.2s; font-family: var(--font-main);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        .search-bar:focus { border-color: var(--xbox-green-btn); background: rgba(10, 10, 10, 0.9); }
+        .profile-pic { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 2px solid rgba(255, 255, 255, 0.1); }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            flex: 1; overflow-y: auto; position: relative; padding: 40px 40px; padding-top: 100px; 
+        }
+
+        /* --- View Toggles --- */
+        .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .view-section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- Featured Auto-Scrolling Carousel --- */
+        .carousel-container { position: relative; width: 100%; height: 500px; border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 40px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6); }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 50px; }
+        .slide.active { opacity: 1; z-index: 1; }
+        .slide::before { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%); z-index: 0; }
+        .slide-content { position: relative; z-index: 2; max-width: 600px; }
+        .slide-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 15px; letter-spacing: -1px; }
+        .slide-desc { font-size: 1.15rem; color: var(--text-dim); margin-bottom: 25px; line-height: 1.5; }
+
+        /* General Play Button Style */
+        .btn-play {
+            background-color: var(--xbox-green-btn); color: white; border: none; padding: 14px 36px; border-radius: 30px; 
+            font-weight: bold; font-size: 1rem; cursor: pointer; transition: transform 0.1s ease, background-color 0.2s;
+            display: inline-flex; align-items: center; gap: 10px;
+        }
+        .btn-play:hover { background-color: var(--xbox-green); color: black; }
+        .btn-play:active { transform: scale(0.95); }
+
+        .indicators { position: absolute; bottom: 30px; right: 50px; display: flex; gap: 10px; z-index: 2; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.3); cursor: pointer; transition: background 0.3s; }
+        .dot.active { background-color: white; }
+
+        /* --- Games Grid (1:1 Cards) --- */
+        .shelf h2 { font-size: 1.5rem; margin-bottom: 25px; font-weight: 600; }
+        .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; padding-bottom: 60px; }
+        .game-card { background-color: var(--glass-panel); border-radius: var(--border-radius-md); overflow: hidden; cursor: pointer; position: relative; border: 1px solid rgba(255, 255, 255, 0.05); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s; }
+        .game-card:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); background-color: var(--glass-hover); }
+        .game-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
+        .game-info { padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+        .game-title { font-size: 1.1rem; color: var(--text-main); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .game-meta { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
+
+        /* --- INDIVIDUAL GAME PAGE STYLES --- */
+        .btn-back {
+            background: var(--glass-panel); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim);
+            padding: 10px 20px; border-radius: 20px; cursor: pointer; margin-bottom: 30px; font-weight: 600;
+            font-family: var(--font-main); transition: background 0.2s, color 0.2s;
+        }
+        .btn-back:hover { background: rgba(255,255,255,0.1); color: white; }
+
+        .game-details-layout { display: flex; gap: 50px; align-items: flex-start; padding-bottom: 50px; }
+        .details-left { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+        .details-title { font-size: 4.5rem; font-weight: 800; line-height: 1; letter-spacing: -1px; margin-bottom: 10px; }
+        
+        .credits-box { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        .credit-line { font-size: 1.1rem; color: var(--text-dim); }
+        .credit-line span { color: var(--text-main); font-weight: 600; }
+        .details-description { font-size: 1.1rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; margin-top: 10px; }
+        
+        .details-right { flex: 1; max-width: 650px; }
+        .details-right img { 
+            width: 100%; 
+            aspect-ratio: 16 / 9; /* Changed to 16:9 exclusively on the game page */
+            object-fit: cover; 
+            border-radius: var(--border-radius-lg); 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
+            border: 1px solid rgba(255,255,255,0.1); 
+        }
+
+        /* --- IFRAME STYLES --- */
+        #game-iframe-container {
+            display: none; /* Hidden until "Play" is clicked */
+            position: relative; /* Added relative positioning for the fullscreen button */
+            width: 100%;
+            height: calc(100vh - 200px); /* Fill the screen minus the header space */
+            border-radius: var(--border-radius-lg);
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        #game-iframe-container iframe {
             width: 100%;
             height: 100%;
-            display: none;
+            border: none;
+            background-color: #000; /* Keeps it black while the game loads */
         }
         
-        .iframe-container.active { display: block; }
-
-        .scaled-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            background-color: #ffffff;
-            display: block;
-        }
-
-        /* Startpage Specifics */
-        .start-page {
-            text-align: center;
-            max-width: 580px;
-            width: 100%;
-        }
-
-        .search-island {
-            background-color: var(--bg-island);
-            padding: 14px 28px;
-            border-radius: 40px;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            box-shadow: 0 16px 40px rgba(0,0,0,0.3);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-        }
-
-        .search-input { background: none; border: none; outline: none; color: white; font-size: 14px; width: 100%; }
-
-        .speed-dial-grid {
-            display: flex;
-            gap: 48px;
-            margin-top: 90px;
-            justify-content: center;
-        }
-
-        .speed-dial-item {
-            width: 76px;
-            height: 76px;
-            background-color: var(--bg-island);
-            border-radius: 16px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            cursor: pointer;
-            font-size: 11px;
-            color: var(--text-muted);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .speed-dial-item:hover {
-            transform: translateY(-4px);
-            background-color: var(--bg-tab-active);
-            color: white;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.3);
-        }
-
-        .speed-dial-image { width: 24px; height: 24px; border-radius: 6px; object-fit: cover; }
-
-        /* --- Games Page Specifics --- */
-        .games-layout {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            height: 100%;
-            padding: 60px 20px;
-            overflow-y: auto;
-        }
-
-        .games-header {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 40px;
-            text-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
-            letter-spacing: 1px;
-        }
-
-        .games-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 24px;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .game-card {
-            background-color: var(--bg-island);
-            border-radius: 16px;
-            height: 180px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
-        }
-
-        /* Animated Gradient Border Layer */
-        .game-card::before {
-            content: '';
+        .btn-fullscreen {
             position: absolute;
-            top: -2px; left: -2px; right: -2px; bottom: -2px;
-            background: linear-gradient(60deg, #ff1b2d, #8c52ff, #3b82f6, #00f2fe, #ff1b2d);
-            background-size: 300% 300%;
-            z-index: 0;
-            opacity: 0;
-            transition: opacity 0.4s ease;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            z-index: 10;
+            font-family: var(--font-main);
+            transition: background 0.2s;
+            font-weight: bold;
+        }
+        .btn-fullscreen:hover {
+            background: rgba(50, 50, 50, 0.9);
         }
 
-        /* Inner Content Box to hollow out the border */
-        .game-card-inner {
-            position: relative;
-            z-index: 1;
-            background-color: var(--bg-island);
-            width: calc(100% - 6px); /* Leaves a 3px border */
-            height: calc(100% - 6px);
-            border-radius: 13px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-        }
-
-        .game-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 32px rgba(0,0,0,0.4);
-        }
-
-        /* Trigger Gradient Animation on Hover */
-        .game-card:hover::before {
-            opacity: 1;
-            animation: gradientSpin 3s ease infinite;
-        }
-
-        .game-icon { font-size: 48px; }
-        .game-title { font-weight: 600; color: white; font-size: 16px; }
-
-        @keyframes gradientSpin {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
+        /* Scrollbar styling */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
     </style>
 </head>
 <body>
 
-    <div class="aurora-container">
-        <div class="blob-wrapper" id="wrapper1">
-            <div class="aurora-blob blob-purple"></div>
-        </div>
-        <div class="blob-wrapper" id="wrapper2">
-            <div class="aurora-blob blob-blue"></div>
-        </div>
+    <div class="progressive-blur-container">
+        <div class="blur-1"></div><div class="blur-2"></div><div class="blur-3"></div><div class="blur-4"></div><div class="blur-5"></div>
     </div>
 
-    <div class="sidebar">
-        <div class="sidebar-top">
-            <div class="sidebar-icon opera-logo" title="Opera">O</div>
-            <div class="sidebar-icon" title="Aria AI">
-                <img src="https://unsplash.com" alt="Aria AI">
-            </div>
-            <div class="sidebar-icon" title="Messenger">
-                <img src="https://unsplash.com" alt="Messenger">
-            </div>
-            <div class="sidebar-icon" title="WhatsApp">
-                <img src="https://unsplash.com" alt="WhatsApp">
-            </div>
-            <div class="sidebar-icon" title="Instagram">
-                <img src="https://unsplash.com" alt="Instagram">
-            </div>
-        </div>
-        <div class="sidebar-bottom">
-            <div class="sidebar-icon" title="History">
-                <img src="https://unsplash.com" alt="History">
-            </div>
-            <div class="sidebar-icon" title="Settings">
-                <img src="https://unsplash.com" alt="Settings">
-            </div>
-        </div>
+    <div class="floating-controls">
+        <input type="text" class="search-bar" placeholder="Search games, add-ons, and more">
+        <div class="profile-pic"></div>
     </div>
 
-    <div class="main-container">
-       
-        <div class="browser-island">
-            <div class="tab-strip">
-                <div class="tab-island" id="tabContainer">
-                    <div class="tab active" data-id="tab1" data-url="Terere://startpage">
-                        <span>New Tab</span>
-                        <span class="tab-close" title="Close tab">&times;</span>
-                    </div>
-                    <div class="tab" data-id="tab2" data-url="Terere://games">
-                        <span>Games</span>
-                        <span class="tab-close" title="Close tab">&times;</span>
-                    </div>
-                    <div class="tab" data-id="tab3" data-url="https://en.wikipedia.org/wiki/Main_Page">
-                        <span>Wikipedia</span>
-                        <span class="tab-close" title="Close tab">&times;</span>
+    <aside class="sidebar">
+        <ul class="nav-menu">
+            <li class="nav-item active" onclick="goHome()">Game Pass</li>
+            <li class="nav-item">My Library</li>
+            <li class="nav-item">Cloud Gaming</li>
+            <li class="nav-item">Store</li>
+            <li class="nav-item">Community</li>
+        </ul>
+
+        <div class="sidebar-recent">
+            <h4>Most Recent</h4>
+            <div class="recent-game" onclick="openGame('cyber')">
+                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" class="recent-icon" alt="Game">
+                <span class="recent-title">Cyber Ascent</span>
+            </div>
+            <div class="recent-game" onclick="openGame('void')">
+                <img src="https://images.unsplash.com/photo-1605901309584-818e25960b8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" class="recent-icon" alt="Game">
+                <span class="recent-title">Void Walker</span>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <div id="home-view" class="view-section active">
+            <section class="carousel-container">
+                <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1622838320002-3112bd242bf0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');">
+                    <div class="slide-content">
+                        <h1 class="slide-title">HALO: INFINITY</h1>
+                        <p class="slide-desc">Step inside the armor of humanity's greatest hero. Included with Game Pass.</p>
+                        <button class="btn-play">PLAY NOW</button>
                     </div>
                 </div>
-                <div class="add-tab-btn" id="addTabBtn" title="Open new tab">+</div>
-            </div>
-        </div>
+            </section>
 
-        <div class="web-content" id="webContentView">
-           
-            <div class="internal-container active" id="panel-startpage">
-                <div class="start-page">
-                    <div class="search-island">
-                        <span>🔍</span>
-                        <input type="text" class="search-input" id="startpageSearch" placeholder="Search the web or type a URL...">
+            <section class="shelf">
+                <h2>Popular on Game Pass</h2>
+                <div class="games-grid">
+                    <div class="game-card" onclick="openGame('gtavc')">
+                        <img src="https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/i/vc/icon.png" alt="Game">
+                        <div class="game-info">
+                            <span class="game-title">GTA: VC</span>
+                            <span class="game-meta">Open World</span>
+                        </div>
+                    </div>
+                    
+                    <div class="game-card" onclick="openGame('elden')">
+                        <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Game">
+                        <div class="game-info">
+                            <span class="game-title">Elden Realms</span>
+                            <span class="game-meta">Fantasy RPG</span>
+                        </div>
                     </div>
 
-                    <div class="speed-dial-grid">
-                        <div class="speed-dial-item" onclick="navigateActiveTab('https://en.wikipedia.org/wiki/Main_Page', 'Wikipedia')">
-                            <img class="speed-dial-image" src="https://unsplash.com" alt="Wikipedia">
-                            <span>Wikipedia</span>
-                        </div>
-                        <div class="speed-dial-item" onclick="navigateActiveTab('https://www.google.com/search?igu=1', 'Google')">
-                            <img class="speed-dial-image" src="https://unsplash.com" alt="Google">
-                            <span>Google</span>
+                    <div class="game-card" onclick="openGame('drift')">
+                        <img src="https://images.unsplash.com/photo-1580234797602-22c37b4a6217?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Game">
+                        <div class="game-info">
+                            <span class="game-title">Drift King</span>
+                            <span class="game-meta">Arcade Racing</span>
                         </div>
                     </div>
                 </div>
-            </div>
+            </section>
+        </div>
 
-            <div class="internal-container" id="panel-games">
-                <div class="games-layout">
-                    <h1 class="games-header">Game Center</h1>
-                    <div class="games-grid">
-                        <div class="game-card" onclick="launchGame('/g/eaglercraft.html', 'Eaglercraft')">
-                            <div class="game-card-inner">
-                                <div class="game-icon">🧱</div>
-                                <div class="game-title">Tetris</div>
-                            </div>
-                        </div>
-                        <div class="game-card" onclick="launchGame('/g/fnf.html', 'Friday Night Funkin')">
-                            <div class="game-card-inner">
-                                <div class="game-icon">👻</div>
-                                <div class="game-title">Pac-Man</div>
-                            </div>
-                        </div>
-                        <div class="game-card" onclick="launchGame('/g/solar.html', 'Solar Smash')">
-                            <div class="game-card-inner">
-                                <div class="game-icon">🐍</div>
-                                <div class="game-title">Snake</div>
-                            </div>
-                        </div>
-                        <div class="game-card" onclick="launchGame('/g/citysmash.html', 'City Smash')">
-                            <div class="game-card-inner">
-                                <div class="game-icon">🏓</div>
-                                <div class="game-title">Pong</div>
-                            </div>
-                        </div>
+        <div id="game-details-view" class="view-section">
+            <button class="btn-back" onclick="goHome()">← Back to Home</button>
+            
+            <div id="details-layout" class="game-details-layout">
+                <div class="details-left">
+                    <h1 class="details-title" id="gd-title">Game Title</h1>
+                    
+                    <div class="credits-box">
+                        <div class="credit-line">Made by: <span id="gd-dev">Developer</span></div>
+                        <div class="credit-line">Published by: <span id="gd-pub">Publisher</span></div>
+                        <div class="credit-line">Webport by: <span id="gd-web">webport</span></div>
                     </div>
+                    
+                    <div>
+                        <button class="btn-play" style="padding: 16px 40px; font-size: 1.1rem;" onclick="launchGame()">PLAY</button>
+                    </div>
+
+                    <p class="details-description" id="gd-desc">Game description goes here.</p>
+                </div>
+
+                <div class="details-right">
+                    <img id="gd-image" src="" alt="Game Artwork">
                 </div>
             </div>
 
+            <div id="game-iframe-container">
+                <button class="btn-fullscreen" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+                <iframe id="game-iframe" src="" allowfullscreen></iframe>
+            </div>
         </div>
 
-    </div>
-
-    <div class="tab-context-menu" id="tabContextMenu">
-        <div class="context-nav-buttons">
-            <div class="context-nav-btn" id="btnBack">← Back</div>
-            <div class="context-nav-btn" id="btnForward">→ Forward</div>
-            <div class="context-nav-btn" id="btnRefresh">↻ Refresh</div>
-        </div>
-        <div class="context-address-container">
-            <span style="font-size: 12px;">🔒</span>
-            <input type="text" class="context-address-input" id="contextAddressInput">
-        </div>
-    </div>
+    </main>
 
     <script>
-        // --- CORE BROWSER ENGINE ---
-        const tabContainer = document.getElementById('tabContainer');
-        const webContentView = document.getElementById('webContentView');
-        const panelStartpage = document.getElementById('panel-startpage');
-        const panelGames = document.getElementById('panel-games');
-        const contextMenu = document.getElementById('tabContextMenu');
-        const contextAddressInput = document.getElementById('contextAddressInput');
-        const addTabBtn = document.getElementById('addTabBtn');
-        const startpageSearch = document.getElementById('startpageSearch');
-        
-        // Navigation Button Selectors
-        const btnBack = document.getElementById('btnBack');
-        const btnForward = document.getElementById('btnForward');
-        const btnRefresh = document.getElementById('btnRefresh');
-
-        let tabCount = 3;
-        let currentActiveTab = document.querySelector('.tab.active');
-
-        // --- SESSION HISTORY DATA OBJECT ---
-        // Keeps independent tracking of back/forward steps per tab context ID
-        const tabHistories = {};
-
-        function initTabHistory(tabId, url, title) {
-            tabHistories[tabId] = {
-                stack: [{ url, title }],
-                index: 0
-            };
-            updateNavButtonVisualStates();
-        }
-
-        // Initialize pre-existing hardcoded markdown tabs
-        document.querySelectorAll('.tab').forEach(tab => {
-            setupTab(tab);
-            const id = tab.getAttribute('data-id');
-            const url = tab.getAttribute('data-url');
-            const title = tab.querySelector('span').innerText;
-            initTabHistory(id, url, title);
-        });
-        
-        if (currentActiveTab) activateTab(currentActiveTab);
-
-        function setupTab(tab) {
-            tab.addEventListener('click', () => {
-                activateTab(tab);
-                contextMenu.style.display = 'none';
-            });
-
-            tab.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                activateTab(tab);
-                contextMenu.style.display = 'flex';
-                contextMenu.style.left = `${e.clientX}px`;
-                contextMenu.style.top = `${e.clientY + 10}px`;
-            });
-
-            const closeBtn = tab.querySelector('.tab-close');
-            if (closeBtn) {
-                closeBtn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    closeTab(tab);
-                    contextMenu.style.display = 'none';
-                });
+        // --- GAME DATABASE WITH PATHS ---
+        // Notice the new "path" property. This tells the iframe which file to load.
+        const gameDatabase = {
+            'gtavc': {
+                title: 'Grand Theft Auto: Vice City',
+                image: 'https://github.com/jcdevsman/juliansgames/blob/main/i/vice-city/cover.png?raw=true',
+                developer: 'Rockstar Games',
+                webport: '98cobins',
+                publisher: 'Julian',
+                description: 'Grand Theft Auto: Vice City is an iconic 2002 open-world action-adventure game developed by Rockstar North and published by Rockstar Games. Set in a neon-drenched, fictionalized version of 1986 Miami, the game captures the quintessential essence of 1980s pop culture, excess, and organized crime.The Plot and SettingThe Protagonist: Players control Tommy Vercetti, a mobster voiced by Ray Liotta, who is released from prison after 15 years.The Conflict: Sent to Vice City by his boss Sonny Forelli, Tommy gets ambushed during a major drug deal. He loses both the money and the merchandise.The Empire: To repay his boss, Tommy must build his own criminal syndicate from the ground up by seizing businesses, cutting deals, and dominating the citys underworld.Gameplay MechanicsOpen-World Freedom: Players navigate a massive sandbox map divided into two main islands, utilizing third-person combat and driving mechanics.Asset Acquisition: You can buy properties across the city—such as taxi companies, film studios, and nightclubs—which unlock unique side missions and generate passive income.Diverse Vehicles: The game introduced motorcycles, helicopters, and boats to the series alongside traditional cars.Vigilante Systems: Outside of the linear storyline, players can complete side activities like taxi driving, ambulance rescue, and firefighting for bonus rewards.Cinematic Influences and AudioPop Culture Parallels: The narrative is heavily inspired by the 1983 classic film Scarface and the hit television series Miami Vice.Iconic Soundtrack: The game features an legendary, licensed soundtrack spanning pop, rock, and hip-hop across distinct radio stations like Flash FM and Wildstyle.',
+                path: 'g/gtavc.html' // The file to load when Play is clicked
+            },
+            'elden': {
+                title: 'Elden Realms',
+                image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+                developer: 'Mythic Studios',
+                publisher: 'Global Games',
+                description: 'Explore a vast, ruined world filled with forgotten magic and terrifying beasts. Forge your own path in an unforgiving fantasy epic where every victory is earned.',
+                path: 'eldenrealms.html'
+            },
+            'drift': {
+                title: 'Drift King',
+                image: 'https://images.unsplash.com/photo-1580234797602-22c37b4a6217?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+                developer: 'Apex Racing',
+                publisher: 'SpeedNet',
+                description: 'Burn rubber across neon-lit cityscapes. Customize your dream garage and compete in underground drift tournaments to claim the ultimate crown.',
+                path: 'driftking.html'
+            },
+            'cyber': {
+                title: 'Cyber Ascent',
+                image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+                developer: 'Neon Syndicate',
+                publisher: 'FutureCorp',
+                description: 'Survive in a dystopian megacity where flesh meets steel. Unravel corporate conspiracies in this narrative-driven action RPG.',
+                path: 'cyberascent.html'
+            },
+            'void': {
+                title: 'Void Walker',
+                image: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
+                developer: 'Stellar Indie',
+                publisher: 'Cosmos Publishing',
+                description: 'Journey to the edge of the known universe. Gather resources, upgrade your ship, and uncover ancient alien artifacts in this breathtaking sci-fi adventure.',
+                path: 'voidwalker.html'
             }
-        }
+        };
 
-        function closeTab(tabToClose) {
-            const tabId = tabToClose.getAttribute('data-id');
-            const isActive = tabToClose.classList.contains('active');
+        let currentGameId = null;
+
+        // View Elements
+        const homeView = document.getElementById('home-view');
+        const detailsView = document.getElementById('game-details-view');
+        const detailsLayout = document.getElementById('details-layout');
+        const iframeContainer = document.getElementById('game-iframe-container');
+        const gameIframe = document.getElementById('game-iframe');
+
+        // Text Elements
+        const gdTitle = document.getElementById('gd-title');
+        const gdImage = document.getElementById('gd-image');
+        const gdDev = document.getElementById('gd-dev');
+        const gdWeb = document.getElementById('gd-web');
+        const gdPub = document.getElementById('gd-pub');
+        const gdDesc = document.getElementById('gd-desc');
+
+        function openGame(gameId) {
+            const gameData = gameDatabase[gameId];
             
-            tabToClose.remove();
-            delete tabHistories[tabId]; // Garbage collection
+            if(gameData) {
+                currentGameId = gameId;
 
-            const iframePanel = document.getElementById(`iframe-${tabId}`);
-            if (iframePanel) iframePanel.remove();
+                // 1. Populate text and image
+                gdTitle.textContent = gameData.title;
+                gdImage.src = gameData.image;
+                gdDev.textContent = gameData.developer;
+                gdPub.textContent = gameData.publisher;
+                gdWeb.textContent = gameData.webport;
+                gdDesc.textContent = gameData.description;
 
-            if (isActive) {
-                const remainingTabs = document.querySelectorAll('.tab');
-                if (remainingTabs.length > 0) {
-                    activateTab(remainingTabs[remainingTabs.length - 1]);
-                } else {
-                    addTabBtn.click();
-                }
+                // 2. Ensure Details Layout is visible and Iframe is hidden
+                detailsLayout.style.display = 'flex';
+                iframeContainer.style.display = 'none';
+                gameIframe.src = ''; // Clear out the iframe so it stops running in the background
+
+                // 3. Switch overall views
+                homeView.classList.remove('active');
+                detailsView.classList.add('active');
+
+                // 4. Scroll to top
+                document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
-        function activateTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            tab.classList.add('active');
-            currentActiveTab = tab;
+        // The function that runs when you hit PLAY
+        function launchGame() {
+            const gameData = gameDatabase[currentGameId];
+            if(!gameData) return;
 
-            const url = tab.getAttribute('data-url');
-            const tabId = tab.getAttribute('data-id');
-            contextAddressInput.value = url;
-
-            panelStartpage.classList.remove('active');
-            panelGames.classList.remove('active');
-            document.querySelectorAll('.iframe-container').forEach(c => c.classList.remove('active'));
-
-            if (url === 'Terere://startpage') {
-                panelStartpage.classList.add('active');
-            } else if (url === 'Terere://games') {
-                panelGames.classList.add('active');
-            } else {
-                let iframePanel = document.getElementById(`iframe-${tabId}`);
-                
-                if (!iframePanel) {
-                    iframePanel = document.createElement('div');
-                    iframePanel.className = 'iframe-container';
-                    iframePanel.id = `iframe-${tabId}`;
-                    iframePanel.innerHTML = `<iframe class="scaled-iframe" src="${url}"></iframe>`;
-                    webContentView.appendChild(iframePanel);
-                } else {
-                    const iframe = iframePanel.querySelector('iframe');
-                    if (iframe.src !== url) iframe.src = url;
-                }
-                
-                iframePanel.classList.add('active');
-            }
-            updateNavButtonVisualStates();
-        }
-
-        // Updated global navigational master logic to accurately map histories
-        function navigateActiveTab(newUrl, newTitle = "Web Page", isHistoryTraversal = false) {
-            if (!currentActiveTab) return;
-            const tabId = currentActiveTab.getAttribute('data-id');
-            const state = tabHistories[tabId];
-
-            if (state && !isHistoryTraversal) {
-                // Wipe out alternative forward timeline states if we decide to navigate organically from standard inputs
-                state.stack = state.stack.slice(0, state.index + 1);
-                state.stack.push({ url: newUrl, title: newTitle });
-                state.index++;
-            }
-
-            currentActiveTab.setAttribute('data-url', newUrl);
-            if (newTitle) currentActiveTab.querySelector('span').innerText = newTitle;
+            // Hide the text/image layout
+            detailsLayout.style.display = 'none';
             
-            activateTab(currentActiveTab); 
-            contextMenu.style.display = 'none';
+            // Show the iframe container
+            iframeContainer.style.display = 'block';
+
+            // Set the iframe source to the game's file path.
+            // If hosted on example.com, setting src to 'strikeforce.html' 
+            // automatically resolves to 'example.com/strikeforce.html'
+            gameIframe.src = gameData.path; 
         }
 
-        function launchGame(relativePath, gameTitle) {
-            const fullUrl = new URL(relativePath, window.location.href).href;
-            navigateActiveTab(fullUrl, gameTitle);
-        }
-
-        // --- BACK/FORWARD SYSTEM LISTENERS ---
-        function updateNavButtonVisualStates() {
-            if (!currentActiveTab) return;
-            const tabId = currentActiveTab.getAttribute('data-id');
-            const state = tabHistories[tabId];
-
-            if (state) {
-                btnBack.classList.toggle('disabled', state.index <= 0);
-                btnForward.classList.toggle('disabled', state.index >= state.stack.length - 1);
+        function goHome() {
+            // Clear the iframe so the game stops playing and mute audio
+            gameIframe.src = '';
+            
+            // Switch views back to home
+            detailsView.classList.remove('active');
+            homeView.classList.add('active');
+            
+            // If exiting while in fullscreen, close fullscreen mode
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
             }
         }
-
-        btnBack.addEventListener('click', () => {
-            if (!currentActiveTab) return;
-            const tabId = currentActiveTab.getAttribute('data-id');
-            const state = tabHistories[tabId];
-
-            if (state && state.index > 0) {
-                state.index--;
-                const historicalStep = state.stack[state.index];
-                navigateActiveTab(historicalStep.url, historicalStep.title, true);
-            }
-        });
-
-        btnForward.addEventListener('click', () => {
-            if (!currentActiveTab) return;
-            const tabId = currentActiveTab.getAttribute('data-id');
-            const state = tabHistories[tabId];
-
-            if (state && state.index < state.stack.length - 1) {
-                state.index++;
-                const historicalStep = state.stack[state.index];
-                navigateActiveTab(historicalStep.url, historicalStep.title, true);
-            }
-        });
-
-        btnRefresh.addEventListener('click', () => {
-            if (!currentActiveTab) return;
-            const tabId = currentActiveTab.getAttribute('data-id');
-            const url = currentActiveTab.getAttribute('data-url');
-
-            if (url !== 'Terere://startpage' && url !== 'Terere://games') {
-                const iframePanel = document.getElementById(`iframe-${tabId}`);
-                if (iframePanel) {
-                    const iframe = iframePanel.querySelector('iframe');
-                    if (iframe) iframe.src = iframe.src; // Forces hardware cycle trigger update reload
+        
+        // Fullscreen toggle logic
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                if (iframeContainer.requestFullscreen) {
+                    iframeContainer.requestFullscreen();
+                } else if (iframeContainer.webkitRequestFullscreen) { /* Safari */
+                    iframeContainer.webkitRequestFullscreen();
+                } else if (iframeContainer.msRequestFullscreen) { /* IE11 */
+                    iframeContainer.msRequestFullscreen();
                 }
             } else {
-                activateTab(currentActiveTab); // Hard reset application templates internally
-            }
-            contextMenu.style.display = 'none';
-        });
-
-        // Search Bar Event Triggers
-        function handleInputNavigation(inputElement) {
-            let targetUrl = inputElement.value.trim();
-            if (!targetUrl) return;
-
-            // Simple URL checking logic pattern
-            if (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://') && !targetUrl.startsWith('Terere://')) {
-                if (targetUrl.includes('.') && !targetUrl.includes(' ')) {
-                    targetUrl = 'https://' + targetUrl;
-                } else {
-                    targetUrl = 'https://www.google.com/search?q=' + encodeURIComponent(targetUrl);
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                } else if (document.msExitFullscreen) { /* IE11 */
+                    document.msExitFullscreen();
                 }
             }
-            
-            let descriptiveTitle = targetUrl.replace('https://', '').replace('http://', '');
-            if (descriptiveTitle.length > 18) descriptiveTitle = descriptiveTitle.substring(0, 15) + '...';
-            
-            navigateActiveTab(targetUrl, descriptiveTitle);
-            inputElement.value = '';
         }
-
-        contextAddressInput.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleInputNavigation(contextAddressInput);
-        });
-
-        startpageSearch.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') handleInputNavigation(startpageSearch);
-        });
-
-        addTabBtn.addEventListener('click', () => {
-            tabCount++;
-            const targetId = `tab${tabCount}`;
-            const newTab = document.createElement('div');
-            newTab.className = 'tab';
-            newTab.setAttribute('data-id', targetId);
-            newTab.setAttribute('data-url', 'Terere://startpage');
-            newTab.innerHTML = `<span>New Tab</span><span class="tab-close" title="Close tab">&times;</span>`;
-            
-            tabContainer.appendChild(newTab);
-            setupTab(newTab);
-            initTabHistory(targetId, 'Terere://startpage', 'New Tab');
-            activateTab(newTab);
-            tabContainer.scrollLeft = tabContainer.scrollWidth;
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!contextMenu.contains(e.target) && !e.target.closest('.tab')) {
-                contextMenu.style.display = 'none';
-            }
-        });
-
-        // --- AURORA JS PARALLAX ENGINE ---
-        const wrapper1 = document.getElementById('wrapper1');
-        const wrapper2 = document.getElementById('wrapper2');
-
-        document.addEventListener('mousemove', (e) => {
-            const x = (e.clientX / window.innerWidth) - 0.5;
-            const y = (e.clientY / window.innerHeight) - 0.5;
-            
-            wrapper1.style.transform = `translate(${x * 120}px, ${y * 120   }px)`;
-            wrapper2.style.transform = `translate(${x * -80}px, ${y * -80}px)`;
-        });
     </script>
 </body>
 </html>
