@@ -3,500 +3,611 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modern Xbox UI - Game Portal</title>
+    <title>Arcade OS - Mac Edition</title>
     <style>
-        /* Modern Xbox Palette & Variables */
         :root {
-            --app-bg: #0b0b0b;
-            --glass-panel: rgba(30, 30, 30, 0.6);
-            --glass-hover: rgba(50, 50, 50, 0.8);
-            --xbox-green: #9bf00b;
-            --xbox-green-btn: #107c10;
+            --bg-glass: rgba(30, 30, 30, 0.65);
+            --bg-solid: #1e1e1e;
+            --border-glass: rgba(255, 255, 255, 0.15);
             --text-main: #ffffff;
-            --text-dim: #cccccc;
-            --text-muted: #888888;
-            --font-main: 'Segoe UI Variable', 'Segoe UI', system-ui, sans-serif;
-            --border-radius-lg: 32px;
-            --border-radius-md: 24px;
-            --border-radius-sm: 16px;
+            --text-muted: #a0a0a0;
+            --shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body.light-theme {
+            --bg-glass: rgba(255, 255, 255, 0.65);
+            --bg-solid: #f5f5f5;
+            --border-glass: rgba(0, 0, 0, 0.15);
+            --text-main: #1a1a1a;
+            --text-muted: #666666;
+            --shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
 
         body {
-            font-family: var(--font-main);
-            background-color: var(--app-bg);
-            background-image: radial-gradient(circle at 15% 50%, rgba(16, 124, 16, 0.15), transparent 25%),
-                              radial-gradient(circle at 85% 30%, rgba(0, 120, 215, 0.1), transparent 25%);
-            color: var(--text-main);
-            display: flex;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
             height: 100vh;
             overflow: hidden;
-            user-select: none;
+            color: var(--text-main);
+            background-image: url('https://images.unsplash.com/photo-1550745165-9bc0b252726f?q=80&w=2000&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            transition: color 0.3s;
         }
 
-        /* --- Sidebar Navigation --- */
-        .sidebar {
-            width: 280px;
-            background-color: var(--glass-panel);
+        /* The Dock */
+        .dock-container {
+            position: fixed;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-glass);
             backdrop-filter: blur(20px);
             -webkit-backdrop-filter: blur(20px);
-            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 0.5rem;
             display: flex;
-            flex-direction: column;
-            padding: 20px 15px;
-            z-index: 100;
+            gap: 0.5rem;
+            z-index: 9998;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease, opacity 0.3s ease;
         }
 
-        .nav-menu {
-            list-style: none;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            flex-grow: 1; 
+        .dock-container.hidden {
+            transform: translate(-50%, 100px);
+            opacity: 0;
+            pointer-events: none;
         }
 
-        .nav-item {
-            padding: 12px 20px;
-            border-radius: var(--border-radius-md); 
-            color: var(--text-dim);
-            font-weight: 500;
+        .dock-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
             cursor: pointer;
-            transition: background 0.2s, color 0.2s;
+            transition: transform 0.2s, margin 0.2s;
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: rgba(255,255,255,0.1);
         }
-
-        .nav-item:hover {
-            background-color: var(--glass-hover);
-            color: var(--text-main);
-        }
-
-        .nav-item.active {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--text-main);
-        }
-
-        /* Most Recent Sidebar Area */
-        .sidebar-recent {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .sidebar-recent h4 {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            padding-left: 10px;
-        }
-
-        .recent-game {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            padding: 10px;
-            border-radius: var(--border-radius-md);
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .recent-game:hover { background-color: var(--glass-hover); }
-        .recent-icon { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .recent-title { font-size: 0.95rem; color: var(--text-dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 500; }
-
-        /* --- TRUE PROGRESSIVE BLUR --- */
-        .progressive-blur-container {
-            position: fixed; top: 0; left: 280px; right: 0; height: 150px; z-index: 50; pointer-events: none; 
-        }
-        .progressive-blur-container > div { position: absolute; inset: 0; }
-        .blur-1 { backdrop-filter: blur(2px); mask-image: linear-gradient(to bottom, black 60%, transparent 100%); -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%); }
-        .blur-2 { backdrop-filter: blur(6px); mask-image: linear-gradient(to bottom, black 40%, transparent 80%); -webkit-mask-image: linear-gradient(to bottom, black 40%, transparent 80%); }
-        .blur-3 { backdrop-filter: blur(12px); mask-image: linear-gradient(to bottom, black 20%, transparent 60%); -webkit-mask-image: linear-gradient(to bottom, black 20%, transparent 60%); }
-        .blur-4 { backdrop-filter: blur(24px); mask-image: linear-gradient(to bottom, black 10%, transparent 40%); -webkit-mask-image: linear-gradient(to bottom, black 10%, transparent 40%); }
-        .blur-5 { backdrop-filter: blur(48px); mask-image: linear-gradient(to bottom, black 0%, transparent 20%); -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 20%); }
-
-        /* --- FLOATING CONTROLS --- */
-        .floating-controls {
-            position: fixed; top: 25px; right: 40px; display: flex; align-items: center; gap: 15px; z-index: 100;
-        }
-        .search-bar {
-            background: rgba(20, 20, 20, 0.7); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1); color: white; padding: 12px 20px; border-radius: 30px;
-            width: 300px; outline: none; transition: border 0.2s, background 0.2s; font-family: var(--font-main);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-        .search-bar:focus { border-color: var(--xbox-green-btn); background: rgba(10, 10, 10, 0.9); }
-        .profile-pic { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #f6d365 0%, #fda085 100%); cursor: pointer; box-shadow: 0 4px 15px rgba(0,0,0,0.3); border: 2px solid rgba(255, 255, 255, 0.1); }
-
-        /* --- Main Content Area --- */
-        .main-content {
-            flex: 1; overflow-y: auto; position: relative; padding: 40px 40px; padding-top: 100px; 
-        }
-
-        /* --- View Toggles --- */
-        .view-section { display: none; animation: fadeIn 0.3s ease-in-out; }
-        .view-section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- Featured Auto-Scrolling Carousel --- */
-        .carousel-container { position: relative; width: 100%; height: 500px; border-radius: var(--border-radius-lg); overflow: hidden; margin-bottom: 40px; box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6); }
-        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; transition: opacity 1s ease-in-out; background-size: cover; background-position: center; display: flex; align-items: flex-end; padding: 50px; }
-        .slide.active { opacity: 1; z-index: 1; }
-        .slide::before { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 70%; background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, transparent 100%); z-index: 0; }
-        .slide-content { position: relative; z-index: 2; max-width: 600px; }
-        .slide-title { font-size: 3.5rem; font-weight: 800; margin-bottom: 15px; letter-spacing: -1px; }
-        .slide-desc { font-size: 1.15rem; color: var(--text-dim); margin-bottom: 25px; line-height: 1.5; }
-
-        /* General Play Button Style */
-        .btn-play {
-            background-color: var(--xbox-green-btn); color: white; border: none; padding: 14px 36px; border-radius: 30px; 
-            font-weight: bold; font-size: 1rem; cursor: pointer; transition: transform 0.1s ease, background-color 0.2s;
-            display: inline-flex; align-items: center; gap: 10px;
-        }
-        .btn-play:hover { background-color: var(--xbox-green); color: black; }
-        .btn-play:active { transform: scale(0.95); }
-
-        .indicators { position: absolute; bottom: 30px; right: 50px; display: flex; gap: 10px; z-index: 2; }
-        .dot { width: 12px; height: 12px; border-radius: 50%; background-color: rgba(255, 255, 255, 0.3); cursor: pointer; transition: background 0.3s; }
-        .dot.active { background-color: white; }
-
-        /* --- Games Grid (1:1 Cards) --- */
-        .shelf h2 { font-size: 1.5rem; margin-bottom: 25px; font-weight: 600; }
-        .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 25px; padding-bottom: 60px; }
-        .game-card { background-color: var(--glass-panel); border-radius: var(--border-radius-md); overflow: hidden; cursor: pointer; position: relative; border: 1px solid rgba(255, 255, 255, 0.05); transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s; }
-        .game-card:hover { transform: translateY(-8px); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5); background-color: var(--glass-hover); }
-        .game-card img { width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
-        .game-info { padding: 16px; display: flex; flex-direction: column; gap: 4px; }
-        .game-title { font-size: 1.1rem; color: var(--text-main); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .game-meta { font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; }
-
-        /* --- INDIVIDUAL GAME PAGE STYLES --- */
-        .btn-back {
-            background: var(--glass-panel); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim);
-            padding: 10px 20px; border-radius: 20px; cursor: pointer; margin-bottom: 30px; font-weight: 600;
-            font-family: var(--font-main); transition: background 0.2s, color 0.2s;
-        }
-        .btn-back:hover { background: rgba(255,255,255,0.1); color: white; }
-
-        .game-details-layout { display: flex; gap: 50px; align-items: flex-start; padding-bottom: 50px; }
-        .details-left { flex: 1; display: flex; flex-direction: column; gap: 20px; }
-        .details-title { font-size: 4.5rem; font-weight: 800; line-height: 1; letter-spacing: -1px; margin-bottom: 10px; }
         
-        .credits-box { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-        .credit-line { font-size: 1.1rem; color: var(--text-dim); }
-        .credit-line span { color: var(--text-main); font-weight: 600; }
-        .details-description { font-size: 1.1rem; color: var(--text-dim); line-height: 1.6; margin-bottom: 20px; margin-top: 10px; }
-        
-        .details-right { flex: 1; max-width: 650px; }
-        .details-right img { 
-            width: 100%; 
-            aspect-ratio: 16 / 9; /* Changed to 16:9 exclusively on the game page */
-            object-fit: cover; 
-            border-radius: var(--border-radius-lg); 
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
-            border: 1px solid rgba(255,255,255,0.1); 
+        body.light-theme .dock-icon { background: rgba(0,0,0,0.05); }
+
+        .dock-icon:hover {
+            transform: scale(1.2) translateY(-10px);
+            margin: 0 10px;
         }
 
-        /* --- IFRAME STYLES --- */
-        #game-iframe-container {
-            display: none; /* Hidden until "Play" is clicked */
-            position: relative; /* Added relative positioning for the fullscreen button */
-            width: 100%;
-            height: calc(100vh - 200px); /* Fill the screen minus the header space */
-            border-radius: var(--border-radius-lg);
+        /* macOS Spotlight Search */
+        #spotlight-wrapper {
+            position: fixed;
+            top: 22%;
+            left: 50%;
+            transform: translate(-50%, -20px);
+            width: 90%;
+            max-width: 620px;
+            z-index: 10000;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--bg-glass);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.4);
             overflow: hidden;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
-            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            flex-direction: column;
         }
 
-        #game-iframe-container iframe {
+        #spotlight-wrapper.active {
+            transform: translate(-50%, 0);
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .spotlight-top-bar {
+            display: flex;
+            align-items: center;
+            padding: 0 1.2rem;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .spotlight-magnifier {
+            font-size: 1.3rem;
+            margin-right: 0.8rem;
+            opacity: 0.6;
+        }
+
+        .spotlight-input {
             width: 100%;
-            height: 100%;
+            box-sizing: border-box;
+            padding: 1.1rem 0;
+            font-size: 1.4rem;
+            background: transparent;
+            color: var(--text-main);
             border: none;
-            background-color: #000; /* Keeps it black while the game loads */
-        }
-        
-        .btn-fullscreen {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            z-index: 10;
-            font-family: var(--font-main);
-            transition: background 0.2s;
-            font-weight: bold;
-        }
-        .btn-fullscreen:hover {
-            background: rgba(50, 50, 50, 0.9);
+            outline: none;
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.15); border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.25); }
+        .spotlight-input::placeholder {
+            color: var(--text-muted);
+            opacity: 0.7;
+        }
+
+        .spotlight-results {
+            max-height: 380px;
+            overflow-y: auto;
+            display: block;
+            padding: 6px;
+        }
+
+        .spotlight-item {
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background 0.1s, color 0.1s;
+            color: var(--text-main);
+        }
+
+        .spotlight-item:hover {
+            background: #0062ed;
+            color: #ffffff;
+        }
+
+        .spotlight-item img { 
+            width: 32px; 
+            height: 32px; 
+            border-radius: 6px; 
+            object-fit: cover; 
+        }
+
+        .spotlight-item span { 
+            font-size: 1rem; 
+            font-weight: 400; 
+        }
+
+        /* Window System */
+        .os-window {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 800px;
+            height: 500px;
+            background: var(--bg-solid);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: none; 
+            flex-direction: column;
+            overflow: hidden;
+            resize: both; 
+        }
+
+        .os-window.animating {
+            transition: width 0.25s ease, height 0.25s ease, top 0.25s ease, left 0.25s ease, border-radius 0.25s ease;
+        }
+
+        /* True Full Screen Mode */
+        .os-window.maximized {
+            top: 0 !important; 
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            border-radius: 0 !important;
+            border: none !important;
+            resize: none;
+            box-shadow: none;
+        }
+
+        .os-window.maximized .window-header {
+            display: none !important;
+        }
+
+        .os-window.maximized .browser-toolbar {
+            display: none !important;
+        }
+
+        .window-header {
+            height: 38px;
+            background: var(--bg-glass);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            cursor: grab;
+            user-select: none;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .window-header:active { cursor: grabbing; }
+
+        .traffic-lights {
+            display: flex;
+            gap: 8px;
+            width: 60px;
+        }
+
+        .light {
+            width: 12px; height: 12px; border-radius: 50%; cursor: pointer;
+        }
+        .light.red { background: #ff5f56; }
+        .light.yellow { background: #ffbd2e; }
+        .light.green { background: #27c93f; }
+
+        .window-title {
+            flex-grow: 1;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-right: 60px; 
+        }
+
+        .browser-toolbar {
+            height: 40px;
+            background: var(--bg-solid);
+            border-bottom: 1px solid var(--border-glass);
+            display: flex;
+            align-items: center;
+            padding: 0 1rem;
+            gap: 0.5rem;
+        }
+
+        .toolbar-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+        }
+
+        .toolbar-btn:hover { background: rgba(255,255,255,0.1); }
+        body.light-theme .toolbar-btn:hover { background: rgba(0,0,0,0.1); }
+
+        .window-content {
+            flex-grow: 1;
+            position: relative;
+            background: #fff; 
+            display: flex;
+            flex-direction: column;
+        }
+
+        iframe {
+            flex-grow: 1;
+            width: 100%;
+            border: none;
+            display: block;
+        }
+
+        .settings-content {
+            padding: 2rem;
+            color: var(--text-main);
+            background: var(--bg-solid);
+            height: 100%;
+            box-sizing: border-box;
+        }
+
+        .btn-theme {
+            background: var(--text-main);
+            color: var(--bg-solid);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <div class="progressive-blur-container">
-        <div class="blur-1"></div><div class="blur-2"></div><div class="blur-3"></div><div class="blur-4"></div><div class="blur-5"></div>
-    </div>
-
-    <div class="floating-controls">
-        <input type="text" class="search-bar" placeholder="Search games, add-ons, and more">
-        <div class="profile-pic"></div>
-    </div>
-
-    <aside class="sidebar">
-        <ul class="nav-menu">
-            <li class="nav-item active" onclick="goHome()">Game Pass</li>
-            <li class="nav-item">My Library</li>
-            <li class="nav-item">Cloud Gaming</li>
-            <li class="nav-item">Store</li>
-            <li class="nav-item">Community</li>
-        </ul>
-
-        <div class="sidebar-recent">
-            <h4>Most Recent</h4>
-            <div class="recent-game" onclick="openGame('cyber')">
-                <img src="https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" class="recent-icon" alt="Game">
-                <span class="recent-title">Cyber Ascent</span>
-            </div>
-            <div class="recent-game" onclick="openGame('void')">
-                <img src="https://images.unsplash.com/photo-1605901309584-818e25960b8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80" class="recent-icon" alt="Game">
-                <span class="recent-title">Void Walker</span>
-            </div>
+    <div id="spotlight-wrapper">
+        <div class="spotlight-top-bar">
+            <span class="spotlight-magnifier">🔍</span>
+            <input type="text" id="spotlight-input" class="spotlight-input" placeholder="Search apps and games..." autocomplete="off" spellcheck="false">
         </div>
-    </aside>
+        <div id="spotlight-results" class="spotlight-results"></div>
+    </div>
 
-    <main class="main-content">
+    <div id="app-window" class="os-window">
+        <div class="window-header" id="app-header">
+            <div class="traffic-lights" onmousedown="event.stopPropagation()">
+                <div class="light red" onclick="closeWindow('app-window', true)"></div>
+                <div class="light yellow" onclick="minimizeWindow('app-window')"></div>
+                <div class="light green" onclick="maximizeWindow('app-window')"></div>
+            </div>
+            <div class="window-title" id="app-title">Application</div>
+        </div>
         
-        <div id="home-view" class="view-section active">
-            <section class="carousel-container">
-                <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1622838320002-3112bd242bf0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80');">
-                    <div class="slide-content">
-                        <h1 class="slide-title">HALO: INFINITY</h1>
-                        <p class="slide-desc">Step inside the armor of humanity's greatest hero. Included with Game Pass.</p>
-                        <button class="btn-play">PLAY NOW</button>
-                    </div>
-                </div>
-            </section>
-
-            <section class="shelf">
-                <h2>Popular on Game Pass</h2>
-                <div class="games-grid">
-                    <div class="game-card" onclick="openGame('gtavc')">
-                        <img src="https://github.com/jcdevsman/juliansgames/blob/main/i/vice-city/icon.png?raw=true" alt="Game">
-                        <div class="game-info">
-                            <span class="game-title">GTA: VC</span>
-                            <span class="game-meta">Open World</span>
-                        </div>
-                    </div>
-                    
-                    <div class="game-card" onclick="openGame('elden')">
-                        <img src="https://images.unsplash.com/photo-1538481199705-c710c4e965fc?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Game">
-                        <div class="game-info">
-                            <span class="game-title">Elden Realms</span>
-                            <span class="game-meta">Fantasy RPG</span>
-                        </div>
-                    </div>
-
-                    <div class="game-card" onclick="openGame('drift')">
-                        <img src="https://images.unsplash.com/photo-1580234797602-22c37b4a6217?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Game">
-                        <div class="game-info">
-                            <span class="game-title">Drift King</span>
-                            <span class="game-meta">Arcade Racing</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
+        <div id="browser-toolbar" class="browser-toolbar" style="display: none;">
+            <button class="toolbar-btn" onclick="browserBack()" title="Go Back">◀</button>
+            <button class="toolbar-btn" onclick="browserRefresh()" title="Refresh">↻</button>
+            <button class="toolbar-btn" onclick="browserHome()" title="Home">🏠</button>
         </div>
 
-        <div id="game-details-view" class="view-section">
-            <button class="btn-back" onclick="goHome()">← Back to Home</button>
-            
-            <div id="details-layout" class="game-details-layout">
-                <div class="details-left">
-                    <h1 class="details-title" id="gd-title">Game Title</h1>
-                    
-                    <div class="credits-box">
-                        <div class="credit-line">Made by: <span id="gd-dev">Developer</span></div>
-                        <div class="credit-line">Published by: <span id="gd-pub">Publisher</span></div>
-                        <div class="credit-line">Webport by: <span id="gd-web">webport</span></div>
-                    </div>
-                    
-                    <div>
-                        <button class="btn-play" style="padding: 16px 40px; font-size: 1.1rem;" onclick="launchGame()">PLAY</button>
-                    </div>
-
-                    <p class="details-description" id="gd-desc">Game description goes here.</p>
-                </div>
-
-                <div class="details-right">
-                    <img id="gd-image" src="" alt="Game Artwork">
-                </div>
-            </div>
-
-            <div id="game-iframe-container">
-                <button class="btn-fullscreen" onclick="toggleFullscreen()">⛶ Fullscreen</button>
-                <iframe id="game-iframe" src="" allowfullscreen></iframe>
-            </div>
+        <div class="window-content">
+            <iframe id="app-frame" sandbox="allow-scripts allow-same-origin allow-pointer-lock allow-forms allow-popups"></iframe>
         </div>
+    </div>
 
-    </main>
+    <div id="settings-window" class="os-window" style="width: 400px; height: 300px;">
+        <div class="window-header" id="settings-header">
+            <div class="traffic-lights" onmousedown="event.stopPropagation()">
+                <div class="light red" onclick="closeWindow('settings-window', false)"></div>
+                <div class="light yellow" onclick="minimizeWindow('settings-window')"></div>
+                <div class="light green" style="opacity: 0.5; cursor: default;"></div>
+            </div>
+            <div class="window-title">System Settings</div>
+        </div>
+        <div class="settings-content">
+            <h2>Appearance</h2>
+            <p>Change the system tint.</p>
+            <button class="btn-theme" onclick="toggleTheme()">Toggle Light/Dark Mode</button>
+        </div>
+    </div>
+
+    <div id="dock" class="dock-container">
+        <div class="dock-icon" title="Browser" onclick="launchApp('Browser', 'https://www.google.com/webhp?igu=1')">
+            🌐
+        </div>
+        <div class="dock-icon" title="System Settings" onclick="openSettings()">
+            ⚙️
+        </div>
+    </div>
 
     <script>
-        // --- GAME DATABASE WITH PATHS ---
-        // Notice the new "path" property. This tells the iframe which file to load.
-        const gameDatabase = {
-            'gtavc': {
-                title: 'Grand Theft Auto: Vice City',
-                image: 'https://github.com/jcdevsman/juliansgames/blob/main/i/vice-city/cover.png?raw=true',
-                developer: 'Rockstar Games',
-                webport: '98cobins',
-                publisher: 'Julian',
-                description: 'Grand Theft Auto: Vice City is an iconic 2002 open-world action-adventure game developed by Rockstar North and published by Rockstar Games. Set in a neon-drenched, fictionalized version of 1986 Miami, the game captures the quintessential essence of 1980s pop culture, excess, and organized crime.The Plot and SettingThe Protagonist: Players control Tommy Vercetti, a mobster voiced by Ray Liotta, who is released from prison after 15 years.The Conflict: Sent to Vice City by his boss Sonny Forelli, Tommy gets ambushed during a major drug deal. He loses both the money and the merchandise.The Empire: To repay his boss, Tommy must build his own criminal syndicate from the ground up by seizing businesses, cutting deals, and dominating the citys underworld.Gameplay MechanicsOpen-World Freedom: Players navigate a massive sandbox map divided into two main islands, utilizing third-person combat and driving mechanics.Asset Acquisition: You can buy properties across the city—such as taxi companies, film studios, and nightclubs—which unlock unique side missions and generate passive income.Diverse Vehicles: The game introduced motorcycles, helicopters, and boats to the series alongside traditional cars.Vigilante Systems: Outside of the linear storyline, players can complete side activities like taxi driving, ambulance rescue, and firefighting for bonus rewards.Cinematic Influences and AudioPop Culture Parallels: The narrative is heavily inspired by the 1983 classic film Scarface and the hit television series Miami Vice.Iconic Soundtrack: The game features an legendary, licensed soundtrack spanning pop, rock, and hip-hop across distinct radio stations like Flash FM and Wildstyle.',
-                path: 'g/gtavc.html' // The file to load when Play is clicked
-            },
-            'elden': {
-                title: 'Elden Realms',
-                image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                developer: 'Mythic Studios',
-                publisher: 'Global Games',
-                description: 'Explore a vast, ruined world filled with forgotten magic and terrifying beasts. Forge your own path in an unforgiving fantasy epic where every victory is earned.',
-                path: 'eldenrealms.html'
-            },
-            'drift': {
-                title: 'Drift King',
-                image: 'https://images.unsplash.com/photo-1580234797602-22c37b4a6217?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                developer: 'Apex Racing',
-                publisher: 'SpeedNet',
-                description: 'Burn rubber across neon-lit cityscapes. Customize your dream garage and compete in underground drift tournaments to claim the ultimate crown.',
-                path: 'driftking.html'
-            },
-            'cyber': {
-                title: 'Cyber Ascent',
-                image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                developer: 'Neon Syndicate',
-                publisher: 'FutureCorp',
-                description: 'Survive in a dystopian megacity where flesh meets steel. Unravel corporate conspiracies in this narrative-driven action RPG.',
-                path: 'cyberascent.html'
-            },
-            'void': {
-                title: 'Void Walker',
-                image: 'https://images.unsplash.com/photo-1605901309584-818e25960b8f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80',
-                developer: 'Stellar Indie',
-                publisher: 'Cosmos Publishing',
-                description: 'Journey to the edge of the known universe. Gather resources, upgrade your ship, and uncover ancient alien artifacts in this breathtaking sci-fi adventure.',
-                path: 'voidwalker.html'
+        const gamesDatabase = [
+            { id: 1, title: "GTA: VC (lustful, i personally would not play)", icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/i/vice-city/icon.png", url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/g/gtavc.html" },
+            { id: 2, title: "DriveMad", icon: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/i/drivemad/drivemad.png", url: "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/g/drivemad.html" },
+            { id: 3, title: "Tetris Clone", icon: "https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/css/css.png", url: "https://raw.githubusercontent.com/golang/example/refs/heads/master/appengine-hello/static/index.html" }
+        ];
+
+        let topZIndex = 100;
+        let currentBrowserUrl = 'https://www.google.com/webhp?igu=1';
+
+        const spotlightWrapper = document.getElementById('spotlight-wrapper');
+        const spotlightInput = document.getElementById('spotlight-input');
+        const spotlightResults = document.getElementById('spotlight-results');
+
+        function renderSpotlightList(items) {
+            spotlightResults.innerHTML = '';
+            if (items.length === 0) {
+                spotlightResults.innerHTML = `<div class="spotlight-item" style="cursor: default; color: var(--text-muted); justify-content: center;"><span>No Results Found</span></div>`;
+                return;
             }
-        };
 
-        let currentGameId = null;
+            items.forEach((game, index) => {
+                const item = document.createElement('div');
+                item.className = 'spotlight-item' + (index === 0 ? ' selected' : '');
+                item.onclick = () => {
+                    launchApp(game.title, game.url, true);
+                    toggleSearch();
+                };
+                item.innerHTML = `<img src="${game.icon}"><span>${game.title}</span>`;
+                spotlightResults.appendChild(item);
+            });
+        }
 
-        // View Elements
-        const homeView = document.getElementById('home-view');
-        const detailsView = document.getElementById('game-details-view');
-        const detailsLayout = document.getElementById('details-layout');
-        const iframeContainer = document.getElementById('game-iframe-container');
-        const gameIframe = document.getElementById('game-iframe');
-
-        // Text Elements
-        const gdTitle = document.getElementById('gd-title');
-        const gdImage = document.getElementById('gd-image');
-        const gdDev = document.getElementById('gd-dev');
-        const gdWeb = document.getElementById('gd-web');
-        const gdPub = document.getElementById('gd-pub');
-        const gdDesc = document.getElementById('gd-desc');
-
-        function openGame(gameId) {
-            const gameData = gameDatabase[gameId];
-            
-            if(gameData) {
-                currentGameId = gameId;
-
-                // 1. Populate text and image
-                gdTitle.textContent = gameData.title;
-                gdImage.src = gameData.image;
-                gdDev.textContent = gameData.developer;
-                gdPub.textContent = gameData.publisher;
-                gdWeb.textContent = gameData.webport;
-                gdDesc.textContent = gameData.description;
-
-                // 2. Ensure Details Layout is visible and Iframe is hidden
-                detailsLayout.style.display = 'flex';
-                iframeContainer.style.display = 'none';
-                gameIframe.src = ''; // Clear out the iframe so it stops running in the background
-
-                // 3. Switch overall views
-                homeView.classList.remove('active');
-                detailsView.classList.add('active');
-
-                // 4. Scroll to top
-                document.querySelector('.main-content').scrollTo({ top: 0, behavior: 'smooth' });
+        function toggleSearch() {
+            if (spotlightWrapper.classList.contains('active')) {
+                spotlightWrapper.classList.remove('active');
+                spotlightInput.blur();
+                spotlightInput.value = '';
+                spotlightResults.innerHTML = '';
+            } else {
+                spotlightWrapper.classList.add('active');
+                spotlightInput.focus();
+                renderSpotlightList(gamesDatabase);
             }
         }
 
-        // The function that runs when you hit PLAY
-        function launchGame() {
-            const gameData = gameDatabase[currentGameId];
-            if(!gameData) return;
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Alt' && !e.repeat) {
+                e.preventDefault(); 
+                toggleSearch();
+            }
+            if (e.key === 'Escape' && spotlightWrapper.classList.contains('active')) {
+                toggleSearch();
+            }
+        });
 
-            // Hide the text/image layout
-            detailsLayout.style.display = 'none';
-            
-            // Show the iframe container
-            iframeContainer.style.display = 'block';
+        spotlightInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            const filtered = gamesDatabase.filter(g => g.title.toLowerCase().includes(term));
+            renderSpotlightList(filtered);
+        });
 
-            // Set the iframe source to the game's file path.
-            // If hosted on example.com, setting src to 'strikeforce.html' 
-            // automatically resolves to 'example.com/strikeforce.html'
-            gameIframe.src = gameData.path; 
+        function bringToFront(windowId) {
+            topZIndex++;
+            document.getElementById(windowId).style.zIndex = topZIndex;
         }
 
-        function goHome() {
-            // Clear the iframe so the game stops playing and mute audio
-            gameIframe.src = '';
+        function closeWindow(windowId, killApp = false) {
+            const win = document.getElementById(windowId);
+            win.style.display = 'none';
+            win.classList.remove('maximized', 'animating');
             
-            // Switch views back to home
-            detailsView.classList.remove('active');
-            homeView.classList.add('active');
-            
-            // If exiting while in fullscreen, close fullscreen mode
             if (document.fullscreenElement) {
-                document.exitFullscreen();
+                document.exitFullscreen().catch(() => {});
+            }
+
+            if (windowId === 'app-window') {
+                document.getElementById('dock').classList.remove('hidden');
+            }
+
+            if(killApp) {
+                const frame = document.getElementById('app-frame');
+                frame.removeAttribute('src');
+                frame.removeAttribute('srcdoc');
+                document.getElementById('app-title').innerText = "Application";
+                document.getElementById('browser-toolbar').style.display = 'none';
             }
         }
-        
-        // Fullscreen toggle logic
-        function toggleFullscreen() {
-            if (!document.fullscreenElement) {
-                if (iframeContainer.requestFullscreen) {
-                    iframeContainer.requestFullscreen();
-                } else if (iframeContainer.webkitRequestFullscreen) { /* Safari */
-                    iframeContainer.webkitRequestFullscreen();
-                } else if (iframeContainer.msRequestFullscreen) { /* IE11 */
-                    iframeContainer.msRequestFullscreen();
+
+        function minimizeWindow(windowId) {
+            document.getElementById(windowId).style.display = 'none';
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(() => {});
+            }
+            if (windowId === 'app-window') {
+                document.getElementById('dock').classList.remove('hidden');
+            }
+        }
+
+        function maximizeWindow(windowId) {
+            const win = document.getElementById(windowId);
+            win.classList.add('animating');
+            win.classList.toggle('maximized');
+            bringToFront(windowId);
+
+            const dock = document.getElementById('dock');
+            if (win.classList.contains('maximized')) {
+                dock.classList.add('hidden');
+                if (!document.fullscreenElement) {
+                    document.documentElement.requestFullscreen().catch(err => {
+                        console.log("Full screen blocked by browser policy:", err);
+                    });
                 }
             } else {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) { /* Safari */
-                    document.webkitExitFullscreen();
-                } else if (document.msExitFullscreen) { /* IE11 */
-                    document.msExitFullscreen();
+                dock.classList.remove('hidden');
+                if (document.fullscreenElement) {
+                    document.exitFullscreen().catch(() => {});
                 }
             }
+
+            setTimeout(() => win.classList.remove('animating'), 250);
+        }
+
+        // Listen for user exiting native browser full screen (e.g. pressing ESC on keyboard)
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                const appWindow = document.getElementById('app-window');
+                const settingsWindow = document.getElementById('settings-window');
+                const dock = document.getElementById('dock');
+
+                // If windows are maximized, un-maximize them and bring back the dock
+                if (appWindow.classList.contains('maximized')) {
+                    appWindow.classList.remove('maximized');
+                }
+                if (settingsWindow.classList.contains('maximized')) {
+                    settingsWindow.classList.remove('maximized');
+                }
+                dock.classList.remove('hidden');
+            }
+        });
+
+        async function launchApp(title, url, isRawGame = false) {
+            const win = document.getElementById('app-window');
+            const frame = document.getElementById('app-frame');
+            const toolbar = document.getElementById('browser-toolbar');
+            const currentTitle = document.getElementById('app-title').innerText;
+            
+            win.style.display = 'flex';
+            bringToFront('app-window');
+
+            if (currentTitle === title) return;
+
+            document.getElementById('app-title').innerText = title;
+            frame.removeAttribute('src');
+            frame.removeAttribute('srcdoc');
+
+            if (title === 'Browser') {
+                toolbar.style.display = 'flex';
+                currentBrowserUrl = url;
+            } else {
+                toolbar.style.display = 'none';
+            }
+
+            if (isRawGame) {
+                try {
+                    const res = await fetch(url);
+                    frame.srcdoc = await res.text();
+                } catch (e) {
+                    frame.srcdoc = `<h2>Error loading game</h2>`;
+                }
+            } else {
+                frame.src = url;
+            }
+        }
+
+        function browserBack() {
+            const frame = document.getElementById('app-frame');
+            try {
+                frame.contentWindow.history.back();
+            } catch (e) {
+                browserHome();
+            }
+        }
+
+        function browserRefresh() {
+            const frame = document.getElementById('app-frame');
+            frame.src = frame.src; 
+        }
+
+        function browserHome() {
+            const frame = document.getElementById('app-frame');
+            frame.src = currentBrowserUrl;
+        }
+
+        function openSettings() {
+            const win = document.getElementById('settings-window');
+            win.style.display = 'flex';
+            bringToFront('settings-window');
+        }
+
+        function makeDraggable(windowId, headerId) {
+            const win = document.getElementById(windowId);
+            const header = document.getElementById(headerId);
+            let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+
+            header.onmousedown = (e) => {
+                if (win.classList.contains('maximized')) return;
+                e.preventDefault();
+                bringToFront(windowId);
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                document.onmouseup = closeDragElement;
+                document.onmousemove = elementDrag;
+                win.style.pointerEvents = "none"; 
+            };
+
+            function elementDrag(e) {
+                e.preventDefault();
+                pos1 = pos3 - e.clientX;
+                pos2 = pos4 - e.clientY;
+                pos3 = e.clientX;
+                pos4 = e.clientY;
+                win.style.top = (win.offsetTop - pos2) + "px";
+                win.style.left = (win.offsetLeft - pos1) + "px";
+            }
+
+            function closeDragElement() {
+                document.onmouseup = null;
+                document.onmousemove = null;
+                win.style.pointerEvents = "auto";
+            }
+            
+            win.addEventListener('mousedown', () => bringToFront(windowId));
+        }
+
+        makeDraggable('app-window', 'app-header');
+        makeDraggable('settings-window', 'settings-header');
+
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
         }
     </script>
 </body>
