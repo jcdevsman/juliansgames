@@ -28,8 +28,6 @@
             document.body.innerHTML = `<h2>Unable to fetch newest version</h2><p>${error.message}</p>`;
         }
     }
-
-    // Run automatically on load
     loadNewPage();
 </script>
 </body>
