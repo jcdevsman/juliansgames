@@ -215,6 +215,25 @@
             display: none !important;
         }
 
+        body {
+  cursor: none; /* Hides default system arrow */
+}
+
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 16px;
+  height: 16px;
+  background-color: #ffffff; /* Modern white or change to any color */
+  border-radius: 50%;
+  pointer-events: none; /* Critical: allows clicking through the cursor */
+  transform: translate(-50%, -50%); /* Centers the dot exactly on the tip */
+  transition: transform 0.1s ease; /* Adds smooth scaling if desired */
+  z-index: 9999; /* Keeps it on top of all elements */
+}
+
+
         .window-header {
             height: 38px;
             background: var(--bg-glass);
@@ -314,6 +333,7 @@
 </head>
 <body>
 
+    <div class="custom-cursor"></div>
     <div id="spotlight-wrapper">
         <div class="spotlight-top-bar">
             <span class="spotlight-magnifier">🔍</span>
@@ -594,6 +614,14 @@
                 win.style.top = (win.offsetTop - pos2) + "px";
                 win.style.left = (win.offsetLeft - pos1) + "px";
             }
+
+            const cursor = document.querySelector('.custom-cursor');
+
+document.addEventListener('mousemove', (e) => {
+  cursor.style.left = `${e.clientX}px`;
+  cursor.style.top = `${e.clientY}px`;
+});
+
 
             function closeDragElement() {
                 document.onmouseup = null;
