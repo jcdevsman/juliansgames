@@ -219,19 +219,22 @@
   cursor: none; /* Hides default system arrow */
 }
 
-.custom-cursor {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 16px;
-  height: 16px;
-  background-color: #ffffff; /* Modern white or change to any color */
-  border-radius: 50%;
-  pointer-events: none; /* Critical: allows clicking through the cursor */
-  transform: translate(-50%, -50%); /* Centers the dot exactly on the tip */
-  transition: transform 0.1s ease; /* Adds smooth scaling if desired */
-  z-index: 9999; /* Keeps it on top of all elements */
-}
+    .custom-cursor {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 32px;  /* Set to your image width */
+      height: 32px; /* Set to your image height */
+      
+      /* Insert your raw image link below */
+      background-image: url('https://imgur.com/a/I2GNy9S');
+      background-size: contain;
+      background-repeat: no-repeat;
+      
+      pointer-events: none; /* Crucial: lets you click elements underneath */
+      transform: translate(-50%, -50%); /* Centers the image exactly on the mouse point */
+      z-index: 9999;
+    }
 
 
         .window-header {
