@@ -9,12 +9,10 @@
 </head>
 <body>
 <script>
-    // 1. CONFIGURATION: Paste your raw GitHub HTML link here
     const GITHUB_RAW_URL = "https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/index.html"; 
 
     async function loadNewPage() {
         try {
-            // Fetch the raw HTML code from GitHub
             const response = await fetch(GITHUB_RAW_URL);
             
             if (!response.ok) {
@@ -22,8 +20,6 @@
             }
             
             const newHtmlContent = await response.text();
-
-            // Completely wipe the current document and write the new HTML code
             document.open();
             document.write(newHtmlContent);
             document.close();
