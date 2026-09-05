@@ -1,0 +1,366 @@
+:root {
+    --bg: #07080c;
+    --surface: #0f111a;
+    --surface-hover: #161926;
+    --primary: #6c5ce7;
+    --cyan: #00cec9;
+    --text: #f5f6fa;
+    --muted: #626880;
+    
+    /* Deep Game Library Layered Shadows */
+    --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.5);
+    --shadow-deep: 0 20px 50px rgba(0, 0, 0, 0.8);
+    --shadow-glow: 0 0 25px rgba(108, 92, 231, 0.25);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+body {
+    background-color: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    padding-top: 80px;
+}
+
+/* Background Ambient Glow */
+.glow-backdrop {
+    position: fixed;
+    top: -20%;
+    left: -10%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(108, 92, 231, 0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Top Navigation Bar */
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 5%;
+    background: rgba(7, 8, 12, 0.75);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.7);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    z-index: 100;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.logo span { color: var(--cyan); }
+
+.nav-links {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+}
+
+.nav-links a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.nav-links li.active a, 
+.nav-links a:hover {
+    color: var(--text);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: linear-gradient(45deg, var(--primary), var(--cyan));
+    box-shadow: 0 0 15px rgba(108, 92, 231, 0.4);
+}
+
+/* Main Container Layout */
+.library-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 5rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Featured Game Hero Banner */
+.featured-banner {
+    height: 320px;
+    border-radius: 16px;
+    background: linear-gradient(90deg, rgba(7,8,12,0.95) 20%, rgba(7,8,12,0.3) 100%), 
+                linear-gradient(135deg, #1e1b4b, #06b6d4);
+    background-size: cover;
+    display: flex;
+    align-items: center;
+    padding: 0 4rem;
+    box-shadow: var(--shadow-deep), inset 0 1px 1px rgba(255, 255, 255, 0.1);
+    margin-bottom: 3.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.banner-content { max-width: 500px; }
+
+.badge {
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    font-weight: 700;
+    color: var(--cyan);
+    background: rgba(0, 206, 201, 0.1);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    border: 1px solid rgba(0, 206, 201, 0.2);
+}
+
+.banner-content h1 {
+    font-size: 2.5rem;
+    margin: 0.8rem 0 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+.banner-content p {
+    color: var(--muted);
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+}
+
+.banner-actions { display: flex; gap: 1rem; }
+
+.btn {
+    padding: 0.75rem 1.6rem;
+    border-radius: 8px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.primary-btn {
+    background: var(--text);
+    color: var(--bg);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.2);
+}
+
+.primary-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(255, 255, 255, 0.35);
+}
+
+.glass-btn {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+}
+
+.glass-btn:hover { background: rgba(255, 255, 255, 0.1); }
+
+/* Controls Header & Pills */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+}
+
+.filter-pills { display: flex; gap: 0.5rem; }
+
+.pill {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--muted);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.pill.active, 
+.pill:hover {
+    color: var(--text);
+    background: var(--surface);
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+/* Card Grid & Cards */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.8rem;
+}
+
+.game-card {
+    background: var(--surface);
+    border-radius: 12px;
+    padding: 0.8rem;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+    cursor: pointer;
+}
+
+.game-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-deep), var(--shadow-glow);
+    border-color: rgba(108, 92, 231, 0.3);
+    background: var(--surface-hover);
+}
+
+.card-cover {
+    height: 280px;
+    border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+}
+
+/* Cover Image Placeholder Gradients */
+.game-1 { background: linear-gradient(180deg, #3d3d3d 0%, #111827 100%); }
+.game-2 { background: linear-gradient(180deg, #312e81 0%, #0f172a 100%); }
+.game-3 { background: linear-gradient(180deg, #881337 0%, #18181b 100%); }
+.game-4 { background: linear-gradient(180deg, #064e3b 0%, #022c22 100%); }
+
+.card-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(7, 8, 12, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    backdrop-filter: blur(2px);
+}
+
+.game-card:hover .card-overlay { opacity: 1; }
+
+.quick-play {
+    background: var(--text);
+    color: var(--bg);
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 20px;
+    font-weight: 700;
+    transform: translateY(10px);
+    transition: transform 0.2s ease;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.game-card:hover .quick-play { transform: translateY(0); }
+
+.card-details { padding: 0.8rem 0.2rem 0.2rem; }
+
+.card-details h3 {
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.meta {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-top: 0.2rem;
+}
+
+/* Game iFrame Modal Pop-Up */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(4, 5, 8, 0.85);
+    backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.modal-container {
+    width: 90%;
+    max-width: 1100px;
+    height: 80vh;
+    background: var(--surface);
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9), var(--shadow-glow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-container {
+    transform: scale(1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modal-header h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.close-btn {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    font-size: 1.8rem;
+    cursor: pointer;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.close-btn:hover { color: var(--text); }
+
+.iframe-wrapper {
+    flex: 1;
+    width: 100%;
+    height: 100%;
+    background: #000;
+}
+
+.iframe-wrapper iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
