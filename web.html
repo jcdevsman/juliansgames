@@ -3,122 +3,330 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS // Game Vault</title>
-    <link rel="stylesheet" href="style.css">
+    <title>BULL33 Official Game Vault</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            blue: '#3b82f6', // Vibrant blue primary accent
+                            dark: '#0a0a0c',   // Main background
+                            panel: '#151518',  // Hero panel background
+                            cardTop: '#101012',// Card top background
+                            cardBot: '#151821',// Card bottom background
+                            border: 'rgba(59, 130, 246, 0.15)', // Blue-tinted border
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #050507;
+            color: #ffffff;
+        }
+
+        /* Hero radial gradient for depth */
+        .hero-bg {
+            background: radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.1) 0%, rgba(21, 21, 24, 1) 50%);
+        }
+        
+        /* Iframe transition animation */
+        #game-overlay.show {
+            display: flex;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* Image hover zoom effect */
+        .game-card .thumb-wrapper img {
+            transition: transform 0.5s ease;
+        }
+        
+        .game-card:hover .thumb-wrapper img {
+            transform: scale(1.05);
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0c; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e3a8a; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3b82f6; 
+        }
+    </style>
 </head>
-<body>
-    <div class="glow-backdrop"></div>
+<body class="min-h-screen antialiased selection:bg-brand-blue selection:text-white pb-20">
 
-    <nav class="navbar">
-        <div class="logo">NEXUS<span>.</span></div>
-        <ul class="nav-links">
-            <li class="active"><a href="#library">Library</a></li>
-            <li><a href="#favorites">Favorites</a></li>
-            <li><a href="#installed">Installed</a></li>
-        </ul>
-        <div class="user-profile">
-            <div class="avatar"></div>
-        </div>
-    </nav>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
 
-    <main class="library-container" id="library">
-        <section class="featured-banner">
-            <div class="banner-content">
-                <span class="badge">NOW PLAYING</span>
-                <h1>CYBER CITY: 2099</h1>
-                <p>Continue your campaign where you left off in Sector 7.</p>
-                <div class="banner-actions">
-                    <button class="btn primary-btn play-trigger" 
-                            data-game-url="/g/cybercity.html" 
-                            data-title="Cyber City: 2099">
-                        <span>▶</span> Play Game
-                    </button>
-                    <button class="btn glass-btn">Details</button>
+        <div class="hero-bg bg-brand-panel rounded-3xl p-8 md:p-12 border border-brand-border flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative overflow-hidden shadow-2xl shadow-brand-blue/5">
+            
+            <div class="z-10 max-w-2xl">
+                <!-- Badge -->
+                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-blue/30 bg-brand-blue/5 text-brand-blue text-xs font-semibold tracking-wide mb-6 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                    <div class="w-1.5 h-1.5 rounded-full bg-brand-blue animate-pulse"></div>
+                    BULL33 OFFICIAL GAME VAULT
                 </div>
+                
+                <!-- Heading -->
+                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 tracking-tight">
+                    Zero Lag. <span class="text-brand-blue drop-shadow-[0_0_10px_rgba(59,130,246,0.3)]">Fully Unblocked.</span>
+                </h1>
+                
+                <!-- Subtext -->
+                <p class="text-gray-400 text-lg md:text-xl leading-relaxed max-w-xl">
+                    Play your favorite arcade minigames directly inside your school browser. No downloads, no blocked domains.
+                </p>
             </div>
-        </section>
 
-        <div class="section-header">
-            <h2>Your Collection</h2>
-            <div class="filter-pills">
-                <button class="pill active">All Games</button>
-                <button class="pill">RPG</button>
-                <button class="pill">Action</button>
-                <button class="pill">Strategy</button>
+            <!-- Hero Quick Play Buttons -->
+            <div class="z-10 flex flex-col sm:flex-row gap-4 w-full lg:w-auto shrink-0">
+                <button id="btn-hero-snake" class="bg-brand-blue hover:bg-blue-500 text-white px-6 py-3.5 rounded-xl font-bold flex items-center justify-center gap-3 transition-colors duration-200 shadow-[0_0_20px_rgba(59,130,246,0.3)] hover:shadow-[0_0_25px_rgba(59,130,246,0.5)] cursor-pointer" data-game-id="snake">
+                    <i class="fa-solid fa-play text-sm"></i> Play Bull Snake
+                </button>
+                <button id="btn-hero-clicker" class="bg-[#1f2028] hover:bg-[#2a2c36] text-white px-6 py-3.5 rounded-xl font-bold flex items-center justify-center gap-3 border border-brand-blue/20 transition-all duration-200 hover:border-brand-blue/50 cursor-pointer" data-game-id="clicker">
+                    <i class="fa-solid fa-bolt text-brand-blue text-sm"></i> Neon Clicker
+                </button>
             </div>
         </div>
 
-        <div class="grid">
-            <div class="game-card play-trigger" 
-                 data-game-url="/g/neonsyndicate.html" 
-                 data-title="Neon Syndicate">
-                <div class="card-cover game-1">
-                    <div class="card-overlay">
-                        <button class="quick-play">▶ Play</button>
-                    </div>
-                </div>
-                <div class="card-details">
-                    <h3>Neon Syndicate</h3>
-                    <p class="meta">RPG • 42 hrs played</p>
-                </div>
-            </div>
-
-            <div class="game-card play-trigger" 
-                 data-game-url="/g/astrahorizon.html" 
-                 data-title="Astra Horizon">
-                <div class="card-cover game-2">
-                    <div class="card-overlay">
-                        <button class="quick-play">▶ Play</button>
-                    </div>
-                </div>
-                <div class="card-details">
-                    <h3>Astra Horizon</h3>
-                    <p class="meta">Sci-Fi • Ready to install</p>
-                </div>
-            </div>
-
-            <div class="game-card play-trigger" 
-                 data-game-url="/g/vortexdecay.html" 
-                 data-title="Vortex Decay">
-                <div class="card-cover game-3">
-                    <div class="card-overlay">
-                        <button class="quick-play">▶ Play</button>
-                    </div>
-                </div>
-                <div class="card-details">
-                    <h3>Vortex Decay</h3>
-                    <p class="meta">Survival • Update available</p>
-                </div>
-            </div>
-
-            <div class="game-card play-trigger" 
-                 data-game-url="/g/ghostprotocol.html" 
-                 data-title="Ghost Protocol">
-                <div class="card-cover game-4">
-                    <div class="card-overlay">
-                        <button class="quick-play">▶ Play</button>
-                    </div>
-                </div>
-                <div class="card-details">
-                    <h3>Ghost Protocol</h3>
-                    <p class="meta">Stealth • 18 hrs played</p>
-                </div>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-16 mb-8 gap-4">
+            <h2 class="text-2xl font-bold flex items-center gap-3 text-white">
+                <i class="fa-solid fa-gamepad text-brand-blue"></i>
+                Featured Arcade Games
+            </h2>
+            
+            <!-- Functional Search Bar -->
+            <div class="relative w-full sm:w-80 group">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-brand-blue/50 group-focus-within:text-brand-blue transition-colors"></i>
+                <input type="text" id="search-input" placeholder="Search unblocked games..." class="w-full bg-[#101014] border border-brand-border rounded-xl py-3 pl-11 pr-4 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-blue/60 focus:bg-[#15151a] focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all">
             </div>
         </div>
-    </main>
 
-    <div class="modal-overlay" id="gameModal">
-        <div class="modal-container">
-            <div class="modal-header">
-                <h3 id="modalTitle">Playing Game</h3>
-                <button class="close-btn" id="closeModal">&times;</button>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="games-grid">
+            <!-- Game cards will be dynamically rendered from our game list array -->
+        </div>
+        
+        <!-- Empty State for Search -->
+        <div id="empty-state" class="hidden flex-col items-center justify-center py-16 text-center">
+            <div class="w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center mb-4 border border-brand-blue/20">
+                <i class="fa-solid fa-ghost text-2xl text-brand-blue"></i>
             </div>
-            <div class="iframe-wrapper">
-                <iframe id="gameIframe" src="" frameborder="0" allowfullscreen></iframe>
-            </div>
+            <h3 class="text-xl font-bold text-white mb-2">No games found</h3>
+            <p class="text-gray-400">Try adjusting your search terms.</p>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <div id="game-overlay" class="fixed inset-0 z-50 bg-[#020203] hidden flex-col">
+        <!-- Overlay Header -->
+        <div class="h-14 bg-[#0a0a0c] border-b border-brand-blue/20 flex items-center justify-between px-6 shadow-md shadow-brand-blue/5">
+            <div class="flex items-center gap-3">
+                <div class="w-2 h-2 rounded-full bg-brand-blue animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
+                <span id="overlay-title" class="text-white font-bold text-sm tracking-widest uppercase">NOW PLAYING</span>
+            </div>
+            
+            <button id="close-game-btn" class="group bg-transparent hover:bg-brand-blue/10 text-gray-400 hover:text-brand-blue border border-transparent hover:border-brand-blue/30 px-4 py-1.5 rounded-lg transition-all duration-200 text-sm font-bold flex items-center gap-2 cursor-pointer">
+                <i class="fa-solid fa-xmark group-hover:rotate-90 transition-transform duration-200"></i> Close Game
+            </button>
+        </div>
+        
+        <!-- Iframe Element -->
+        <div class="flex-grow w-full relative bg-black flex items-center justify-center overflow-hidden">
+            <!-- Loading indicator behind iframe -->
+            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0 bg-brand-dark">
+                <div class="relative w-16 h-16 mb-4">
+                    <div class="absolute inset-0 border-4 border-brand-blue/20 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-brand-blue rounded-full border-t-transparent animate-spin"></div>
+                </div>
+                <p class="text-brand-blue text-sm font-bold tracking-widest animate-pulse">CONNECTING TO VAULT...</p>
+            </div>
+            
+            <iframe id="game-iframe" class="w-full h-full border-none relative z-10 bg-transparent" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <script>
+        // Explicit list of games with unique IDs, clean metadata, and custom paths
+        const gamesCatalog = [
+            {
+                id: 'snake',
+                title: 'Bull Snake',
+                category: 'Arcade',
+                description: 'Navigate the grid, collect glowing orbs, and grow your length without hitting walls.',
+                thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                statLabel: 'High',
+                statValue: '-',
+                path: '/g/gtavc.html'
+            },
+            {
+                id: 'pong',
+                title: 'Cyber Pong',
+                category: 'Retro',
+                description: 'Classic paddle duel against AI. Fast-paced energy ball action in a neon arena.',
+                thumbnail: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                statLabel: 'High',
+                statValue: '-',
+                path: '/g/pong.html'
+            },
+            {
+                id: 'memory',
+                title: 'Memory Match',
+                category: 'Puzzle',
+                description: 'Test your focus and match glowing technological patterns in minimum moves.',
+                thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                statLabel: 'Best Moves',
+                statValue: '-',
+                path: '/g/memory.html'
+            },
+            {
+                id: 'clicker',
+                title: 'Neon Clicker',
+                category: 'Idle',
+                description: 'Harvest cyber energy, purchase automated generators, and scale up your output.',
+                thumbnail: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
+                statLabel: 'Energy',
+                statValue: '-',
+                path: '/g/clicker.html'
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const gridContainer = document.getElementById('games-grid');
+            
+            // Render game cards dynamically from the list
+            function renderGames(gamesToRender) {
+                gridContainer.innerHTML = '';
+                
+                gamesToRender.forEach(game => {
+                    const card = document.createElement('div');
+                    card.className = 'game-card flex flex-col rounded-2xl overflow-hidden cursor-pointer group border border-brand-border hover:border-brand-blue/50 transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-black/40 hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] bg-brand-cardBot';
+                    card.setAttribute('data-game-id', game.id);
+                    
+                    card.innerHTML = `
+                        <div class="h-44 relative flex items-center justify-center bg-black thumb-wrapper overflow-hidden border-b border-brand-border">
+                            <img src="${game.thumbnail}" alt="${game.title}" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                            <div class="absolute inset-0 bg-gradient-to-t from-brand-cardBot via-transparent to-transparent z-10"></div>
+                            <span class="absolute top-4 right-4 z-20 px-2.5 py-0.5 rounded-full border border-brand-blue/60 bg-black/50 backdrop-blur-sm text-brand-blue text-[10px] font-bold tracking-widest uppercase">${game.category}</span>
+                        </div>
+                        <div class="p-5 flex-grow flex flex-col justify-between relative z-20">
+                            <div class="mb-5">
+                                <h3 class="font-bold text-xl text-white mb-2 group-hover:text-brand-blue transition-colors">${game.title}</h3>
+                                <p class="text-sm text-gray-400 leading-relaxed line-clamp-2">${game.description}</p>
+                            </div>
+                            <div class="flex justify-between items-center pt-4 border-t border-brand-blue/10 mt-auto">
+                                <span class="text-xs text-gray-500 font-medium">${game.statLabel}: <span class="text-brand-blue">${game.statValue}</span></span>
+                                <button class="px-4 py-1.5 rounded-lg bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-xs font-bold group-hover:bg-brand-blue group-hover:text-white transition-colors">Play</button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    // Attach click handler to open in iframe overlay
+                    card.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        launchGame(game);
+                    });
+
+                    gridContainer.appendChild(card);
+                });
+            }
+
+            // Initial render
+            renderGames(gamesCatalog);
+
+            // --- Overlay & Dynamic Path Routing Logic ---
+            const overlay = document.getElementById('game-overlay');
+            const iframe = document.getElementById('game-iframe');
+            const closeBtn = document.getElementById('close-game-btn');
+            const overlayTitle = document.getElementById('overlay-title');
+
+            function launchGame(game) {
+                // Get current domain and append custom game path
+                const currentOrigin = window.location.origin;
+                const targetUrl = currentOrigin + game.path;
+                
+                console.log(`Launching game ID [${game.id}] -> ${targetUrl}`);
+                
+                // Set iframe source
+                iframe.src = targetUrl;
+                overlayTitle.textContent = game.title.toUpperCase();
+                
+                // Show modal overlay
+                overlay.classList.remove('hidden');
+                overlay.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+
+            // Hero buttons listeners
+            document.getElementById('btn-hero-snake').addEventListener('click', (e) => {
+                e.preventDefault();
+                const game = gamesCatalog.find(g => g.id === 'snake');
+                if (game) launchGame(game);
+            });
+
+            document.getElementById('btn-hero-clicker').addEventListener('click', (e) => {
+                e.preventDefault();
+                const game = gamesCatalog.find(g => g.id === 'clicker');
+                if (game) launchGame(game);
+            });
+
+            // Close button listener
+            closeBtn.addEventListener('click', () => {
+                overlay.classList.remove('show');
+                setTimeout(() => {
+                    overlay.classList.add('hidden');
+                    iframe.src = ''; // Clear iframe source
+                    document.body.style.overflow = '';
+                }, 300);
+            });
+
+            // --- Functional Search Bar ---
+            const searchInput = document.getElementById('search-input');
+            const emptyState = document.getElementById('empty-state');
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.toLowerCase().trim();
+                
+                const filteredGames = gamesCatalog.filter(game => 
+                    game.title.toLowerCase().includes(query) || 
+                    game.description.toLowerCase().includes(query) ||
+                    game.category.toLowerCase().includes(query)
+                );
+
+                renderGames(filteredGames);
+
+                if (filteredGames.length === 0) {
+                    emptyState.classList.remove('hidden');
+                    emptyState.classList.add('flex');
+                    gridContainer.classList.add('hidden');
+                } else {
+                    emptyState.classList.add('hidden');
+                    emptyState.classList.remove('flex');
+                    gridContainer.classList.remove('hidden');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
