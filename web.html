@@ -28,7 +28,7 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" href="favicon.ico">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/favicon.ico">
 
     <style>
         body {
@@ -139,7 +139,7 @@
                 <span id="overlay-title" class="text-white font-bold text-sm tracking-widest uppercase">NOW PLAYING</span>
             </div>
             
-            <button id="close-game-btn" class="group bg-transparent hover:bg-brand-blue/10 text-gray-400 hover:text-brand-blue border border-transparent hover:border-brand-blue/30 px-4 py-1.5 rounded-lg transition-all duration-200 text-sm font-bold flex items-center gap-2 cursor-pointer">
+            <button id="close-game-btn" type="button" class="group bg-transparent hover:bg-brand-blue/10 text-gray-300 hover:text-brand-blue border border-brand-blue/20 hover:border-brand-blue/50 px-4 py-1.5 rounded-lg transition-all duration-200 text-sm font-bold flex items-center gap-2 cursor-pointer shadow-sm">
                 <i class="fa-solid fa-xmark group-hover:rotate-90 transition-transform duration-200"></i> Close Game
             </button>
         </div>
@@ -167,46 +167,42 @@
                 title: 'GTA: Vice City',
                 category: 'Arcade',
                 description: 'Grand Theft Auto: Vice City. yay',
-                thumbnail: 'https://images.unsplash.com/photo-1550745165-9bc0b252726f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-                statLabel: 'High',
-                statValue: '-',
+                thumbnail: 'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/i/vice-city/icon.jpg',
+                statLabel: 'By',
+                statValue: 'Rockstar games',
                 path: '/g/gtavc.html'
             },
             {
-                id: 'pong',
-                title: 'Cyber Pong',
-                category: 'Retro',
-                description: 'Classic paddle duel against AI. Fast-paced energy ball action in a neon arena.',
-                thumbnail: 'https://images.unsplash.com/photo-1611996575749-79a3a250f948?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-                statLabel: 'High',
-                statValue: '-',
-                path: '/g/pong.html'
+                id: 'sr',
+                title: 'Soccer Random',
+                category: 'Arcade',
+                description: 'Soccer Random is a football version of the popular random series produced by TwoPlayerGames',
+                thumbnail: 'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/i/sr.jpg',
+                statLabel: 'By',
+                statValue: 'TwoPlayerGames.org',
+                path: '/g/sr.html'
             },
             {
-                id: 'memory',
-                title: 'Memory Match',
-                category: 'Puzzle',
-                description: 'Test your focus and match glowing technological patterns in minimum moves.',
-                thumbnail: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-                statLabel: 'Best Moves',
-                statValue: '-',
+                id: 'undertale',
+                title: 'Undertale',
+                category: 'Arcade',
+                description: 'Welcome to UNDERTALE. In this RPG, you control a human who falls underground into the world of monsters. Now you must find your way out... or stay trapped forever.',
+                thumbnail: 'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/i/undertale.jpg',
+                statLabel: 'By',
+                statValue: 'tobyfox',
                 path: '/g/memory.html'
-            },
-            {
-                id: 'clicker',
-                title: 'Neon Clicker',
-                category: 'Idle',
-                description: 'Harvest cyber energy, purchase automated generators, and scale up your output.',
-                thumbnail: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80',
-                statLabel: 'Energy',
-                statValue: '-',
-                path: '/g/clicker.html'
             }
         ];
 
         document.addEventListener('DOMContentLoaded', () => {
             const gridContainer = document.getElementById('games-grid');
-            
+            const overlay = document.getElementById('game-overlay');
+            const iframe = document.getElementById('game-iframe');
+            const closeBtn = document.getElementById('close-game-btn');
+            const overlayTitle = document.getElementById('overlay-title');
+            const searchInput = document.getElementById('search-input');
+            const emptyState = document.getElementById('empty-state');
+
             // Render game cards dynamically from the list
             function renderGames(gamesToRender) {
                 gridContainer.innerHTML = '';
@@ -234,7 +230,6 @@
                         </div>
                     `;
                     
-                    // Attach click handler to open in iframe overlay
                     card.addEventListener('click', (e) => {
                         e.preventDefault();
                         launchGame(game);
@@ -247,28 +242,38 @@
             // Initial render
             renderGames(gamesCatalog);
 
-            // --- Overlay & Dynamic Path Routing Logic ---
-            const overlay = document.getElementById('game-overlay');
-            const iframe = document.getElementById('game-iframe');
-            const closeBtn = document.getElementById('close-game-btn');
-            const overlayTitle = document.getElementById('overlay-title');
-
             function launchGame(game) {
-                // Get current domain and append custom game path
                 const currentOrigin = window.location.origin;
                 const targetUrl = currentOrigin + game.path;
                 
                 console.log(`Launching game ID [${game.id}] -> ${targetUrl}`);
                 
-                // Set iframe source
                 iframe.src = targetUrl;
                 overlayTitle.textContent = game.title.toUpperCase();
                 
-                // Show modal overlay
-                overlay.classList.remove('hidden');
                 overlay.classList.add('show');
                 document.body.style.overflow = 'hidden';
             }
+
+            // Robust close game function
+            function closeGame() {
+                overlay.classList.remove('show');
+                iframe.src = 'about:blank'; // Completely stops iframe activity and audio
+                document.body.style.overflow = '';
+            }
+
+            // Event listeners for closing
+            closeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                closeGame();
+            });
+
+            // Escape key listener to close overlay
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && overlay.classList.contains('show')) {
+                    closeGame();
+                }
+            });
 
             // Hero buttons listeners
             document.getElementById('btn-hero-snake').addEventListener('click', (e) => {
@@ -283,20 +288,7 @@
                 if (game) launchGame(game);
             });
 
-            // Close button listener
-            closeBtn.addEventListener('click', () => {
-                overlay.classList.remove('show');
-                setTimeout(() => {
-                    overlay.classList.add('hidden');
-                    iframe.src = ''; // Clear iframe source
-                    document.body.style.overflow = '';
-                }, 300);
-            });
-
-            // --- Functional Search Bar ---
-            const searchInput = document.getElementById('search-input');
-            const emptyState = document.getElementById('empty-state');
-
+            // Functional Search Bar listener
             searchInput.addEventListener('input', (e) => {
                 const query = e.target.value.toLowerCase().trim();
                 
