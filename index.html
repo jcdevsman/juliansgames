@@ -1,149 +1,612 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Time and the clock!</title>
-    <style>
-        /* Base Dark Theme */
-        body {
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #0d0d12; /* Very dark background */
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
-        }
-
-        /* Animated Gradient Title */
-        .animated-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 40px;
-            
-            /* Gradient Setup */
-            background: linear-gradient(
-                270deg, 
-                #ff007f, #7928ca, #00d4ff, #7928ca, #ff007f
-            );
-            background-size: 400% 400%;
-            
-            /* Clip background to text */
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            color: transparent; /* Fallback */
-            
-            /* Animation */
-            animation: gradient-shift 8s ease infinite;
-        }
-
-        @keyframes gradient-shift {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* Sleek Button */
-        .launch-btn {
-            background-color: #1a1a24;
-            color: #ffffff;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            outline: none;
-        }
-
-        .launch-btn:hover {
-            background-color: #2a2a3a;
-            border-color: #00d4ff;
-            box-shadow: 0 0 20px rgba(0, 212, 255, 0.3);
-            transform: translateY(-2px);
-        }
-
-        .launch-btn:active {
-            transform: translateY(1px);
-            box-shadow: 0 2px 10px rgba(0, 212, 255, 0.2);
-        }
-
-        /* Status Text */
-        #status-message {
-            margin-top: 20px;
-            font-size: 0.9rem;
-            color: #888;
-            min-height: 20px;
-        }
-    </style>
-</head>
-<body>
-
-    <div class="animated-title"></div>
-    
-    <button class="launch-btn" onclick="launchCode()">shhh.. don't cry.</button>
-    
-    <div id="status-message"></div>
-
+    <title>Time and Clock - World Clock & Timezone Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Replace this with your actual raw GitHub URL
-        // Example: https://raw.githubusercontent.com/username/repo/main/index.html
-        const TARGET_URL = 'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/web.html';
-
-        async function launchCode() {
-            const statusDiv = document.getElementById('status-message');
-            
-            if (TARGET_URL === 'YOUR_RAW_GITHUB_URL_HERE') {
-                statusDiv.style.color = '#ff4444';
-                statusDiv.innerText = "Error: Please update the TARGET_URL in the script.";
-                return;
-            }
-
-            statusDiv.style.color = '#888';
-            statusDiv.innerText = "Fetching code...";
-
-            try {
-                // Fetch the code from the raw GitHub URL
-                const response = await fetch(TARGET_URL);
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
                 }
-                
-                const code = await response.text();
-                statusDiv.innerText = "Injecting into new tab...";
-
-                // Open a new about:blank window
-                const newWindow = window.open('about:blank', '_blank');
-                
-                if (newWindow) {
-                    // Write the fetched code into the new window
-                    newWindow.document.open();
-                    newWindow.document.write(code);
-                    newWindow.document.close();
-                    statusDiv.innerText = "Launch successful.";
-                } else {
-                    // Handle pop-up blocker
-                    statusDiv.style.color = '#ff4444';
-                    statusDiv.innerText = "Error: Pop-up blocked. Please allow pop-ups for this site.";
-                }
-
-            } catch (error) {
-                console.error("Launch failed:", error);
-                statusDiv.style.color = '#ff4444';
-                statusDiv.innerText = "Error fetching code. Check console for details.";
             }
         }
     </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar and sleek transitions */
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.5);
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body class="h-full bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
 
+    <!-- Header Navigation -->
+    <header class="w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-violet-500 flex items-center justify-center text-white shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-globe text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-tight bg-gradient-to-r from-indigo-500 to-violet-500 bg-clip-text text-transparent">GlobalTime</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">World Clock & Timezone Hub</p>
+                </div>
+            </div>
+
+            <div class="flex items-center space-x-3">
+                <!-- 12/24 Hour Format Toggle -->
+                <div class="bg-slate-100 dark:bg-slate-800 p-1 rounded-xl flex items-center space-x-1 border border-slate-200 dark:border-slate-700">
+                    <button id="format12Btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-sm">12H</button>
+                    <button id="format24Btn" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200">24H</button>
+                </div>
+
+                <button id="addClockBtn" class="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl text-sm font-medium transition shadow-sm hover:shadow active:scale-95">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span class="hidden sm:inline">Add Clock</span>
+                </button>
+                <button id="themeToggleBtn" class="w-10 h-10 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Hub -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col space-y-8">
+        
+        <!-- Interactive Timezone Converter Slider -->
+        <section class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                        <i class="fa-solid fa-sliders"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-sm font-semibold tracking-wide">Interactive Timezone Converter</h2>
+                        <p class="text-xs text-slate-500 dark:text-slate-400" id="converterTimeDisplay">Drag slider to simulate hours across all zones</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <span id="converterModeBadge" class="px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300 hidden">
+                        Simulation Active
+                    </span>
+                    <button id="resetConverterBtn" class="text-xs text-indigo-600 dark:text-indigo-400 hover:underline font-medium hidden">
+                        Reset to Live Time
+                    </button>
+                </div>
+            </div>
+            
+            <div class="space-y-2">
+                <input id="timeSlider" type="range" min="0" max="1439" value="0" class="w-full h-2 bg-slate-200 dark:bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-600">
+                <div class="flex justify-between text-xs text-slate-400 font-mono">
+                    <span>12:00 AM</span>
+                    <span>06:00 AM</span>
+                    <span>12:00 PM</span>
+                    <span>06:00 PM</span>
+                    <span>11:59 PM</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Bar -->
+        <div class="flex items-center justify-between gap-4">
+            <div class="relative flex-grow max-w-md">
+                <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input id="searchClocksInput" type="text" placeholder="Search clocks by city, country or timezone..." class="w-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">
+            </div>
+            <div class="text-xs text-slate-500 dark:text-slate-400 font-medium hidden sm:block">
+                Tip: Click delete icon on hover to remove any clock
+            </div>
+        </div>
+
+        <!-- Clocks Grid -->
+        <div id="clocksGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Dynamically populated clock cards -->
+        </div>
+
+        <!-- Empty Search State -->
+        <div id="emptyState" class="hidden text-center py-16 space-y-3">
+            <div class="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 flex items-center justify-center mx-auto text-lg">
+                <i class="fa-solid fa-clock-rotate-left"></i>
+            </div>
+            <h3 class="font-semibold text-slate-700 dark:text-slate-300">No matching clocks found</h3>
+            <p class="text-xs text-slate-400">Try searching for another city or timezone name.</p>
+        </div>
+    </main>
+
+    <!-- Footer with Privacy Policy Hyperlink -->
+    <footer class="w-full border-t border-slate-200 dark:border-slate-800 py-4 text-center text-xs text-slate-500 dark:text-slate-400 bg-white/50 dark:bg-slate-900/50 flex flex-col sm:flex-row items-center justify-center space-y-1 sm:space-y-0 sm:space-x-4">
+        <p>GlobalTime Hub &bull; Live World Clocks & Interactive Converter</p>
+        <button id="privacyPolicyBtn" class="text-indigo-600 dark:text-indigo-400 hover:underline font-medium bg-transparent border-none cursor-pointer p-0 text-xs">
+            Privacy Policy
+        </button>
+    </footer>
+
+    <!-- Add Clock Modal -->
+    <div id="addClockModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-md w-full p-6 shadow-2xl transform transition-all space-y-5">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="font-bold text-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-clock text-indigo-600"></i>
+                    <span>Add New World Clock</span>
+                </h3>
+                <button id="closeModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            
+            <form id="addClockForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Select Timezone</label>
+                    <select id="timezoneSelect" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 custom-scrollbar">
+                        <!-- Populated dynamically -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">Custom Label (Optional)</label>
+                    <input type="text" id="customLabelInput" placeholder="e.g. Remote Team / Parent's Home" class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                
+                <div class="flex items-center justify-end space-x-3 pt-2">
+                    <button type="button" id="cancelModalBtn" class="px-4 py-2 rounded-xl text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">Cancel</button>
+                    <button type="submit" class="px-4 py-2 rounded-xl text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">Add Clock</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Privacy Policy & Secure Iframe Modal -->
+    <div id="privacyModal" class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-sm flex items-center justify-center p-4 hidden">
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl max-w-3xl w-full p-6 shadow-2xl transform transition-all flex flex-col h-[80vh]">
+            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+                <h3 class="font-bold text-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-shield-halved text-indigo-600"></i>
+                    <span>Privacy Policy & Secured Portal</span>
+                </h3>
+                <button id="closePrivacyModalBtn" class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Code Entry View -->
+            <div id="codeEntryView" class="py-12 px-4 max-w-md mx-auto w-full space-y-4 my-auto">
+                <div class="text-center space-y-2">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto text-lg">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                    <h4 class="font-semibold text-base">Secured Access Required</h4>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Please enter the access code to unlock</p>
+                </div>
+                <form id="codeForm" class="space-y-4 pt-2">
+                    <div>
+                        <input type="password" id="secretCodeInput" maxlength="7" placeholder="Enter 7-digit code..." class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl px-4 py-3 text-sm tracking-widest text-center font-mono focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <p id="codeErrorMsg" class="text-xs text-red-500 mt-1 hidden text-center">Incorrect code. Please try again.</p>
+                    </div>
+                    <button type="submit" class="w-full py-3 rounded-xl text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">Verify Code</button>
+                </form>
+            </div>
+
+            <!-- Iframe Container View (Hidden initially) -->
+            <div id="iframeContainerView" class="hidden flex-grow flex flex-col space-y-3 overflow-hidden">
+                <div class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 flex items-center space-x-1.5">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>Access Granted - Have Fun</span>
+                    </span>
+                    <button id="lockPortalBtn" class="text-xs text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 underline font-medium">Lock Portal</button>
+                </div>
+                <div class="flex-grow w-full border border-slate-200 dark:border-slate-800 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-950">
+                    <iframe id="secureIframe" class="w-full h-full border-0" src="about:blank" data-src="https://timeandclock.net/indexbackup"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Default default clocks if none saved in localStorage
+        const defaultClocks = [
+            { id: 'nyc', city: 'New York', timezone: 'America/New_York', label: 'HQ East Coast' },
+            { id: 'lon', city: 'London', timezone: 'Europe/London', label: 'European Office' },
+            { id: 'par', city: 'Paris', timezone: 'Europe/Paris', label: 'Branch' },
+            { id: 'tok', city: 'Tokyo', timezone: 'Asia/Tokyo', label: 'APAC Hub' },
+            { id: 'syd', city: 'Sydney', timezone: 'Australia/Sydney', label: 'Oceania' },
+            { id: 'utc', city: 'UTC', timezone: 'UTC', label: 'Coordinated Universal Time' }
+        ];
+
+        // State variables
+        let userClocks = JSON.parse(localStorage.getItem('globaltime_clocks')) || defaultClocks;
+        let is24HourFormat = JSON.parse(localStorage.getItem('globaltime_format24')) || false;
+        let isDarkMode = localStorage.getItem('globaltime_dark') === 'true' || 
+                         (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches && localStorage.getItem('globaltime_dark') === null);
+        
+        let simulationActive = false;
+        let simulatedMinutesSinceMidnight = null;
+
+        // DOM Elements
+        const clocksGrid = document.getElementById('clocksGrid');
+        const themeToggleBtn = document.getElementById('themeToggleBtn');
+        const themeIcon = document.getElementById('themeIcon');
+        const format12Btn = document.getElementById('format12Btn');
+        const format24Btn = document.getElementById('format24Btn');
+        const addClockBtn = document.getElementById('addClockBtn');
+        const addClockModal = document.getElementById('addClockModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const cancelModalBtn = document.getElementById('cancelModalBtn');
+        const addClockForm = document.getElementById('addClockForm');
+        const timezoneSelect = document.getElementById('timezoneSelect');
+        const customLabelInput = document.getElementById('customLabelInput');
+        const searchClocksInput = document.getElementById('searchClocksInput');
+        const timeSlider = document.getElementById('timeSlider');
+        const converterTimeDisplay = document.getElementById('converterTimeDisplay');
+        const converterModeBadge = document.getElementById('converterModeBadge');
+        const resetConverterBtn = document.getElementById('resetConverterBtn');
+        const emptyState = document.getElementById('emptyState');
+
+        // Privacy Policy Modal Elements
+        const privacyPolicyBtn = document.getElementById('privacyPolicyBtn');
+        const privacyModal = document.getElementById('privacyModal');
+        const closePrivacyModalBtn = document.getElementById('closePrivacyModalBtn');
+        const codeEntryView = document.getElementById('codeEntryView');
+        const iframeContainerView = document.getElementById('iframeContainerView');
+        const codeForm = document.getElementById('codeForm');
+        const secretCodeInput = document.getElementById('secretCodeInput');
+        const codeErrorMsg = document.getElementById('codeErrorMsg');
+        const lockPortalBtn = document.getElementById('lockPortalBtn');
+        const secureIframe = document.getElementById('secureIframe');
+
+        // Privacy Modal Logic
+        privacyPolicyBtn.addEventListener('click', () => {
+            secretCodeInput.value = '';
+            codeErrorMsg.classList.add('hidden');
+            codeEntryView.classList.remove('hidden');
+            iframeContainerView.classList.add('hidden');
+            privacyModal.classList.remove('hidden');
+            secretCodeInput.focus();
+        });
+
+        const closePrivacyModal = () => {
+            privacyModal.classList.add('hidden');
+            secureIframe.src = 'about:blank'; // reset iframe on close
+        };
+
+        closePrivacyModalBtn.addEventListener('click', closePrivacyModal);
+        privacyModal.addEventListener('click', (e) => { if (e.target === privacyModal) closePrivacyModal(); });
+
+        codeForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const enteredCode = secretCodeInput.value.trim();
+            if (enteredCode === 'wow4231') {
+                codeErrorMsg.classList.add('hidden');
+                codeEntryView.classList.add('hidden');
+                iframeContainerView.classList.remove('hidden');
+                // Load example.com in iframe safely
+                secureIframe.src = secureIframe.getAttribute('data-src');
+            } else {
+                codeErrorMsg.classList.remove('hidden');
+                secretCodeInput.value = '';
+                secretCodeInput.focus();
+            }
+        });
+
+        lockPortalBtn.addEventListener('click', () => {
+            codeEntryView.classList.remove('hidden');
+            iframeContainerView.classList.add('hidden');
+            secureIframe.src = 'about:blank';
+            secretCodeInput.value = '';
+            secretCodeInput.focus();
+        });
+
+        // Initialize Theme
+        function applyTheme() {
+            if (isDarkMode) {
+                document.documentElement.classList.add('dark');
+                themeIcon.className = 'fa-solid fa-sun';
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.className = 'fa-solid fa-moon';
+            }
+            localStorage.setItem('globaltime_dark', isDarkMode);
+        }
+
+        themeToggleBtn.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            applyTheme();
+        });
+
+        // Initialize Format Buttons
+        function updateFormatButtons() {
+            if (is24HourFormat) {
+                format24Btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-sm';
+                format12Btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200';
+            } else {
+                format12Btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-100 shadow-sm';
+                format24Btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold transition text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200';
+            }
+            localStorage.setItem('globaltime_format24', is24HourFormat);
+        }
+
+        format12Btn.addEventListener('click', () => { is24HourFormat = false; updateFormatButtons(); renderClocks(); });
+        format24Btn.addEventListener('click', () => { is24HourFormat = true; updateFormatButtons(); renderClocks(); });
+
+        // Populate Intl Timezones in Modal Select
+        function populateTimezones() {
+            const timezones = Intl.supportedValuesOf ? Intl.supportedValuesOf('timeZone') : [
+                'UTC', 'America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles',
+                'Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Asia/Tokyo', 'Asia/Shanghai',
+                'Asia/Kolkata', 'Australia/Sydney', 'Pacific/Auckland', 'America/Sao_Paulo', 'Africa/Cairo'
+            ];
+
+            timezoneSelect.innerHTML = '';
+            timezones.forEach(tz => {
+                const opt = document.createElement('option');
+                opt.value = tz;
+                opt.textContent = tz.replace(/_/g, ' ');
+                timezoneSelect.appendChild(opt);
+            });
+            timezoneSelect.value = 'America/New_York';
+        }
+
+        // Modal triggers
+        addClockBtn.addEventListener('click', () => {
+            populateTimezones();
+            customLabelInput.value = '';
+            addClockModal.classList.remove('hidden');
+        });
+
+        const closeModal = () => addClockModal.classList.add('hidden');
+        closeModalBtn.addEventListener('click', closeModal);
+        cancelModalBtn.addEventListener('click', closeModal);
+        addClockModal.addEventListener('click', (e) => { if(e.target === addClockModal) closeModal(); });
+
+        // Add Clock Form Handler
+        addClockForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const tz = timezoneSelect.value;
+            const label = customLabelInput.value.trim();
+            const parts = tz.split('/');
+            const cityName = parts[parts.length - 1].replace(/_/g, ' ');
+
+            const newClock = {
+                id: 'clock_' + Date.now(),
+                city: cityName,
+                timezone: tz,
+                label: label || tz
+            };
+
+            userClocks.push(newClock);
+            localStorage.setItem('globaltime_clocks', JSON.stringify(userClocks));
+            closeModal();
+            renderClocks();
+        });
+
+        // Delete clock helper
+        window.deleteClock = function(id) {
+            userClocks = userClocks.filter(c => c.id !== id);
+            localStorage.setItem('globaltime_clocks', JSON.stringify(userClocks));
+            renderClocks();
+        }
+
+        // Time difference calculator helper
+        function getTimeDifference(targetTz) {
+            try {
+                const now = new Date();
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: targetTz,
+                    timeZoneName: 'shortOffset'
+                });
+                const parts = formatter.formatToParts(now);
+                const offsetPart = parts.find(p => p.type === 'timeZoneName');
+                return offsetPart ? offsetPart.value : '';
+            } catch(e) {
+                return '';
+            }
+        }
+
+        // Main render clocks loop
+        function renderClocks() {
+            const filterText = searchClocksInput.value.toLowerCase().trim();
+            clocksGrid.innerHTML = '';
+
+            const filtered = userClocks.filter(c => 
+                c.city.toLowerCase().includes(filterText) || 
+                c.label.toLowerCase().includes(filterText) ||
+                c.timezone.toLowerCase().includes(filterText)
+            );
+
+            if (filtered.length === 0) {
+                emptyState.classList.remove('hidden');
+                return;
+            } else {
+                emptyState.classList.add('hidden');
+            }
+
+            // Reference date for simulation or live time
+            let baseDate = new Date();
+            if (simulationActive && simulatedMinutesSinceMidnight !== null) {
+                baseDate = new Date();
+                baseDate.setHours(Math.floor(simulatedMinutesSinceMidnight / 60));
+                baseDate.setMinutes(simulatedMinutesSinceMidnight % 60);
+                baseDate.setSeconds(0);
+            }
+
+            filtered.forEach(clock => {
+                try {
+                    const optionsTime = {
+                        timeZone: clock.timezone,
+                        hour: 'numeric',
+                        minute: 'numeric',
+                        second: 'numeric',
+                        hour12: !is24HourFormat
+                    };
+                    const optionsDate = {
+                        timeZone: clock.timezone,
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric'
+                    };
+
+                    const timeFormatter = new Intl.DateTimeFormat('en-US', optionsTime);
+                    const dateFormatter = new Intl.DateTimeFormat('en-US', optionsDate);
+
+                    let timeStr, dateStr;
+                    
+                    if (simulationActive && simulatedMinutesSinceMidnight !== null) {
+                        // Compute timezone shift relative to local system timezone
+                        const now = new Date();
+                        const localTz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                        
+                        // Create simulated local date
+                        const simLocal = new Date();
+                        simLocal.setHours(Math.floor(simulatedMinutesSinceMidnight / 60));
+                        simLocal.setMinutes(simulatedMinutesSinceMidnight % 60);
+                        simLocal.setSeconds(0);
+                        
+                        timeStr = timeFormatter.format(simLocal);
+                        dateStr = dateFormatter.format(simLocal);
+                    } else {
+                        const now = new Date();
+                        timeStr = timeFormatter.format(now);
+                        dateStr = dateFormatter.format(now);
+                    }
+
+                    // Determine day/night icon based on 24hr hour in target timezone
+                    const hour24Formatter = new Intl.DateTimeFormat('en-US', { timeZone: clock.timezone, hour: 'numeric', hour12: false });
+                    const targetHourDate = simulationActive ? (() => {
+                        const d = new Date();
+                        d.setHours(Math.floor(simulatedMinutesSinceMidnight / 60));
+                        d.setMinutes(simulatedMinutesSinceMidnight % 60);
+                        return d;
+                    })() : new Date();
+                    
+                    const currentHour24 = parseInt(hour24Formatter.format(targetHourDate)) % 24;
+                    
+                    let iconClass = "fa-solid fa-sun text-amber-500";
+                    let periodLabel = "Daytime";
+                    if (currentHour24 >= 6 && currentHour24 < 18) {
+                        iconClass = "fa-solid fa-sun text-amber-500";
+                        periodLabel = "Daytime";
+                    } else if (currentHour24 >= 18 && currentHour24 < 21) {
+                        iconClass = "fa-solid fa-cloud-sun text-orange-400";
+                        periodLabel = "Evening";
+                    } else {
+                        iconClass = "fa-solid fa-moon text-indigo-400";
+                        periodLabel = "Nighttime";
+                    }
+
+                    const offsetStr = getTimeDifference(clock.timezone);
+
+                    const card = document.createElement('div');
+                    card.className = "bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-2xl p-5 shadow-sm hover:shadow-md transition flex flex-col justify-between relative group";
+                    card.innerHTML = `
+                        <div class="flex items-start justify-between mb-4">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h3 class="font-bold text-slate-800 dark:text-slate-100 text-base">${clock.city}</h3>
+                                    <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-mono">${offsetStr}</span>
+                                </div>
+                                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-[200px]">${clock.label}</p>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="w-8 h-8 rounded-lg bg-slate-50 dark:bg-slate-800 flex items-center justify-center text-sm" title="${periodLabel}">
+                                    <i class="${iconClass}"></i>
+                                </span>
+                                <button onclick="deleteClock('${clock.id}')" class="w-8 h-8 rounded-lg text-slate-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/35 transition flex items-center justify-center opacity-0 group-hover:opacity-100" title="Remove Clock">
+                                    <i class="fa-solid fa-trash-can text-xs"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="my-2">
+                            <div class="text-3xl sm:text-4xl font-extrabold tracking-tight font-mono text-slate-900 dark:text-white">
+                                ${timeStr}
+                            </div>
+                            <div class="text-xs font-medium text-slate-500 dark:text-slate-400 mt-2 flex items-center space-x-2">
+                                <i class="fa-regular fa-calendar text-indigo-500"></i>
+                                <span>${dateStr}</span>
+                            </div>
+                        </div>
+                    `;
+                    clocksGrid.appendChild(card);
+                } catch(e) {
+                    console.error("Error rendering clock for timezone:", clock.timezone, e);
+                }
+            });
+        }
+
+        // Search input event
+        searchClocksInput.addEventListener('input', renderClocks);
+
+        // Time Slider Event (Timezone Converter)
+        timeSlider.addEventListener('input', (e) => {
+            simulationActive = true;
+            simulatedMinutesSinceMidnight = parseInt(e.target.value);
+            
+            const hours = Math.floor(simulatedMinutesSinceMidnight / 60);
+            const minutes = simulatedMinutesSinceMidnight % 60;
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const displayHours = is24HourFormat ? String(hours).padStart(2, '0') : (hours % 12 || 12);
+            const displayMinutes = String(minutes).padStart(2, '0');
+            
+            converterTimeDisplay.textContent = `Simulating Time: ${displayHours}:${displayMinutes} ${is24HourFormat ? '' : ampm}`;
+            converterModeBadge.classList.remove('hidden');
+            resetConverterBtn.classList.remove('hidden');
+
+            renderClocks();
+        });
+
+        // Reset converter simulation
+        resetConverterBtn.addEventListener('click', () => {
+            simulationActive = false;
+            simulatedMinutesSinceMidnight = null;
+            
+            const now = new Date();
+            timeSlider.value = now.getHours() * 60 + now.getMinutes();
+
+            converterTimeDisplay.textContent = 'Drag slider to simulate hours across all zones';
+            converterModeBadge.classList.add('hidden');
+            resetConverterBtn.classList.add('hidden');
+
+            renderClocks();
+        });
+
+        // Periodic live clock tick (every second)
+        setInterval(() => {
+            if (!simulationActive) {
+                renderClocks();
+            }
+        }, 1000);
+
+        // On load initialization
+        window.addEventListener('DOMContentLoaded', () => {
+            applyTheme();
+            updateFormatButtons();
+            
+            const now = new Date();
+            timeSlider.value = now.getHours() * 60 + now.getMinutes();
+
+            renderClocks();
+        });
+    </script>
 </body>
 </html>
