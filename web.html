@@ -1,316 +1,704 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Classroom</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
     <script>
         tailwind.config = {
+            darkMode: 'class',
             theme: {
                 extend: {
-                    colors: {
-                        brand: {
-                            blue: '#3b82f6', // Vibrant blue primary accent
-                            dark: '#0a0a0c',   // Main background
-                            panel: '#151518',  // Hero panel background
-                            cardTop: '#101012',// Card top background
-                            cardBot: '#151821',// Card bottom background
-                            border: 'rgba(59, 130, 246, 0.15)', // Blue-tinted border
-                        }
-                    },
                     fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        oasis: {
+                            bg: '#0f1117',        // Deep Bible.com charcoal canvas
+                            sidebar: '#161922',   // Matte sidebar background
+                            card: '#1c202c',      // Elevated matte dark card
+                            hover: '#242938',     // Smooth hover tone
+                            border: '#2a3042',    // Subtle border separation
+                            cyan: '#00d2ff',      // Modern bright cyan highlight
+                            blue: '#3a7bd5',      // High-tech deep blue gradient end
+                            muted: '#94a3b8',     // Calm cool slate text
+                        }
                     }
                 }
             }
         }
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/favicon.ico">
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #050507;
-            color: #ffffff;
+        /* Custom Clean Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #0f1117; }
+        ::-webkit-scrollbar-thumb { background: #2a3042; border-radius: 9999px; }
+        ::-webkit-scrollbar-thumb:hover { background: #00d2ff; }
+
+        /* Smooth UI transitions */
+        .oasis-card {
+            background: #1c202c;
+            border: 1px solid #2a3042;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .oasis-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 210, 255, 0.35);
+            box-shadow: 0 12px 28px -8px rgba(0, 0, 0, 0.6), 0 0 15px 0px rgba(0, 210, 255, 0.15);
         }
 
-        /* Hero radial gradient for depth */
-        .hero-bg {
-            background: radial-gradient(circle at 100% 0%, rgba(59, 130, 246, 0.1) 0%, rgba(21, 21, 24, 1) 50%);
+        .sidebar-link { transition: all 0.15s ease-in-out; }
+        .sidebar-link.active {
+            background: rgba(0, 210, 255, 0.08);
+            color: #00d2ff;
+            border-right: 3px solid #00d2ff;
+            font-weight: 600;
+        }
+
+        /* Gradient accent utilities */
+        .btn-gradient {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            color: #0f1117;
+        }
+        .btn-gradient:hover { filter: brightness(1.1); }
+        .text-gradient {
+            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Fullscreen API styles */
+        #modalContainer:fullscreen {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            border-radius: 0 !important;
+            border: none !important;
+        }
+        #modalContainer:fullscreen .modal-header {
+            display: none !important;
         }
         
-        /* Iframe transition animation */
-        #game-overlay.show {
-            display: flex;
-            animation: fadeIn 0.3s ease-out forwards;
+        /* Safari Fullscreen Support */
+        #modalContainer:-webkit-full-screen {
+            width: 100vw !important;
+            height: 100vh !important;
+            max-width: none !important;
+            border-radius: 0 !important;
+            border: none !important;
         }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* Image hover zoom effect */
-        .game-card .thumb-wrapper img {
-            transition: transform 0.5s ease;
+        #modalContainer:-webkit-full-screen .modal-header {
+            display: none !important;
         }
         
-        .game-card:hover .thumb-wrapper img {
-            transform: scale(1.05);
+        /* Iframe loading overlay spinner */
+        .loader-ring {
+            border: 3px solid rgba(0, 210, 255, 0.1);
+            border-top: 3px solid #00d2ff;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            animation: spin 1s linear infinite;
         }
-
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0c; 
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1e3a8a; 
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3b82f6; 
-        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen antialiased selection:bg-brand-blue selection:text-white pb-20">
+<body class="bg-oasis-bg text-slate-100 font-sans min-h-full flex antialiased selection:bg-cyan-500 selection:text-slate-950">
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
-
-        <div class="hero-bg bg-brand-panel rounded-3xl p-8 md:p-12 border border-brand-border flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 relative overflow-hidden shadow-2xl shadow-brand-blue/5">
-            
-            <div class="z-10 max-w-2xl">
-                <!-- Badge -->
-                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-brand-blue/30 bg-brand-blue/5 text-brand-blue text-xs font-semibold tracking-wide mb-6 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
-                    <div class="w-1.5 h-1.5 rounded-full bg-brand-blue animate-pulse"></div>
-                    Event
-                </div>
-                
-                <!-- Heading -->
-                <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold mb-4 tracking-tight">
-                    Launch of<span class="text-brand-blue drop-shadow-[0_0_10px_rgba(59,130,246,0.3)]"> about:games</span>
-                </h1>
-                
-                <!-- Subtext -->
-                <p class="text-gray-400 text-lg md:text-xl leading-relaxed max-w-xl">
-                    If your seeing this, Your playing on launch day!! (also I might add ads here for extra money). Fully undetected due to it being in a about:blank.
-                </p>
-            </div>
-
-        </div>
-
-        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-16 mb-8 gap-4">
-            <h2 class="text-2xl font-bold flex items-center gap-3 text-white">
-                <i class="fa-solid fa-gamepad text-brand-blue"></i>
-                The library.
-            </h2>
-            
-            <!-- Functional Search Bar -->
-            <div class="relative w-full sm:w-80 group">
-                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-brand-blue/50 group-focus-within:text-brand-blue transition-colors"></i>
-                <input type="text" id="search-input" placeholder="Search unblocked games..." class="w-full bg-[#101014] border border-brand-border rounded-xl py-3 pl-11 pr-4 text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-brand-blue/60 focus:bg-[#15151a] focus:shadow-[0_0_15px_rgba(59,130,246,0.1)] transition-all">
-            </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="games-grid">
-            <!-- Game cards will be dynamically rendered from our game list array -->
-        </div>
-        
-        <!-- Empty State for Search -->
-        <div id="empty-state" class="hidden flex-col items-center justify-center py-16 text-center">
-            <div class="w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center mb-4 border border-brand-blue/20">
-                <i class="fa-solid fa-ghost text-2xl text-brand-blue"></i>
-            </div>
-            <h3 class="text-xl font-bold text-white mb-2">No games found</h3>
-            <p class="text-gray-400">Try adjusting your search terms.</p>
-        </div>
-    </div>
-
-    <div id="game-overlay" class="fixed inset-0 z-50 bg-[#020203] hidden flex-col">
-        <!-- Overlay Header -->
-        <div class="h-14 bg-[#0a0a0c] border-b border-brand-blue/20 flex items-center justify-between px-6 shadow-md shadow-brand-blue/5">
-            <div class="flex items-center gap-3">
-                <div class="w-2 h-2 rounded-full bg-brand-blue animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.8)]"></div>
-                <span id="overlay-title" class="text-white font-bold text-sm tracking-widest uppercase">NOW PLAYING</span>
-            </div>
-            
-            <button id="close-game-btn" type="button" class="group bg-transparent hover:bg-brand-blue/10 text-gray-300 hover:text-brand-blue border border-brand-blue/20 hover:border-brand-blue/50 px-4 py-1.5 rounded-lg transition-all duration-200 text-sm font-bold flex items-center gap-2 cursor-pointer shadow-sm">
-                <i class="fa-solid fa-xmark group-hover:rotate-90 transition-transform duration-200"></i> Close Game
+    <!-- MOBILE HEADER -->
+    <div class="lg:hidden fixed top-0 left-0 right-0 z-40 bg-oasis-sidebar border-b border-oasis-border px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <button onclick="toggleMobileSidebar()" class="text-slate-300 hover:text-white p-1.5 rounded-lg bg-oasis-card border border-oasis-border">
+                <i class="fa-solid fa-bars text-base"></i>
             </button>
-        </div>
-        
-        <!-- Iframe Element -->
-        <div class="flex-grow w-full relative bg-black flex items-center justify-center overflow-hidden">
-            <!-- Loading indicator behind iframe -->
-            <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-0 bg-brand-dark">
-                <div class="relative w-16 h-16 mb-4">
-                    <div class="absolute inset-0 border-4 border-brand-blue/20 rounded-full"></div>
-                    <div class="absolute inset-0 border-4 border-brand-blue rounded-full border-t-transparent animate-spin"></div>
+            <div class="flex items-center gap-2">
+                <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-slate-950 font-black text-sm shadow-sm shadow-cyan-500/20">
+                    <i class="fa-solid fa-compass"></i>
                 </div>
-                <p class="text-brand-blue text-sm font-bold tracking-widest animate-pulse">Fetching html. Please be paitent. Games like undertale take a hot minute to boot.</p>
+                <span class="font-bold text-base tracking-wide text-white">OASIS</span>
             </div>
-            
-            <iframe id="game-iframe" class="w-full h-full border-none relative z-10 bg-transparent" allowfullscreen></iframe>
+        </div>
+        <button onclick="playRandomGame()" class="px-3 py-1.5 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 text-xs font-semibold flex items-center gap-1.5 hover:bg-cyan-500/20 transition-all">
+            <i class="fa-solid fa-dice text-xs"></i> Random
+        </button>
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-64 lg:w-72 bg-oasis-sidebar border-r border-oasis-border flex flex-col justify-between transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out">
+        <div class="flex flex-col h-full overflow-y-auto">
+            <!-- Sidebar Header -->
+            <div class="p-6 border-b border-oasis-border/60 flex items-center justify-between">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="filterByCategory('All')">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center text-slate-950 shadow-md shadow-cyan-500/20">
+                        <i class="fa-solid fa-compass text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-lg font-bold tracking-tight text-white block leading-tight">Julian's games</span>
+                        <span class="text-[10px] font-mono tracking-widest text-oasis-muted uppercase">A complete overhaul.</span>
+                    </div>
+                </div>
+                <button onclick="toggleMobileSidebar()" class="lg:hidden text-oasis-muted hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Search Field -->
+            <div class="p-4 border-b border-oasis-border/40">
+                <div class="relative">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-oasis-muted text-xs"></i>
+                    <input type="text" id="searchInput" placeholder="Search games..." class="w-full bg-oasis-bg text-xs text-slate-200 placeholder-oasis-muted pl-9 pr-8 py-2.5 rounded-xl border border-oasis-border focus:outline-none focus:border-cyan-400 transition-colors">
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-2.5 text-oasis-muted hover:text-white text-xs">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="flex-1 py-4 px-3 space-y-6">
+                <!-- Main Nav -->
+                <div>
+                    <div class="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-oasis-muted font-mono">Navigation</div>
+                    <ul class="space-y-1">
+                        <li>
+                            <button onclick="filterByCategory('All')" id="nav-All" class="sidebar-link active w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs text-slate-300 hover:text-white">
+                                <i class="fa-solid fa-border-all w-4 text-center text-slate-400"></i> <span>All Games</span>
+                            </button>
+                        </li>
+                        <li>
+                            <button onclick="filterByCategory('Favorites')" id="nav-Favorites" class="sidebar-link w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs text-slate-300 hover:text-white">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-bookmark w-4 text-center text-cyan-400"></i> <span>Favorites</span>
+                                </div>
+                                <span id="favCountBadge" class="px-1.5 py-0.5 text-[10px] rounded-md bg-oasis-bg border border-oasis-border text-oasis-muted font-mono">0</span>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Categories -->
+                <div>
+                    <div class="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-oasis-muted font-mono">Categories</div>
+                    <ul class="space-y-1">
+                        <li><button onclick="filterByCategory('Sports')" id="nav-Sports" class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs text-slate-400 hover:text-white"><i class="fa-solid fa-basketball w-4 text-center"></i> <span>Sports</span></button></li>
+                        <li><button onclick="filterByCategory('Arcade')" id="nav-Arcade" class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs text-slate-400 hover:text-white"><i class="fa-solid fa-gamepad w-4 text-center"></i> <span>Arcade</span></button></li>
+                        <li><button onclick="filterByCategory('Driving')" id="nav-Driving" class="sidebar-link w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs text-slate-400 hover:text-white"><i class="fa-solid fa-car-side w-4 text-center"></i> <span>Driving</span></button></li>
+                    </ul>
+                </div>
+
+                <!-- Tools -->
+                <div>
+                    <div class="px-3 mb-2 text-[10px] font-bold uppercase tracking-wider text-oasis-muted font-mono">Tools</div>
+                    <ul class="space-y-1">
+                        <li><button onclick="playRandomGame()" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-cyan-400"><i class="fa-solid fa-dice w-4 text-center text-cyan-400"></i> <span>Feeling Lucky</span></button></li>
+                        <li><button onclick="openCustomUrlModal()" class="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs text-slate-300 hover:text-white"><i class="fa-solid fa-link w-4 text-center text-oasis-muted"></i> <span>Add non-JG game...</span></button></li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Audio Toggle & Footer -->
+            <div class="p-4 border-t border-oasis-border/60 space-y-3">
+                <div class="flex items-center justify-between bg-oasis-bg p-2.5 rounded-xl border border-oasis-border">
+                    <div class="flex items-center gap-2">
+                        <i id="soundIcon" class="fa-solid fa-volume-high text-cyan-400 text-xs"></i>
+                        <span class="text-xs text-slate-300 font-medium">Sound Effects</span>
+                    </div>
+                    <button onclick="toggleAudio()" id="soundToggleSwitch" class="relative w-9 h-5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 transition-all">
+                        <span id="soundToggleDot" class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-slate-950 transition-transform"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col min-w-0 pt-14 lg:pt-0">
+        <!-- Header -->
+        <header class="sticky top-0 z-30 bg-oasis-bg/95 backdrop-blur-md border-b border-oasis-border/60 px-6 py-4 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <h1 id="activeCategoryTitle" class="text-xl font-bold text-white tracking-tight">All Games</h1>
+                <span id="activeCountBadge" class="text-xs font-mono text-oasis-muted bg-oasis-card px-2.5 py-1 rounded-lg border border-oasis-border">0</span>
+            </div>
+            <!-- Sort Filter -->
+            <select id="sortSelect" onchange="setSort(this.value)" class="bg-oasis-card border border-oasis-border text-xs text-slate-200 py-1.5 px-3 rounded-lg focus:outline-none focus:border-cyan-400">
+                <option value="popular">Popularity</option>
+                <option value="alphabetical">A-Z</option>
+            </select>
+        </header>
+
+        <!-- Games Grid -->
+        <div class="flex-1 p-6 lg:p-8 overflow-y-auto">
+            <div id="gamesGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Games Injected Here via JS -->
+            </div>
+            <div id="noResults" class="hidden flex-col items-center justify-center py-20 text-center space-y-3">
+                <div class="w-12 h-12 rounded-xl bg-oasis-card border border-oasis-border flex items-center justify-center text-oasis-muted text-xl"><i class="fa-solid fa-folder-open"></i></div>
+                <h3 class="text-sm font-bold text-white">No Games Found</h3>
+                <p class="text-xs text-oasis-muted">Try a different category or search term.</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- GAME LAUNCHER MODAL (IFRAME VIEWER) -->
+    <div id="gameModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-200 p-2 sm:p-6">
+        <div id="modalContainer" class="relative w-full max-w-5xl h-[88vh] bg-oasis-card rounded-2xl border border-oasis-border shadow-2xl flex flex-col overflow-hidden transition-all duration-300">
+            <!-- Modal Header -->
+            <div class="modal-header flex items-center justify-between px-5 py-3.5 bg-oasis-sidebar border-b border-oasis-border select-none">
+                <div class="flex items-center gap-3 overflow-hidden">
+                    <div class="w-8 h-8 rounded-lg bg-cyan-500/10 border border-cyan-500/30 flex items-center justify-center text-cyan-400 text-sm flex-shrink-0">
+                        <i class="fa-solid fa-gamepad" id="modalGameIcon"></i>
+                    </div>
+                    <div class="truncate">
+                        <h3 id="modalGameTitle" class="text-sm font-bold text-white truncate">Game Title</h3>
+                        <p id="modalGamePath" class="text-[10px] font-mono text-oasis-muted truncate">/path/to/game.html</p>
+                    </div>
+                </div>
+                <!-- Controls -->
+                <div class="flex items-center gap-2">
+                    <button id="modalFavBtn" onclick="toggleFavoriteFromModal()" title="Favorite Game" class="p-2 rounded-lg bg-oasis-bg hover:bg-oasis-hover border border-oasis-border transition-all">
+                        <i id="modalFavIcon" class="fa-regular fa-bookmark text-xs text-slate-300"></i>
+                    </button>
+                    <button onclick="toggleFullscreen()" title="Fullscreen" class="hidden sm:block p-2 rounded-lg bg-oasis-bg hover:bg-oasis-hover text-slate-300 border border-oasis-border transition-all">
+                        <i class="fa-solid fa-expand text-xs"></i>
+                    </button>
+                    <button onclick="reloadIframe()" title="Reload" class="p-2 rounded-lg bg-oasis-bg hover:bg-oasis-hover text-slate-300 border border-oasis-border transition-all">
+                        <i class="fa-solid fa-rotate-right text-xs"></i>
+                    </button>
+                    <button onclick="closeGameModal()" title="Close Game (Esc)" class="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 transition-all ml-2">
+                        <i class="fa-solid fa-xmark text-sm"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- Iframe Container -->
+            <div class="relative flex-1 bg-black overflow-hidden flex items-center justify-center">
+                <div id="iframeLoader" class="absolute inset-0 flex flex-col items-center justify-center bg-oasis-bg z-10 space-y-3">
+                    <div class="loader-ring"></div>
+                    <span class="text-xs font-mono text-oasis-muted tracking-wider">LOADING ENVIRONMENT...</span>
+                </div>
+                <iframe id="gameIframe" class="w-full h-full border-0 relative z-0 bg-white" allow="autoplay; keyboard; fullscreen" src="about:blank"></iframe>
+            </div>
         </div>
     </div>
 
+    <!-- CUSTOM URL MODAL -->
+    <div id="customUrlModal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-200 p-4">
+        <div class="w-full max-w-md bg-oasis-card rounded-2xl border border-oasis-border p-6 space-y-5 shadow-2xl" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between border-b border-oasis-border pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2"><i class="fa-solid fa-link text-cyan-400"></i> Execute a non-juliansgames html file</h3>
+                <button onclick="closeCustomUrlModal()" class="text-oasis-muted hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-mono text-oasis-muted mb-1">Enter file name</label>
+                    <input type="text" id="customGameTitle" placeholder="how to get robuc hack 2026 for iphone 18 pro real working delta" class="w-full bg-oasis-bg text-xs text-slate-200 px-3 py-2 rounded-xl border border-oasis-border focus:border-cyan-400 outline-none">
+                </div>
+                <div>
+                    <label class="block text-xs font-mono text-oasis-muted mb-1">Path or URL</label>
+                    <input type="text" id="customGameUrl" placeholder="https://..." class="w-full bg-oasis-bg text-xs font-mono text-slate-200 px-3 py-2 rounded-xl border border-oasis-border focus:border-cyan-400 outline-none">
+                </div>
+            </div>
+            <div class="flex items-center justify-end gap-3 pt-2">
+                <button onclick="closeCustomUrlModal()" class="px-4 py-2 rounded-xl bg-oasis-bg text-oasis-muted text-xs hover:text-white border border-oasis-border">Cancel</button>
+                <button onclick="submitCustomUrl()" class="btn-gradient px-4 py-2 rounded-xl text-xs font-bold shadow-md shadow-cyan-500/20">Execute</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // Explicit list of games with unique IDs, clean metadata, and custom paths
-        const gamesCatalog = [
-            {
-                id: 'gtavc',
-                title: 'GTA: Vice City',
-                category: 'Arcade',
-                description: 'Grand Theft Auto: Vice City. yay',
-                thumbnail: 'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/i/vice-city/icon.jpg',
-                statLabel: 'By',
-                statValue: 'Rockstar games',
-                path: '/g/gtavc.html'
-            },
-            {
-                id: 'sr',
-                title: 'Soccer Random',
-                category: 'Arcade',
-                description: 'Soccer Random is a football version of the popular random series produced by TwoPlayerGames',
-                thumbnail: 'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/i/sr.jpg',
-                statLabel: 'By',
-                statValue: 'TwoPlayerGames.org',
-                path: '/g/sr.html'
-            },
-            {
-                id: 'undertale',
-                title: 'Undertale',
-                category: 'Arcade',
-                description: 'Welcome to UNDERTALE. In this RPG, you control a human who falls underground into the world of monsters. Now you must find your way out... or stay trapped forever.',
-                thumbnail: 'https://raw.githubusercontent.com/jcdevsman/juliansgames/refs/heads/main/i/undertale.jpg',
-                statLabel: 'By',
-                statValue: 'tobyfox',
-                path: '/undertale.html'
-            }
+        /* ==========================================================================
+           1. DATABASE OF GAMES
+           ========================================================================== */
+        const DEFAULT_THUMB = "https://thumbs.dreamstime.com/b/temporary-rubber-stamp-over-white-background-86664158.jpg";
+        const SR_THUMB = "https://timeandclock.net/i/sr.avif";
+        const DR_THUMB = "https://timeandclock.net/i/dr.webp";
+
+        const GAMES_DATABASE = [
+            { id: 'sr', title: 'Soccer Random', path: '/g/sr.html', category: 'Sports', icon: 'fa-futbol', thumb: SR_THUMB, description: 'Bouncy 2-player ragdoll soccer physics with randomized fields.', rank: 1 },
+            { id: 'dr', title: 'Drive Made', path: '/g/drivemading.html', category: 'Driving', icon: 'fa-football', thumb: DEFAULT_THUMB, description: 'Classic pixel football management game.', rank: 2 },
+            { id: 'br', title: 'Basket Random', path: '/g/br.html', category: 'Sports', icon: 'fa-basketball', thumb: DEFAULT_THUMB, description: 'Hilarity ensues in this bouncy 2-player basketball game.', rank: 3 },
+            { id: 'dm', title: 'Drive Mad', path: '/g/dm.html', category: 'Driving', icon: 'fa-car-side', thumb: DEFAULT_THUMB, description: 'Challenging monster truck physics racing.', rank: 4 },
+            { id: 'moto', title: 'Moto X3M', path: '/g/moto.html', category: 'Driving', icon: 'fa-motorcycle', thumb: DEFAULT_THUMB, description: 'Action-packed stunt bike racing.', rank: 5 },
+            { id: 'subway', title: 'Subway Surfers', path: '/g/subway.html', category: 'Arcade', icon: 'fa-train', thumb: DEFAULT_THUMB, description: 'Endless runner classic. Dodge trains and barriers.', rank: 6 },
+            { id: 'slope', title: 'Slope 3D', path: '/g/slope.html', category: 'Arcade', icon: 'fa-bowling-ball', thumb: DEFAULT_THUMB, description: 'Fast-paced 3D ball runner down steep, narrow ramps.', rank: 7 }
         ];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const gridContainer = document.getElementById('games-grid');
-            const overlay = document.getElementById('game-overlay');
-            const iframe = document.getElementById('game-iframe');
-            const closeBtn = document.getElementById('close-game-btn');
-            const overlayTitle = document.getElementById('overlay-title');
-            const searchInput = document.getElementById('search-input');
-            const emptyState = document.getElementById('empty-state');
+        /* ==========================================================================
+           2. APP STATE
+           ========================================================================== */
+        let state = {
+            category: 'All',
+            searchQuery: '',
+            sortBy: 'popular',
+            favorites: JSON.parse(localStorage.getItem('oasis_favs') || '[]'),
+            audioEnabled: localStorage.getItem('oasis_audio') !== 'false',
+            activeModalGameId: null
+        };
 
-            // Render game cards dynamically from the list
-            function renderGames(gamesToRender) {
-                gridContainer.innerHTML = '';
-                
-                gamesToRender.forEach(game => {
-                    const card = document.createElement('div');
-                    card.className = 'game-card flex flex-col rounded-2xl overflow-hidden cursor-pointer group border border-brand-border hover:border-brand-blue/50 transition-all duration-300 transform hover:-translate-y-1 shadow-lg shadow-black/40 hover:shadow-[0_8px_30px_rgba(59,130,246,0.15)] bg-brand-cardBot';
-                    card.setAttribute('data-game-id', game.id);
-                    
-                    card.innerHTML = `
-                        <div class="h-44 relative flex items-center justify-center bg-black thumb-wrapper overflow-hidden border-b border-brand-border">
-                            <img src="${game.thumbnail}" alt="${game.title}" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
-                            <div class="absolute inset-0 bg-gradient-to-t from-brand-cardBot via-transparent to-transparent z-10"></div>
-                            <span class="absolute top-4 right-4 z-20 px-2.5 py-0.5 rounded-full border border-brand-blue/60 bg-black/50 backdrop-blur-sm text-brand-blue text-[10px] font-bold tracking-widest uppercase">${game.category}</span>
-                        </div>
-                        <div class="p-5 flex-grow flex flex-col justify-between relative z-20">
-                            <div class="mb-5">
-                                <h3 class="font-bold text-xl text-white mb-2 group-hover:text-brand-blue transition-colors">${game.title}</h3>
-                                <p class="text-sm text-gray-400 leading-relaxed line-clamp-2">${game.description}</p>
-                            </div>
-                            <div class="flex justify-between items-center pt-4 border-t border-brand-blue/10 mt-auto">
-                                <span class="text-xs text-gray-500 font-medium">${game.statLabel}: <span class="text-brand-blue">${game.statValue}</span></span>
-                                <button class="px-4 py-1.5 rounded-lg bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-xs font-bold group-hover:bg-brand-blue group-hover:text-white transition-colors">Play</button>
-                            </div>
-                        </div>
-                    `;
-                    
-                    card.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        launchGame(game);
-                    });
-
-                    gridContainer.appendChild(card);
-                });
+        /* ==========================================================================
+           3. WEB AUDIO API SYNTHESIZER
+           ========================================================================== */
+        let audioCtx = null;
+        function getAudioContext() {
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (AudioContext) audioCtx = new AudioContext();
             }
+            if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+            return audioCtx;
+        }
 
-            // Initial render
-            renderGames(gamesCatalog);
+        function playSound(type) {
+            if (!state.audioEnabled) return;
+            try {
+                const ctx = getAudioContext();
+                if (!ctx) return;
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                const now = ctx.currentTime;
 
-            function launchGame(game) {
-                const currentOrigin = window.location.origin;
-                const targetUrl = currentOrigin + game.path;
-                
-                console.log(`Launching game ID [${game.id}] -> ${targetUrl}`);
-                
-                iframe.src = targetUrl;
-                overlayTitle.textContent = game.title.toUpperCase();
-                
-                overlay.classList.add('show');
-                document.body.style.overflow = 'hidden';
+                if (type === 'hover') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.exponentialRampToValueAtTime(420, now + 0.03);
+                    gain.gain.setValueAtTime(0.015, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+                    osc.start(now); osc.stop(now + 0.03);
+                } else if (type === 'click') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(580, now);
+                    osc.frequency.exponentialRampToValueAtTime(220, now + 0.05);
+                    gain.gain.setValueAtTime(0.04, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                    osc.start(now); osc.stop(now + 0.05);
+                } else if (type === 'open') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(440, now);
+                    osc.frequency.setValueAtTime(554.37, now + 0.08);
+                    gain.gain.setValueAtTime(0.04, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+                    osc.start(now); osc.stop(now + 0.22);
+                }
+            } catch (e) {}
+        }
+
+        function toggleAudio() {
+            state.audioEnabled = !state.audioEnabled;
+            localStorage.setItem('oasis_audio', state.audioEnabled);
+            updateAudioUI();
+            if (state.audioEnabled) playSound('click');
+        }
+
+        function updateAudioUI() {
+            const dot = document.getElementById('soundToggleDot');
+            const btn = document.getElementById('soundToggleSwitch');
+            const icon = document.getElementById('soundIcon');
+            if (state.audioEnabled) {
+                dot.style.transform = 'translateX(0px)';
+                btn.className = 'relative w-9 h-5 rounded-full bg-gradient-to-r from-cyan-400 to-blue-600 transition-all';
+                icon.className = 'fa-solid fa-volume-high text-cyan-400 text-xs';
+            } else {
+                dot.style.transform = 'translateX(-16px)';
+                btn.className = 'relative w-9 h-5 rounded-full bg-oasis-border transition-all';
+                icon.className = 'fa-solid fa-volume-xmark text-oasis-muted text-xs';
             }
+        }
 
-            // Robust close game function
-            function closeGame() {
-                overlay.classList.remove('show');
-                iframe.src = 'about:blank'; // Completely stops iframe activity and audio
-                document.body.style.overflow = '';
-            }
+        /* ==========================================================================
+           4. RENDERING & FILTERING
+           ========================================================================== */
+        function init() {
+            updateAudioUI();
+            updateFavBadge();
+            renderGames();
+            setupSearch();
+            setupModalOverlays();
+        }
 
-            // Event listeners for closing
-            closeBtn.addEventListener('click', (e) => {
-                e.stopPropagation();
-                closeGame();
+        function updateFavBadge() {
+            document.getElementById('favCountBadge').textContent = state.favorites.length;
+        }
+
+        function filterByCategory(cat) {
+            playSound('click');
+            state.category = cat;
+            document.querySelectorAll('.sidebar-link').forEach(el => el.classList.remove('active'));
+            const nav = document.getElementById(`nav-${cat}`);
+            if (nav) nav.classList.add('active');
+            
+            document.getElementById('activeCategoryTitle').textContent = cat === 'Favorites' ? 'My Favorites' : `${cat} Games`;
+            const sidebar = document.getElementById('sidebar');
+            if(window.innerWidth < 1024) sidebar.classList.add('-translate-x-full');
+            renderGames();
+        }
+
+        function setSort(val) {
+            playSound('click');
+            state.sortBy = val;
+            renderGames();
+        }
+
+        function renderGames() {
+            const grid = document.getElementById('gamesGrid');
+            const noRes = document.getElementById('noResults');
+            
+            let filtered = GAMES_DATABASE.filter(g => {
+                let matchCat = state.category === 'All' || (state.category === 'Favorites' ? state.favorites.includes(g.id) : g.category === state.category);
+                let matchSearch = g.title.toLowerCase().includes(state.searchQuery.toLowerCase()) || g.category.toLowerCase().includes(state.searchQuery.toLowerCase());
+                return matchCat && matchSearch;
             });
 
-            // Escape key listener to close overlay
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && overlay.classList.contains('show')) {
-                    closeGame();
+            filtered.sort((a, b) => state.sortBy === 'alphabetical' ? a.title.localeCompare(b.title) : a.rank - b.rank);
+            document.getElementById('activeCountBadge').textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = '';
+                noRes.classList.remove('hidden');
+                noRes.classList.add('flex');
+                return;
+            }
+            noRes.classList.add('hidden');
+            noRes.classList.remove('flex');
+
+            grid.innerHTML = filtered.map(game => {
+                const isFav = state.favorites.includes(game.id);
+                return `
+                    <div class="oasis-card rounded-2xl overflow-hidden flex flex-col group relative" onmouseenter="playSound('hover')">
+                        <!-- Thumbnail Area -->
+                        <div class="relative h-44 bg-oasis-sidebar overflow-hidden cursor-pointer" onclick="launchGame('${game.id}')">
+                            <img src="${game.thumb}" alt="${game.title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+                            <div class="absolute inset-0 bg-gradient-to-t from-oasis-card via-transparent to-transparent opacity-90 pointer-events-none"></div>
+                            
+                            <!-- Category Badge -->
+                            <span class="absolute top-3 left-3 text-[10px] font-mono bg-oasis-sidebar/90 border border-oasis-border px-2 py-1 rounded-lg text-oasis-muted backdrop-blur-md pointer-events-none">${game.category}</span>
+                            
+                            <!-- Play Overlay -->
+                            <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-slate-950/40 backdrop-blur-[2px] pointer-events-none">
+                                <div class="w-10 h-10 rounded-full btn-gradient flex items-center justify-center shadow-lg"><i class="fa-solid fa-play ml-0.5"></i></div>
+                            </div>
+                        </div>
+
+                        <!-- Card Info -->
+                        <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
+                            <div>
+                                <div class="flex items-start justify-between">
+                                    <h3 class="font-bold text-white text-sm group-hover:text-cyan-400 transition-colors cursor-pointer" onclick="launchGame('${game.id}')">
+                                        <i class="fa-solid ${game.icon} text-xs text-oasis-muted mr-1.5"></i>${game.title}
+                                    </h3>
+                                    <button onclick="toggleFavorite('${game.id}', event)" class="text-slate-400 hover:text-cyan-400 transition-colors p-1">
+                                        <i class="${isFav ? 'fa-solid text-cyan-400' : 'fa-regular'} fa-bookmark"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-oasis-muted line-clamp-2 mt-1 leading-relaxed">${game.description}</p>
+                            </div>
+                            <div class="pt-2 border-t border-oasis-border/60 flex items-center justify-between text-xs">
+                                <span class="font-mono text-[10px] text-slate-500 truncate mr-2">${game.path}</span>
+                                <button onclick="launchGame('${game.id}')" class="text-cyan-400 font-semibold hover:underline text-xs whitespace-nowrap">Launch <i class="fa-solid fa-arrow-right text-[10px]"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        /* ==========================================================================
+           5. GAME LAUNCHER & MODAL LOGIC (FIXED)
+           ========================================================================== */
+        function launchGame(gameId) {
+            const game = GAMES_DATABASE.find(g => g.id === gameId);
+            if (!game) return;
+
+            playSound('open');
+            state.activeModalGameId = gameId;
+
+            // Setup UI
+            document.getElementById('modalGameTitle').textContent = game.title;
+            document.getElementById('modalGamePath').textContent = game.path;
+            document.getElementById('modalGameIcon').className = `fa-solid ${game.icon}`;
+            updateModalFavIcon();
+
+            // Show Modal & Loader
+            const modal = document.getElementById('gameModal');
+            const iframe = document.getElementById('gameIframe');
+            const loader = document.getElementById('iframeLoader');
+            
+            loader.classList.remove('hidden');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            
+            // Set source to launch
+            iframe.src = game.path;
+            iframe.onload = () => loader.classList.add('hidden');
+        }
+
+        function closeGameModal() {
+            playSound('click');
+            const modal = document.getElementById('gameModal');
+            const iframe = document.getElementById('gameIframe');
+            
+            // Hide modal
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            
+            // CRITICAL: Stop game execution & audio by clearing the iframe src
+            setTimeout(() => { iframe.src = 'about:blank'; }, 200); 
+            
+            state.activeModalGameId = null;
+            
+            // Safely exit fullscreen if closing via other means
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                if (document.exitFullscreen) document.exitFullscreen();
+                else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+            }
+        }
+
+        function reloadIframe() {
+            playSound('click');
+            const iframe = document.getElementById('gameIframe');
+            if (iframe.src && iframe.src !== 'about:blank' && iframe.src !== window.location.href) {
+                document.getElementById('iframeLoader').classList.remove('hidden');
+                iframe.src = iframe.src;
+            }
+        }
+
+        function toggleFullscreen() {
+            playSound('click');
+            const modal = document.getElementById('modalContainer');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (modal.requestFullscreen) {
+                    modal.requestFullscreen();
+                } else if (modal.webkitRequestFullscreen) { /* Safari */
+                    modal.webkitRequestFullscreen();
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) { /* Safari */
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+
+        function playRandomGame() {
+            const idx = Math.floor(Math.random() * GAMES_DATABASE.length);
+            launchGame(GAMES_DATABASE[idx].id);
+        }
+
+        /* ==========================================================================
+           6. FAVORITES
+           ========================================================================== */
+        function toggleFavorite(id, event) {
+            if(event) event.stopPropagation();
+            playSound('click');
+            if (state.favorites.includes(id)) {
+                state.favorites = state.favorites.filter(fid => fid !== id);
+            } else {
+                state.favorites.push(id);
+            }
+            localStorage.setItem('oasis_favs', JSON.stringify(state.favorites));
+            updateFavBadge();
+            renderGames();
+            if(state.activeModalGameId === id) updateModalFavIcon();
+        }
+
+        function toggleFavoriteFromModal() {
+            if(state.activeModalGameId) toggleFavorite(state.activeModalGameId, null);
+        }
+
+        function updateModalFavIcon() {
+            const icon = document.getElementById('modalFavIcon');
+            if(icon && state.activeModalGameId) {
+                const isFav = state.favorites.includes(state.activeModalGameId);
+                icon.className = `${isFav ? 'fa-solid text-cyan-400' : 'fa-regular text-slate-300'} fa-bookmark text-xs`;
+            }
+        }
+
+        /* ==========================================================================
+           7. SEARCH & EVENT LISTENERS
+           ========================================================================== */
+        function setupSearch() {
+            const input = document.getElementById('searchInput');
+            const clearBtn = document.getElementById('clearSearchBtn');
+            input.addEventListener('input', (e) => {
+                state.searchQuery = e.target.value;
+                clearBtn.classList.toggle('hidden', !state.searchQuery);
+                renderGames();
+            });
+        }
+        function clearSearch() {
+            document.getElementById('searchInput').value = '';
+            state.searchQuery = '';
+            document.getElementById('clearSearchBtn').classList.add('hidden');
+            renderGames();
+        }
+
+        function toggleMobileSidebar() { document.getElementById('sidebar').classList.toggle('-translate-x-full'); }
+
+        /* Custom URL Launching */
+        function openCustomUrlModal() {
+            playSound('open');
+            document.getElementById('customUrlModal').classList.remove('opacity-0', 'pointer-events-none');
+        }
+        function closeCustomUrlModal() {
+            playSound('click');
+            document.getElementById('customUrlModal').classList.add('opacity-0', 'pointer-events-none');
+        }
+        function submitCustomUrl() {
+            const title = document.getElementById('customGameTitle').value || 'Custom App';
+            const url = document.getElementById('customGameUrl').value;
+            if(!url) return;
+            closeCustomUrlModal();
+            
+            state.activeModalGameId = 'custom';
+            document.getElementById('modalGameTitle').textContent = title;
+            document.getElementById('modalGamePath').textContent = url;
+            document.getElementById('modalGameIcon').className = 'fa-solid fa-link';
+            
+            const modal = document.getElementById('gameModal');
+            const iframe = document.getElementById('gameIframe');
+            document.getElementById('iframeLoader').classList.remove('hidden');
+            modal.classList.remove('opacity-0', 'pointer-events-none');
+            
+            iframe.src = url;
+            iframe.onload = () => document.getElementById('iframeLoader').classList.add('hidden');
+        }
+
+        /* robust Esc and Overlay click handlers for closing modals */
+        function setupModalOverlays() {
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    // Prevent closing the modal on the first Esc if we are currently in Fullscreen mode.
+                    // The browser uses the first Esc to natively exit Fullscreen.
+                    if (document.fullscreenElement || document.webkitFullscreenElement) {
+                        return;
+                    }
+                    closeGameModal();
+                    closeCustomUrlModal();
                 }
             });
-
-            // Hero buttons listeners
-            document.getElementById('btn-hero-snake').addEventListener('click', (e) => {
-                e.preventDefault();
-                const game = gamesCatalog.find(g => g.id === 'snake');
-                if (game) launchGame(game);
+            
+            // Close game modal on outside click
+            document.getElementById('gameModal').addEventListener('click', (e) => {
+                if (e.target.id === 'gameModal') closeGameModal();
             });
 
-            document.getElementById('btn-hero-clicker').addEventListener('click', (e) => {
-                e.preventDefault();
-                const game = gamesCatalog.find(g => g.id === 'clicker');
-                if (game) launchGame(game);
+            // Close custom URL modal on outside click
+            document.getElementById('customUrlModal').addEventListener('click', (e) => {
+                if (e.target.id === 'customUrlModal') closeCustomUrlModal();
             });
+        }
 
-            // Functional Search Bar listener
-            searchInput.addEventListener('input', (e) => {
-                const query = e.target.value.toLowerCase().trim();
-                
-                const filteredGames = gamesCatalog.filter(game => 
-                    game.title.toLowerCase().includes(query) || 
-                    game.description.toLowerCase().includes(query) ||
-                    game.category.toLowerCase().includes(query)
-                );
-
-                renderGames(filteredGames);
-
-                if (filteredGames.length === 0) {
-                    emptyState.classList.remove('hidden');
-                    emptyState.classList.add('flex');
-                    gridContainer.classList.add('hidden');
-                } else {
-                    emptyState.classList.add('hidden');
-                    emptyState.classList.remove('flex');
-                    gridContainer.classList.remove('hidden');
-                }
-            });
-        });
+        window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
